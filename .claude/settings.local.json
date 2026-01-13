@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bd init:*)",
+      "Bash(bd create:*)",
+      "Bash(bd dep add:*)",
+      "Bash(bd list:*)",
+      "Bash(bd update:*)",
+      "Bash(bd dep tree:*)",
+      "Bash(bd stats:*)",
+      "Bash(bd ready:*)",
+      "Bash(bd close \"Ways of Development-2\" --reason \"Phase 1 analysis complete - documented in Phase1-Problem-Analysis.md\")",
+      "Bash(bd close:*)",
+      "Bash(dir:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-create.ps1\" -Title \"Test Document\" -Domain API -NoBead)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-create.ps1\" -Title \"Authentication Flow Design\" -Domain AUTH -Type task -Priority 1)",
+      "Bash(bd show:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-registry.ps1\" -Stats)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-create.ps1\" -Title \"OAuth2 Implementation\" -Domain AUTH -NoBead)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-create.ps1\" -Title \"REST API Guidelines\" -Domain API -NoBead)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-create.ps1\" -Title \"User Profile Schema\" -Domain DATA -NoBead)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-registry.ps1\" -Verify)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \".mlda\\\\scripts\\\\mlda-registry.ps1\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File .mldascriptsmlda-validate.ps1)",
+      "Bash(powershell:*)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(grep:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial release: RMS-BMAD Framework v1.0\n\nA comprehensive methodology for AI-assisted software development with Claude Code.\n\nIncludes:\n- RMS Framework \\(Rules-Modes-Skills\\)\n- BMAD Methodology \\(10 expert modes, 23 skills, 16 templates\\)\n- MLDA Documentation Architecture \\(modular linked docs\\)\n- Installation scripts \\(Windows + Unix/Mac\\)\n- Complete documentation and design history\nEOF\n\\)\")",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(tree:*)",
+      "Bash(gh auth:*)",
+      "Bash(git config:*)"
+    ]
+  }
+}

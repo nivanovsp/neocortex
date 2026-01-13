@@ -1,0 +1,16 @@
+id: DOC-API-001
+title: "Test Document for Validation"
+status: active
+
+created:
+  date: "2026-01-12"
+  by: "User"
+
+updated:
+  date: "2026-01-12"
+  by: "User"
+
+tags:
+  - api
+
+related: []

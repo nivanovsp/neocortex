@@ -1,0 +1,67 @@
+So far, you and me worked on numerous topics related to different modules/apps for Dominaite. What I am seeing is quite a complex issue, so I will try to explain as detailed as possible. Let me start with
+  the process, I am doing so far.
+
+  Business analyst:
+  1. You and me have a session (or multiple sessions) on the same topic.
+  2. We use BMAD as a method for business analysts, project management, architects, etc.
+  3. We use beads for tracking (not much related on the topic, just giving a context) as we are doing at this moment.
+  4. You generate multiple documents with information, based on our discussions.
+  5. Usually after that I am asking you to generate one comprehensive document for analysis.
+  6. Then, I am asking you to create a "Project Brief" document.
+
+  Architect:
+  7. I am asking the architect to get familiar with the comprehensive business analysis document and project brief.
+  8. Again with the architect we are making a number of sessions for the architecture.
+  9. You generate multiple documents with information, based on our discussions.
+  10. After that I am asking you to generate one comprehensive document for architecture.
+
+  Project manager:
+  10. I am asking the project manager to get familiar with all documents - business analysis, project brief and architecture.
+  11. After that I am asking for creation of Product requirement document. This takes a numerous sessions. The result is one comprehensive document.
+
+  After that, everything goes for agentic development with the other guys from my team. You also should have in mind that architectural decisions like back-end/front-end language, environment and some other
+  topics I am ecluding from discussions as we have an experienced solutions architect which already set the foundations. Also, within the PRD I am usually removing the sections for epics, stories and tasks,
+  as most of the modules are quite complex and these are initiated durign the development itself. There is no need for a more complex document.
+
+  So, I will try to explain my pain points now:
+  1. We (you and I) are creating multiple comprehencive documents (project brief, analysis, architecture). These are quite large documents and hard to be rememberd by different agents.
+  2. This leads to discussing the same topics multiple times. This itself leads to different results. The agent does not have the correct context, and I also do not remember everything in details that we
+  discussed. Nevertheless, this may need to refactor other documents, because of new decisions and also losing time to discuss same topics.
+  3. There is no relation between the documents. For example, in the PRD where all the functional and non-functional requirements are listed, there is no link to the other document(s) where these are
+  discussed in depth.
+  4. When development starts, they rely on the PRD only. This is also a problem, as the PRD does not give the full context. This can lead to developing something that was either not discussed or a different
+  result was expected. In addition, there is no update of the documents when a change is made, or a different decision is taken.
+  5. Architectural, Business and PRD documents have sections in them that we actually do not need (as I explained above).
+
+  Let me give you an example:
+  1. We are discussing the onboarding module.
+  2. There is a topic for access controls. However, we already have a separate topic about user management where we listed all rules, requirements and so on.
+  3. So there is no need to discuss this topic again. We just need to add a relation to the other document for user management.
+
+  My goal with the current session:
+  Improve the process of generating documents. I think if we are able to generate more documents with less content, and also add link within documents for topics that relate each-other would be great. So, instead of generating one huge document, we can:
+
+Business analyst:
+  1. Generate a number of smaller documents.
+  2. Add a link in the documents where topics relate.
+  3. Create one document (the source of truth), that lists all topics and has link to detailed documentation for each topic. We can use the Project Brief for example.
+
+Architect:
+  4. When starting a discussion I will just provide the Project Brief as a context.
+  5. The architect agent will have all the topics and relevant links to smaller documents.
+  6. When we start a discussion, the agent gets details in depth for the topic we are on.
+  7. The agent again creates multiple documents on separate topics with links in them for topics that are related.
+  8. The agent updates the Project Brief with sections and links to architectural documents.
+
+Project Manager:
+  9. When starting a discussion, I will just provide the Project Brief as a context.
+  10. When we start creating the PRD document, it will not be a single document, but mulitple documents for the different topics/sections. We should remove the epics and stories - these will not be needed.
+  11. When adding requirements, there should be a link per secion of requirements or per requirement. This link will be to analysis documents where all the needed context is available & architectural context (if available).
+
+Development:
+  12. When developers start working (as it is agentic development), they will be provided with the multiple with the document for the specific topic that contains all necessary links to the full documentation.
+  13. Developers will create a beads tracker based on this documentation and will have the full information that is needed on the specific topic.
+  14. If a change is required, all related documents must be updated, so we do not lose track and have always an updated documentation.
+
+How does this sound to you? What do I miss?
+  

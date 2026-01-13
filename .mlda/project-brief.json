@@ -1,0 +1,20 @@
+{
+    "statistics":  {
+                       "TotalDocs":  1,
+                       "NoSummary":  0,
+                       "MissingFile":  0,
+                       "Domains":  1,
+                       "WithSummary":  1
+                   },
+    "domains":  {
+                    "API":  [
+                                {
+                                    "summary":  "This document serves as a test case for the MLDA tooling scripts. It validates that the create, registry, validate, and brief generator scripts work correctly together.",
+                                    "title":  "Test Document for Validation",
+                                    "path":  "docs/api/test-document-for-validation.md",
+                                    "id":  "DOC-API-001"
+                                }
+                            ]
+                },
+    "generated":  "2026-01-12"
+}

@@ -1,0 +1,5 @@
+  Quick install for your peers:
+  git clone https://github.com/nivanovsp/rms-bmad-framework.git
+  cd rms-bmad-framework
+  .\install\install.ps1 -Global   # Windows
+  ./install/install.sh --global   # Mac/Linux

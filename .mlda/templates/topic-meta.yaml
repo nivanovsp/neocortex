@@ -1,0 +1,27 @@
+# Metadata sidecar for topic document
+# Save as: {topic-name}.meta.yaml alongside {topic-name}.md
+
+id: DOC-{DOMAIN}-{NNN}
+title: "{Document Title}"
+status: active  # active | deprecated
+
+created:
+  date: "{YYYY-MM-DD}"
+  by: "{Author}"
+
+updated:
+  date: "{YYYY-MM-DD}"
+  by: "{Author}"
+
+# Tags for discovery
+tags:
+  - {tag1}
+  - {tag2}
+
+# Links to related docs (optional)
+related:
+  - id: DOC-XXX-NNN
+    why: "{relationship description}"
+
+# Beads link (optional)
+beads: "{ProjectName-N}"

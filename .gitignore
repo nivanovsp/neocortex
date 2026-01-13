@@ -1,0 +1,19 @@
+# Beads database (local only)
+.beads/beads.db
+
+# Temporary files
+tmpclaude-*
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local settings (keep template, ignore local overrides)
+# .claude/settings.local.json  # Uncomment if you don't want to share permissions
