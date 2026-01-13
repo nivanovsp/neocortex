@@ -1,5 +1,5 @@
 ---
-description: Facilitate Brainstorming Session Task
+description: Facilitate Brainstorming Session Task with MLDA integration
 ---
 
 # /facilitate-brainstorming-session Task
@@ -16,6 +16,25 @@ template: '.claude/commands/templates/brainstorming-output-tmpl.yaml'
 # Facilitate Brainstorming Session Task
 
 Facilitate interactive brainstorming sessions with users. Be creative and adaptive in applying techniques.
+
+## MLDA Auto-Integration
+
+**Before starting the session, check for MLDA:**
+
+1. **Detect MLDA**: Check if `.mlda/` folder exists in project root
+2. **If MLDA exists**:
+   - Read `.mlda/registry.yaml` to determine next DOC-ID
+   - After session output is created, automatically create `.meta.yaml` sidecar
+   - Add document entry to registry
+3. **If MLDA not present**: Proceed with standard session (no sidecar)
+
+**After Step 5 (Document Output), if MLDA is active:**
+
+- Create `brainstorming-session-results.meta.yaml` alongside the document
+- Use tags: `brainstorming`, `ideation`, `{topic-slug}`
+- Ask user about related documents
+- Update `.mlda/registry.yaml`
+- Confirm: "Session output registered as {DOC-ID} in MLDA"
 
 ## Process
 

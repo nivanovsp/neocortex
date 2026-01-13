@@ -1,9 +1,59 @@
 ---
-description: 'Create documents from YAML templates with interactive elicitation'
+description: 'Create documents from YAML templates with interactive elicitation and MLDA integration'
 ---
 # Create Document Skill
 
 **RMS Skill** | Template-driven document creation with user interaction
+
+## MLDA Auto-Integration
+
+**Before starting document creation, check for MLDA:**
+
+1. **Detect MLDA**: Check if `.mlda/` folder exists in project root
+2. **If MLDA exists**:
+   - Read `.mlda/registry.yaml` to get next available DOC-ID for the domain
+   - After document creation, automatically create `.meta.yaml` sidecar
+   - Add document entry to registry
+   - Ask user about related documents
+3. **If MLDA not present**: Proceed with standard document creation
+
+### MLDA Sidecar Template
+
+When MLDA is detected, create this sidecar alongside the document:
+
+```yaml
+id: {DOC-ID}           # e.g., DOC-INV-016
+title: "{Document Title}"
+status: active
+
+created:
+  date: "{YYYY-MM-DD}"
+  by: "{current_mode or 'analyst'}"
+
+updated:
+  date: "{YYYY-MM-DD}"
+  by: "{current_mode or 'analyst'}"
+
+tags:
+  - {domain}           # e.g., inv, api, auth
+  - {template_type}    # e.g., project-brief, market-research
+
+related: []            # Ask user if any related docs
+```
+
+### Registry Update
+
+Add entry to `.mlda/registry.yaml`:
+
+```yaml
+- id: {DOC-ID}
+  title: "{Document Title}"
+  path: "{relative_path_to_document}"
+  status: active
+  type: {template_type}
+```
+
+---
 
 ## ⚠️ CRITICAL EXECUTION NOTICE ⚠️
 
@@ -42,16 +92,25 @@ If a YAML Template has not been provided, list all templates from .claude/comman
 
 ## Processing Flow
 
-1. **Parse YAML template** - Load template metadata and sections
-2. **Set preferences** - Show current mode (Interactive), confirm output file
-3. **Process each section:**
+1. **Check for MLDA** - Look for `.mlda/` folder in project root
+   - If found: Note MLDA is active, read registry for next DOC-ID
+   - If not found: Proceed without MLDA integration
+2. **Parse YAML template** - Load template metadata and sections
+3. **Set preferences** - Show current mode (Interactive), confirm output file
+   - If MLDA active: Show assigned DOC-ID (e.g., "This document will be DOC-INV-016")
+4. **Process each section:**
    - Skip if condition unmet
    - Check agent permissions (owner/editors) - note if section is restricted to specific agents
    - Draft content using section instruction
    - Present content + detailed rationale
    - **IF elicit: true** → MANDATORY 1-9 options format
    - Save to file if possible
-4. **Continue until complete**
+5. **Continue until complete**
+6. **MLDA Finalization** (if MLDA active):
+   - Create `.meta.yaml` sidecar file alongside the document
+   - Ask: "Are there related documents? Enter DOC-IDs or 'none'"
+   - Update `.mlda/registry.yaml` with new entry
+   - Confirm: "Document registered as {DOC-ID} in MLDA"
 
 ## Detailed Rationale Requirements
 

@@ -1,5 +1,5 @@
 ---
-description: Create Deep Research Prompt Task
+description: Create Deep Research Prompt Task with MLDA integration
 ---
 
 # /create-deep-research-prompt Task
@@ -11,6 +11,26 @@ When this command is used, execute the following task:
 # Create Deep Research Prompt Task
 
 This task helps create comprehensive research prompts for various types of deep analysis. It can process inputs from brainstorming sessions, project briefs, market research, or specific research questions to generate targeted prompts for deeper investigation.
+
+## MLDA Auto-Integration
+
+**Before starting, check for MLDA:**
+
+1. **Detect MLDA**: Check if `.mlda/` folder exists in project root
+2. **If MLDA exists**:
+   - Read `.mlda/registry.yaml` to determine next DOC-ID
+   - After research prompt is saved, create `.meta.yaml` sidecar
+   - Add document entry to registry
+3. **If MLDA not present**: Proceed without sidecar
+
+**After Step 5 (Review and Refinement), if MLDA is active:**
+
+- Save research prompt to file (e.g., `{topic}-research-prompt.md`)
+- Create matching `.meta.yaml` sidecar
+- Use tags: `research`, `prompt`, `{research-type}`
+- Ask user about related documents (e.g., project brief, brainstorming results)
+- Update `.mlda/registry.yaml`
+- Confirm: "Research prompt registered as {DOC-ID} in MLDA"
 
 ## Purpose
 
