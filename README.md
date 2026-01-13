@@ -59,6 +59,7 @@ To make RMS-BMAD available in ALL your projects:
 
 | Skill | Purpose |
 |-------|---------|
+| `/skills:init-project` | Initialize project with MLDA scaffolding |
 | `/skills:create-doc` | Create documents from YAML templates |
 | `/skills:qa-gate` | Quality gate decisions (PASS/CONCERNS/FAIL/WAIVED) |
 | `/skills:execute-checklist` | Validate against checklists |
@@ -125,6 +126,7 @@ Each mode command automatically loads the right skill and template:
 |---------|-------|----------|
 | `*create-project-brief` | `create-doc` | `project-brief-tmpl.yaml` |
 | `*brainstorm` | `facilitate-brainstorming-session` | `brainstorming-output-tmpl.yaml` |
+| `*init-project` | `init-project` | MLDA scaffolding |
 
 ### Key Architect Commands
 | Command | Skill | Template |
@@ -179,6 +181,27 @@ rms-bmad-methodology/
 - Each topic = 1 markdown file + 1 metadata YAML sidecar
 - Documents link via DOC-IDs: `DOC-{DOMAIN}-{NNN}`
 - PowerShell scripts automate registry and validation
+
+### Quick Setup
+
+```bash
+# Via skill (recommended for 15+ documents)
+/skills:init-project
+
+# Or via analyst mode
+/modes:analyst
+*init-project
+```
+
+### Automatic Integration
+
+When `.mlda/` exists in your project, document-creating commands automatically:
+- Assign DOC-IDs from the registry
+- Create `.meta.yaml` sidecars alongside documents
+- Update the registry
+- Ask about related documents
+
+No manual steps required - just use `*create-project-brief`, `*brainstorm`, etc. as normal.
 
 See `.mlda/README.md` for the starter kit.
 

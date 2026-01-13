@@ -1,14 +1,40 @@
-# MLDA Starter Kit
-
-**Modular Linked Documentation Architecture** - Minimal validation setup.
-
----
-
-## What's This?
+# MLDA - Modular Linked Documentation Architecture
 
 A lightweight system for creating small, linked topic documents instead of monolithic docs.
 
-**Core idea:** One topic = one document + one metadata file.
+**Core idea:** One topic = one document + one metadata sidecar.
+
+---
+
+## Quick Start
+
+### Initialize MLDA in a New Project
+
+**Via Analyst Mode (Recommended):**
+```
+/modes:analyst
+*init-project
+```
+
+**Via Skill:**
+```
+/skills:init-project
+```
+
+**Via PowerShell:**
+```powershell
+.\.mlda\scripts\mlda-init-project.ps1 -Domains API,AUTH,INV
+```
+
+### Automatic Integration
+
+Once MLDA is initialized, document-creating commands **automatically**:
+- Assign DOC-IDs from the registry
+- Create `.meta.yaml` sidecars
+- Update the registry
+- Ask about related documents
+
+Just use `*create-project-brief`, `*brainstorm`, etc. as normal!
 
 ---
 
@@ -17,9 +43,15 @@ A lightweight system for creating small, linked topic documents instead of monol
 ```
 .mlda/
 ├── docs/              # Your topic documents go here
-│   └── {domain}/      # Organized by domain (auth/, api/, etc.)
+│   └── {domain}/      # Organized by domain (auth/, api/, inv/, etc.)
 │       ├── {topic}.md
 │       └── {topic}.meta.yaml
+├── scripts/           # MLDA tooling
+│   ├── mlda-init-project.ps1
+│   ├── mlda-create.ps1
+│   ├── mlda-registry.ps1
+│   ├── mlda-validate.ps1
+│   └── mlda-brief.ps1
 ├── templates/         # Copy these when creating new docs
 │   ├── topic-doc.md
 │   └── topic-meta.yaml
@@ -29,9 +61,34 @@ A lightweight system for creating small, linked topic documents instead of monol
 
 ---
 
-## How to Create a Topic Document
+## Scripts
 
-1. **Pick a domain** (e.g., `auth`, `api`, `ui`)
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `mlda-init-project.ps1` | Initialize MLDA in a project | `-Domains API,INV [-Migrate]` |
+| `mlda-create.ps1` | Create a new topic document | `-Domain API -Title "My Doc"` |
+| `mlda-registry.ps1` | Rebuild document registry | No arguments |
+| `mlda-validate.ps1` | Check link integrity | No arguments |
+| `mlda-brief.ps1` | Regenerate project brief | No arguments |
+
+---
+
+## Creating a Topic Document
+
+### Option 1: Using the Script (Recommended)
+
+```powershell
+.\.mlda\scripts\mlda-create.ps1 -Domain API -Title "REST Endpoints"
+```
+
+This automatically:
+- Assigns the next DOC-ID
+- Creates both `.md` and `.meta.yaml` files
+- Updates the registry
+
+### Option 2: Manual Creation
+
+1. **Pick a domain** (e.g., `auth`, `api`, `inv`)
 
 2. **Create the folder** if it doesn't exist:
    ```
@@ -63,13 +120,24 @@ DOC-{DOMAIN}-{NNN}
 Examples:
 - DOC-AUTH-001   (Authentication topic #1)
 - DOC-API-003    (API topic #3)
-- DOC-UI-012     (UI topic #12)
+- DOC-INV-012    (Invoicing topic #12)
 ```
 
-Rules:
-- IDs are permanent (never reuse)
-- Numbers are sequential within domain
-- Keep a simple counter per domain
+### Standard Domains
+
+| Code | Domain |
+|------|--------|
+| API | API specifications |
+| AUTH | Authentication |
+| DATA | Data models |
+| INV | Invoicing |
+| SEC | Security |
+| UI | User Interface |
+| INFRA | Infrastructure |
+| INT | Integrations |
+| TEST | Testing |
+
+Custom domains can be added per project.
 
 ---
 
@@ -86,28 +154,27 @@ In your `.meta.yaml`, track relationships:
 ```yaml
 related:
   - id: DOC-AUTH-001
+    type: depends-on
     why: "Defines auth patterns used here"
 ```
 
----
-
-## What to Validate
-
-Use this setup to test:
-
-1. **Do small topic docs work better?** - Easier to read/update than monoliths?
-2. **Does DOC-ID linking help?** - Can you trace relationships?
-3. **Is the overhead worth it?** - Does the metadata sidecar add value?
-
-If yes to all three, consider fuller adoption.
+Relationship types: `references`, `extends`, `depends-on`, `supersedes`
 
 ---
 
-## What's NOT Included (On Purpose)
+## Migration
 
-- Auto-generation scripts
-- Session manifests
-- Health metrics
-- Complex registry structures
+For existing projects with documents:
 
-Add these only if you feel the pain that justifies them.
+```powershell
+.\.mlda\scripts\mlda-init-project.ps1 -Domains INV -Migrate
+```
+
+The `-Migrate` flag:
+- Creates `.meta.yaml` sidecars for existing `.md` files
+- Assigns DOC-IDs sequentially
+- Adds entries to registry
+
+---
+
+*MLDA v1.1 | RMS-BMAD Methodology*

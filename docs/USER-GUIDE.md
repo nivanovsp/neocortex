@@ -226,12 +226,33 @@ Located in `.mlda/scripts/` (project-level):
 
 | Script | Purpose |
 |--------|---------|
+| `mlda-init-project.ps1` | Initialize MLDA in a new project |
 | `mlda-create.ps1` | Create new topic document with DOC-ID |
 | `mlda-registry.ps1` | Rebuild document registry |
 | `mlda-validate.ps1` | Check link integrity |
 | `mlda-brief.ps1` | Regenerate project brief |
 
 ### Setting Up MLDA in a Project
+
+#### Option 1: Using init-project (Recommended)
+
+For projects expecting 15+ documents:
+
+```
+/modes:analyst
+*init-project
+```
+
+Or directly: `/skills:init-project`
+
+The skill will:
+1. Ask about expected documentation volume
+2. Let you select domains (API, AUTH, INV, etc.)
+3. Scaffold the complete `.mlda/` structure
+4. Copy scripts and templates
+5. Initialize the registry
+
+#### Option 2: Manual Setup
 
 1. **Create the structure:**
    ```
@@ -259,6 +280,25 @@ Located in `.mlda/scripts/` (project-level):
    .mlda/scripts/mlda-registry.ps1
    .mlda/scripts/mlda-brief.ps1
    ```
+
+### Automatic MLDA Integration
+
+When `.mlda/` exists in your project, document-creating commands **automatically integrate**:
+
+| Command | Auto MLDA Behavior |
+|---------|-------------------|
+| `*create-project-brief` | Creates `.meta.yaml` sidecar, updates registry |
+| `*brainstorm` | Creates sidecar for session output |
+| `*research` | Creates sidecar for research prompts |
+| `*create-prd` | Creates sidecar for PRD document |
+| Any `create-doc` | Detects MLDA, creates sidecar, registers doc |
+
+**No manual steps required** - just use mode commands as normal. The agent will:
+1. Detect MLDA is active
+2. Assign the next DOC-ID
+3. Create the sidecar alongside your document
+4. Ask about related documents
+5. Update the registry
 
 ---
 
@@ -464,6 +504,7 @@ Each command below shows exactly which skill and template it uses.
 | `*create-competitor-analysis` | `create-doc` | `competitor-analysis-tmpl.yaml` | - |
 | `*create-project-brief` | `create-doc` | `project-brief-tmpl.yaml` | - |
 | `*elicit` | `advanced-elicitation` | - | `elicitation-methods` |
+| `*init-project` | `init-project` | MLDA scaffolding | - |
 | `*market-research` | `create-doc` | `market-research-tmpl.yaml` | - |
 | `*research` | `create-deep-research-prompt` | - | - |
 
@@ -569,6 +610,7 @@ Each command below shows exactly which skill and template it uses.
 
 | Script | Usage |
 |--------|-------|
+| `mlda-init-project.ps1` | `-ProjectPath "path" -Domains INV,API [-Migrate]` |
 | `mlda-create.ps1` | `-Domain {DOM} -Title "Title"` |
 | `mlda-registry.ps1` | No arguments |
 | `mlda-validate.ps1` | No arguments |
