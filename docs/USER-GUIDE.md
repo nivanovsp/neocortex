@@ -104,22 +104,19 @@ Modes are specialists you summon for specific work:
 
 | Mode | Expert | Use For |
 |------|--------|---------|
-| `/modes:analyst` | Mary | Research, brainstorming, project briefs |
-| `/modes:architect` | Winston | System design, architecture docs |
-| `/modes:pm` | John | PRDs, product strategy, roadmaps |
-| `/modes:po` | Oliver | Backlog, stories, acceptance criteria |
-| `/modes:dev` | James | Code implementation, debugging |
-| `/modes:qa` | Quinn | Testing, quality gates, reviews |
-| `/modes:sm` | Scott | Agile process, sprint ceremonies |
-| `/modes:ux-expert` | Uma | UI/UX design, wireframes |
-| `/modes:bmad-master` | Brian | Multi-domain work, one-off tasks |
+| `/modes:analyst` | Maya | Requirements, PRDs, epics, stories, user guides, handoff |
+| `/modes:architect` | Winston | Critical review, architecture docs, technical refinement |
+| `/modes:dev` | Devon | Implementation, testing, quality gates (Dev+QA combined) |
+| `/modes:ux-expert` | Sally | UI/UX design, wireframes, front-end specs |
+| `/modes:bmad-master` | BMad Master | Multi-domain work, one-off tasks |
 | `/modes:bmad-orchestrator` | Oscar | Workflow guidance, mode selection |
+
+**Note:** PM, PO, SM, and QA modes are deprecated (January 2026). Their functionality is now in the 3 core roles above.
 
 **Mode Commands:**
 ```
 *help     - Show available commands for this mode
 *exit     - Leave the current mode
-*yolo     - Toggle autonomous mode (where supported)
 ```
 
 **Example Session:**
@@ -150,7 +147,7 @@ Skills are standalone workflows anyone can run:
 | `/skills:advanced-elicitation` | Requirements gathering |
 | `/skills:facilitate-brainstorming-session` | Run brainstorming |
 | `/skills:document-project` | Document existing codebase |
-| `/skills:shard-doc` | Break document into modules |
+| `/skills:split-document` | Split monolithic docs into MLDA modules |
 
 **Skills vs Mode Commands:**
 - Skills can be run independently without a mode
@@ -312,28 +309,34 @@ When `.mlda/` exists in your project, document-creating commands **automatically
 - Quality gates and checklists
 - Workflows for greenfield and brownfield projects
 
-### BMAD Workflow
+### BMAD Workflow (3-Role Model)
+
+The methodology uses three core roles with clear handoffs:
+
+```
+Analyst (Maya) → Architect (Winston) → Developer+QA (Devon)
+```
 
 #### Greenfield Project (New)
 
 ```
-1. Analyst    → Research, Project Brief
-2. PM         → PRD (Product Requirements)
-3. Architect  → Architecture Document
-4. PO         → Epic & Stories
-5. Dev        → Implementation
-6. QA         → Review & Quality Gate
+1. Analyst    → Research, Project Brief, PRD, Epics, Stories
+               → Handoff to Architect with open questions
+2. Architect  → Critical review of analyst docs
+               → Architecture documents, technical refinement
+               → Handoff to Developer with entry points
+3. Dev+QA     → Implementation with test-first approach
+               → Quality gates and comprehensive testing
 ```
 
 #### Brownfield Project (Existing)
 
 ```
-1. Analyst    → Document existing system
-2. PM         → Brownfield PRD
-3. Architect  → Brownfield Architecture
-4. PO         → Stories for changes
-5. Dev        → Implementation
-6. QA         → Review & Quality Gate
+1. Analyst    → Document existing system, Brownfield PRD
+               → Stories for changes
+2. Architect  → Review and refine for technical accuracy
+               → Brownfield Architecture if needed
+3. Dev+QA     → Implementation and testing
 ```
 
 ### Using BMAD
@@ -342,35 +345,25 @@ When `.mlda/` exists in your project, document-creating commands **automatically
 ```
 /modes:analyst
 *create-project-brief
-[Complete the brief]
-*exit
-
-/modes:pm
 *create-prd
-[Complete the PRD]
+*create-epic
+*create-story
+*handoff           # Creates handoff document for architect
 *exit
 
 /modes:architect
-*create-fullstack-architecture
-[Complete architecture]
+*review-docs       # Critical review of analyst work
+*create-architecture
+*create-front-end-architecture   # If needed
+*create-back-end-architecture    # If needed
+*handoff           # Creates handoff document for developer
 *exit
 
-/modes:po
-*create-next-story
-[Create stories]
-*exit
-```
-
-**Implement a Story:**
-```
 /modes:dev
+*review-story
+*create-test-cases
 *develop-story
-[Follow the workflow]
-*exit
-
-/modes:qa
-*review {story}
-[Review creates QA gate]
+*qa-gate
 *exit
 ```
 
@@ -490,7 +483,6 @@ When `.mlda/` exists in your project, document-creating commands **automatically
 | `/skills:{name}` | Run a skill |
 | `*help` | Show mode commands (when in a mode) |
 | `*exit` | Leave current mode |
-| `*yolo` | Toggle autonomous mode |
 
 ### Complete Mode Command Reference
 
@@ -512,14 +504,16 @@ Each command below shows exactly which skill and template it uses.
 
 | Command | Skill | Template | Checklist |
 |---------|-------|----------|-----------|
-| `*create-backend-architecture` | `create-doc` | `architecture-tmpl.yaml` | - |
+| `*review-docs` | `review-docs` | - | - |
+| `*create-architecture` | `create-doc` | `architecture-tmpl.yaml` | - |
+| `*create-back-end-architecture` | `create-doc` | `back-end-architecture-tmpl.yaml` | - |
 | `*create-brownfield-architecture` | `create-doc` | `brownfield-architecture-tmpl.yaml` | - |
-| `*create-frontend-architecture` | `create-doc` | `front-end-architecture-tmpl.yaml` | - |
-| `*create-fullstack-architecture` | `create-doc` | `fullstack-architecture-tmpl.yaml` | - |
-| `*document-project` | `document-project` | - | - |
+| `*create-front-end-architecture` | `create-doc` | `front-end-architecture-tmpl.yaml` | - |
+| `*split-document` | `split-document` | - | - |
+| `*validate-mlda` | `validate-mlda` | - | - |
 | `*execute-checklist` | `execute-checklist` | - | `architect-checklist` |
+| `*handoff` | `handoff` | - | - |
 | `*research` | `create-deep-research-prompt` | - | - |
-| `*shard-doc` | `shard-doc` | - | - |
 
 #### PM Mode (John)
 
@@ -713,4 +707,4 @@ Each command below shows exactly which skill and template it uses.
 
 ---
 
-*User Guide v1.0 | RMS + MLDA + BMAD | 2026-01-12*
+*User Guide v1.2 | RMS + MLDA + BMAD | 2026-01-16*

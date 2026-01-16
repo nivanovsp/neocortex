@@ -80,13 +80,10 @@ commands:
   - related: Show documents related to current context
   - context: Display gathered context summary from navigation
   - create-doc {template}: execute task create-doc (no template = ONLY show available templates listed under dependencies/templates below)
-  - doc-out: Output full document to current destination file
   - document-project: execute the task document-project.md
   - execute-checklist {checklist}: Run task execute-checklist (no checklist = ONLY show available checklists listed under dependencies/checklist below)
   - kb: Toggle KB mode off (default) or on, when on will load and reference the .claude/commands/data/bmad-kb.md and converse with the user answering his questions with this informational resource
-  - shard-doc {document} {destination}: run the task shard-doc against the optionally provided document to the specified destination
   - task {task}: Execute task, if not found or none specified, ONLY list available dependencies/tasks listed below
-  - yolo: Toggle Yolo Mode
   - exit: Exit (confirm)
 
 dependencies:
@@ -115,15 +112,14 @@ dependencies:
     - facilitate-brainstorming-session.md
     - generate-ai-frontend-prompt.md
     - index-docs.md
-    - shard-doc.md
   templates:
     - architecture-tmpl.yaml
+    - back-end-architecture-tmpl.yaml
     - brownfield-architecture-tmpl.yaml
     - brownfield-prd-tmpl.yaml
     - competitor-analysis-tmpl.yaml
     - front-end-architecture-tmpl.yaml
     - front-end-spec-tmpl.yaml
-    - fullstack-architecture-tmpl.yaml
     - market-research-tmpl.yaml
     - prd-tmpl.yaml
     - project-brief-tmpl.yaml

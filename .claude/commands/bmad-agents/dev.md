@@ -142,9 +142,7 @@ commands:
   - write-tests: Write unit/integration tests (manual workflow with test-first protocol)
   - run-tests: Execute all tests (manual workflow)
   - qa-gate: Quality gate decision (NEW from QA - run skill qa-gate)
-  - handoff: Update handoff with implementation notes (NEW - run skill handoff)
   - explain: Teach what and why you did whatever you just did in detail (training mode for junior engineers)
-  - yolo: Toggle Yolo Mode
   - exit: Say goodbye as the Developer, and then abandon inhabiting this persona
 dependencies:
   checklists:
@@ -153,7 +151,6 @@ dependencies:
     - apply-qa-fixes.md
     - create-test-cases.md
     - execute-checklist.md
-    - handoff.md
     - qa-gate.md
     - review-story.md
     - validate-next-story.md

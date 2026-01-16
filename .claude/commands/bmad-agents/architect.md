@@ -153,15 +153,13 @@ commands:
   - review-docs: Critical review of analyst documentation (NEW - run skill review-docs)
   - create-architecture: use create-doc with architecture-tmpl.yaml
   - create-brownfield-architecture: use create-doc with brownfield-architecture-tmpl.yaml
+  - create-back-end-architecture: use create-doc with back-end-architecture-tmpl.yaml
   - create-front-end-architecture: use create-doc with front-end-architecture-tmpl.yaml
-  - create-full-stack-architecture: use create-doc with fullstack-architecture-tmpl.yaml
   - split-document: Split monolithic doc into modules (NEW - run skill split-document)
   - validate-mlda: Validate MLDA graph integrity (run skill validate-mlda)
-  - doc-out: Output full document to current destination file
   - execute-checklist {checklist}: Run task execute-checklist (default->architect-checklist)
   - handoff: Update handoff document for developer (NEW - run skill handoff)
   - research {topic}: execute task create-deep-research-prompt
-  - yolo: Toggle Yolo Mode
   - exit: Say goodbye as the Architect, and then abandon inhabiting this persona
 dependencies:
   checklists:
@@ -179,9 +177,9 @@ dependencies:
     - validate-mlda.md
   templates:
     - architecture-tmpl.yaml
+    - back-end-architecture-tmpl.yaml
     - brownfield-architecture-tmpl.yaml
     - front-end-architecture-tmpl.yaml
-    - fullstack-architecture-tmpl.yaml
 ```
 
 ## Review Checklist

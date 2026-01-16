@@ -1,0 +1,238 @@
+template:
+  id: backend-architecture-template-v1
+  name: Backend Architecture Document
+  version: 1.0
+  output:
+    format: markdown
+    filename: docs/backend-architecture.md
+    title: "{{project_name}} Backend Architecture Document"
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+sections:
+  - id: template-framework-selection
+    title: Template and Framework Selection
+    instruction: |
+      Review provided documents including PRD and main Architecture Document. Focus on extracting technical implementation details needed for backend development. Ask the user for any of these documents if you are unable to locate and were not provided.
+
+      Before proceeding with backend architecture design, check if the project is using a backend starter template or existing codebase:
+
+      1. Review the PRD and main architecture document for mentions of:
+         - Backend starter templates (e.g., Express Generator, NestJS CLI, Django, FastAPI, Spring Boot, etc.)
+         - Existing backend projects being used as a foundation
+         - Microservice templates or boilerplates
+         - API framework starters
+
+      2. If a backend starter template or existing project is mentioned:
+         - Ask the user to provide access via one of these methods:
+           - Link to the starter template documentation
+           - Upload/attach the project files (for small projects)
+           - Share a link to the project repository
+         - Analyze the starter/existing project to understand:
+           - Pre-installed dependencies and versions
+           - Folder structure and file organization
+           - Built-in middleware and utilities
+           - Database ORM/ODM setup (if any)
+           - Authentication patterns
+           - Testing setup and patterns
+           - Build and development scripts
+         - Use this analysis to ensure your backend architecture aligns with the starter's patterns
+
+      3. If no backend starter is mentioned but this is a new service:
+         - Based on the language/framework choice, suggest appropriate starters:
+           - Node.js: Express, NestJS, Fastify, Hono
+           - Python: FastAPI, Django, Flask
+           - Go: Gin, Echo, Fiber
+           - Java: Spring Boot, Quarkus
+           - .NET: ASP.NET Core
+         - Explain benefits specific to backend development
+
+      4. If the user confirms no starter template will be used:
+         - Note that all tooling and configuration will need manual setup
+         - Proceed with backend architecture from scratch
+
+      Document the starter template decision and any constraints it imposes before proceeding.
+    sections:
+      - id: changelog
+        title: Change Log
+        type: table
+        columns: [Date, Version, Description, Author]
+        instruction: Track document versions and changes
+
+  - id: backend-tech-stack
+    title: Backend Tech Stack
+    instruction: Extract from main architecture's Technology Stack Table. This section MUST remain synchronized with the main architecture document.
+    elicit: true
+    sections:
+      - id: tech-stack-table
+        title: Technology Stack Table
+        type: table
+        columns: [Category, Technology, Version, Purpose, Rationale]
+        instruction: Fill in appropriate technology choices based on the selected framework and project requirements.
+        rows:
+          - ["Language", "{{language}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Framework", "{{framework}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Database", "{{database}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["ORM/ODM", "{{orm}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Authentication", "{{auth_solution}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Caching", "{{caching}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Message Queue", "{{message_queue}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Logging", "{{logging}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Testing", "{{test_framework}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["API Documentation", "{{api_docs}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+
+  - id: project-structure
+    title: Project Structure
+    instruction: Define exact directory structure for the backend based on the chosen framework. Be specific about where each type of file goes. Generate a structure that follows the framework's best practices and conventions.
+    elicit: true
+    type: code
+    language: plaintext
+
+  - id: api-design
+    title: API Design
+    instruction: Define API patterns and standards for the backend.
+    elicit: true
+    sections:
+      - id: api-style
+        title: API Style
+        instruction: Document the API style (REST, GraphQL, gRPC) and conventions. Include versioning strategy, naming conventions, and response formats.
+      - id: endpoint-template
+        title: Endpoint Template
+        instruction: Provide a template for creating new API endpoints following the framework's best practices. Include request validation, error handling, and response formatting.
+        type: code
+        language: typescript
+      - id: error-handling
+        title: Error Handling
+        instruction: Define error response format and error handling patterns. Include standard error codes and messages.
+        type: code
+        language: typescript
+
+  - id: database-design
+    title: Database Design
+    instruction: Define database patterns and data access layer.
+    elicit: true
+    sections:
+      - id: schema-patterns
+        title: Schema/Model Patterns
+        instruction: Provide patterns for defining database schemas or models following the ORM/ODM conventions.
+        type: code
+        language: typescript
+      - id: repository-pattern
+        title: Repository/Data Access Pattern
+        instruction: Define how data access should be structured (repository pattern, active record, etc.) with examples.
+        type: code
+        language: typescript
+      - id: migrations
+        title: Migration Strategy
+        instruction: Document how database migrations should be handled, including naming conventions and rollback procedures.
+
+  - id: authentication-authorization
+    title: Authentication & Authorization
+    instruction: Define security patterns for the backend.
+    elicit: true
+    sections:
+      - id: auth-flow
+        title: Authentication Flow
+        instruction: Document the authentication flow (JWT, sessions, OAuth, etc.) and implementation patterns.
+      - id: auth-middleware
+        title: Authentication Middleware
+        instruction: Provide middleware/guard patterns for protecting routes.
+        type: code
+        language: typescript
+      - id: authorization-patterns
+        title: Authorization Patterns
+        instruction: Define role-based or permission-based access control patterns.
+        type: code
+        language: typescript
+
+  - id: service-layer
+    title: Service Layer
+    instruction: Define business logic layer patterns.
+    elicit: true
+    sections:
+      - id: service-template
+        title: Service Template
+        instruction: Provide a template for creating services that encapsulate business logic. Include dependency injection patterns if applicable.
+        type: code
+        language: typescript
+      - id: validation-patterns
+        title: Validation Patterns
+        instruction: Define input validation patterns and libraries to use.
+        type: code
+        language: typescript
+
+  - id: middleware-patterns
+    title: Middleware Patterns
+    instruction: Define common middleware patterns for the backend.
+    elicit: true
+    sections:
+      - id: common-middleware
+        title: Common Middleware
+        instruction: List and describe common middleware (logging, CORS, rate limiting, compression, etc.) with configuration examples.
+        type: code
+        language: typescript
+
+  - id: testing-requirements
+    title: Testing Requirements
+    instruction: Define testing strategy for the backend.
+    elicit: true
+    sections:
+      - id: unit-test-template
+        title: Unit Test Template
+        instruction: Provide a template for unit testing services and utilities.
+        type: code
+        language: typescript
+      - id: integration-test-template
+        title: Integration Test Template
+        instruction: Provide a template for integration testing API endpoints.
+        type: code
+        language: typescript
+      - id: testing-best-practices
+        title: Testing Best Practices
+        type: numbered-list
+        items:
+          - "**Unit Tests**: Test services and utilities in isolation"
+          - "**Integration Tests**: Test API endpoints with database"
+          - "**Contract Tests**: Validate API contracts"
+          - "**Coverage Goals**: Aim for 80% code coverage"
+          - "**Test Database**: Use separate test database or in-memory DB"
+          - "**Mock External Services**: API calls, third-party services"
+
+  - id: environment-configuration
+    title: Environment Configuration
+    instruction: List required environment variables. Show the appropriate format and document sensitive vs non-sensitive variables.
+    elicit: true
+
+  - id: logging-monitoring
+    title: Logging & Monitoring
+    instruction: Define logging and monitoring patterns.
+    elicit: true
+    sections:
+      - id: logging-patterns
+        title: Logging Patterns
+        instruction: Define structured logging patterns, log levels, and what to log.
+        type: code
+        language: typescript
+      - id: health-checks
+        title: Health Checks
+        instruction: Define health check endpoints and patterns for monitoring.
+        type: code
+        language: typescript
+
+  - id: backend-developer-standards
+    title: Backend Developer Standards
+    sections:
+      - id: critical-coding-rules
+        title: Critical Coding Rules
+        instruction: List essential rules that prevent common mistakes, including both universal rules and framework-specific ones.
+        elicit: true
+      - id: quick-reference
+        title: Quick Reference
+        instruction: |
+          Create a framework-specific cheat sheet with:
+          - Common commands (dev server, build, test, migrations)
+          - Key import patterns
+          - File naming conventions
+          - Project-specific patterns and utilities

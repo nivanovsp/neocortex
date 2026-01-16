@@ -126,13 +126,11 @@ commands:
   - create-project-brief: use task create-doc with project-brief-tmpl.yaml
   - create-story: use task create-doc with story-tmpl.yaml (NEW - from PO/SM roles)
   - create-user-guide: use task create-doc with user-guide-tmpl.yaml (NEW)
-  - doc-out: Output full document in progress to current destination file
   - elicit: run the task advanced-elicitation
   - handoff: Generate/update handoff document for architect (run skill handoff) (NEW - Critical)
   - perform-market-research: use task create-doc with market-research-tmpl.yaml
   - research-prompt {topic}: execute task create-deep-research-prompt.md
   - validate-mlda: Validate MLDA graph integrity (run skill validate-mlda)
-  - yolo: Toggle Yolo Mode
   - exit: Say goodbye as the Business Analyst, and then abandon inhabiting this persona
 dependencies:
   data:
