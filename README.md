@@ -40,6 +40,17 @@ To make RMS-BMAD available in ALL your projects:
 | **Modes** | Expert personas | `/modes:architect`, `/modes:qa`, etc. |
 | **Skills** | Discrete workflows | `/skills:qa-gate`, `/skills:create-doc`, etc. |
 
+### Critical Thinking Protocol
+
+All agents operate with an **always-on critical thinking substrate** that shapes how they process information:
+
+- **Layer 1: Dispositions** — Accuracy over speed, acknowledge uncertainty, question assumptions
+- **Layer 2: Triggers** — Automatic deeper analysis for ambiguous/high-stakes tasks
+- **Layer 3: Standards** — Quality checks before responding (clarity, accuracy, relevance)
+- **Layer 4: Metacognition** — Self-monitoring for pattern-matching vs. reasoning
+
+Agents use calibrated language ("This will..." / "This should..." / "This might...") and surface assumptions explicitly. See `docs/decisions/DEC-001-critical-thinking-protocol.md` for full specification.
+
 ### Available Modes (Expert Personas)
 
 | Mode | Use For |

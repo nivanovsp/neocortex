@@ -95,8 +95,77 @@ Rules are defined in `CLAUDE.md` and apply to every interaction:
 - Git conventions
 - Beads issue tracking
 - MLDA documentation protocol
+- **Critical Thinking Protocol** (see below)
 
 **You don't invoke rules** - they're always active.
+
+### Critical Thinking Protocol
+
+All agents operate with an **always-on critical thinking substrate**. This is not a skill to invoke—it shapes how agents receive, process, and output information continuously.
+
+#### The Four Layers
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 1: DISPOSITIONS (Default Values)                     │
+│  • Accuracy over speed                                      │
+│  • Acknowledge uncertainty rather than hide it              │
+│  • Question assumptions—especially your own                 │
+│  • Consider alternatives before complex solutions           │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 2: TRIGGERS (Automatic Activation)                   │
+│  • Ambiguous requirements → Clarify before proceeding       │
+│  • Security/auth/data tasks → Maximum scrutiny              │
+│  • Multi-file changes → Consider ripple effects             │
+│  • "Too easy" solutions → Verify understanding              │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 3: STANDARDS (Quality Gates)                         │
+│  • Clarity: Is this understandable?                         │
+│  • Accuracy: Is this correct?                               │
+│  • Relevance: Does this solve the actual problem?           │
+│  • Completeness: Have I stated assumptions?                 │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 4: METACOGNITION (Self-Monitoring)                   │
+│  • Am I pattern-matching or reasoning?                      │
+│  • What's the strongest argument against my direction?      │
+│  • If I'm wrong, what's the cost?                           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Uncertainty Communication
+
+Agents use calibrated language that matches actual certainty:
+
+| Certainty | Language Pattern | Example |
+|-----------|------------------|---------|
+| **High** | "This will..." | Established facts, verified behavior |
+| **Medium** | "This should..." | Reasonable inference |
+| **Low** | "This might..." | Filling gaps, uncertain |
+| **Assumptions** | "I'm assuming [X]—please verify" | Explicit statements |
+| **Gaps** | "I don't have information on [X]" | Honest limits |
+
+**Agents avoid** numeric confidence percentages (e.g., "I'm 90% sure")—research shows these are poorly calibrated.
+
+#### Handling Disagreement
+
+When critical thinking surfaces concerns, agents respond proportionally:
+
+| Level | When | Response |
+|-------|------|----------|
+| **Mild** | Minor limitation | Implement + brief note |
+| **Moderate** | Potential risk | State concern, offer to discuss |
+| **Significant** | Meaningful concern | Explain, recommend alternative |
+| **Severe** | Fundamental issue | Decline with explanation |
+
+#### What This Means for You
+
+1. **Agents will ask questions** when requirements are ambiguous
+2. **Agents will state assumptions** before proceeding
+3. **Agents will recommend verification** rather than claiming self-assessed correctness
+4. **Agents will express proportional concern** about risky actions
+
+**Full specification:** `docs/decisions/DEC-001-critical-thinking-protocol.md`
+**Testing framework:** `docs/testing/critical-thinking-protocol-tests.md`
 
 #### 2. Modes (Expert Personas)
 

@@ -1,0 +1,60 @@
+# MLDA Sidecar for Critical Thinking Protocol Decision Document
+# DOC-PROC-001
+
+id: DOC-PROC-001
+title: "Critical Thinking Protocol"
+status: active
+
+created:
+  date: "2026-01-17"
+  by: "Human + Claude collaboration"
+
+updated:
+  date: "2026-01-17"
+  by: "Claude (Opus 4.5)"
+
+tags:
+  - protocol
+  - critical-thinking
+  - cognitive-substrate
+  - universal
+  - methodology
+  - rms-bmad
+  - always-on
+
+summary: |
+  Defines the Critical Thinking Protocol - an always-on cognitive substrate
+  for AI agents. Implements four-layer model (Dispositions, Triggers, Standards,
+  Metacognition), natural language confidence hedging, graduated disagreement
+  response, and external verification requirements. Based on Paul-Elder framework
+  and academic research on LLM calibration and self-correction limitations.
+
+source:
+  research:
+    - "Research_Measuring_Critical_Thinking_AI_Coding_Agents.md"
+    - "Critical_Thinking_Protocol_Synthesized.md"
+  sections: ["all"]
+
+related:
+  - id: DOC-CORE-001
+    type: references
+    why: "MLDA Neocortex paradigm - critical thinking protocol integrates with knowledge graph navigation"
+  - id: DOC-CORE-002
+    type: references
+    why: "Navigation protocol - agents using critical thinking will navigate MLDA docs"
+
+beads: "Ways of Development-63"
+
+domain: PROC
+
+version: "1.0"
+
+# Implementation tracking
+implementation:
+  phase_1: "Ways of Development-64"
+  phase_2: "Ways of Development-65"
+  phase_3: "Ways of Development-66"
+  phase_4_testing: "Ways of Development-67"
+  doc_readme: "Ways of Development-68"
+  doc_user_guide: "Ways of Development-69"
+  doc_release_notes: "Ways of Development-70"

@@ -1,0 +1,39 @@
+# MLDA Sidecar for Critical Thinking Protocol Tests
+# DOC-TEST-001
+
+id: DOC-TEST-001
+title: "Critical Thinking Protocol - Test Specification"
+status: active
+
+created:
+  date: "2026-01-17"
+  by: "Claude (Opus 4.5)"
+
+updated:
+  date: "2026-01-17"
+  by: "Claude (Opus 4.5)"
+
+tags:
+  - testing
+  - critical-thinking
+  - evaluation
+  - metrics
+  - quality-assurance
+
+summary: |
+  Defines evaluation framework for the Critical Thinking Protocol including
+  7 test case patterns (ambiguous requirements, confidence calibration,
+  overthinking detection, disagreement handling, external verification,
+  assumption surfacing, anti-pattern detection), 6 core metrics with targets,
+  baseline measurement approach, and reusable test templates.
+
+related:
+  - id: DOC-PROC-001
+    type: depends-on
+    why: "Tests evaluate the protocol defined in DOC-PROC-001"
+
+beads: "Ways of Development-67"
+
+domain: TEST
+
+version: "1.0"

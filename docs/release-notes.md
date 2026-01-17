@@ -4,6 +4,66 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [1.3.0] - 2026-01-17
+
+### Added: Critical Thinking Protocol
+
+Implemented an **always-on critical thinking substrate** for all agents. This is not a skill to invoke—it shapes how agents receive, process, and output information continuously.
+
+#### Key Features
+
+- **Four-layer cognitive model:**
+  - Layer 1: Dispositions (accuracy over speed, acknowledge uncertainty, question assumptions)
+  - Layer 2: Triggers (automatic deeper analysis for ambiguous/high-stakes tasks)
+  - Layer 3: Standards (quality checks before responding)
+  - Layer 4: Metacognition (self-monitoring for pattern-matching vs. reasoning)
+
+- **Calibrated uncertainty communication:**
+  - "This will..." (high confidence)
+  - "This should..." (medium confidence)
+  - "This might..." (low confidence)
+  - Explicit assumption statements
+  - No numeric confidence percentages (research shows poor calibration)
+
+- **Graduated disagreement response:**
+  - Mild → Moderate → Significant → Severe levels
+  - Proportional to concern level
+
+- **External verification principle:**
+  - Agents recommend verification rather than claiming self-assessed correctness
+  - Based on research showing LLMs cannot reliably self-correct without external feedback
+
+- **Domain-specific checkpoints:**
+  - Requirements analysis, implementation, debugging, refactoring, security
+
+- **Anti-patterns to avoid:**
+  - Analysis paralysis, performative hedging, over-questioning
+  - Citation theater, false humility, numeric confidence
+
+#### Documentation
+
+| Document | Purpose |
+|----------|---------|
+| `docs/decisions/DEC-001-critical-thinking-protocol.md` | Full specification (DOC-PROC-001) |
+| `docs/testing/critical-thinking-protocol-tests.md` | Test framework (DOC-TEST-001) |
+| `CLAUDE.md` | Protocol implementation (Rules layer) |
+
+#### Research Basis
+
+Based on academic research including:
+- Google DeepMind ICLR 2024: "LLMs Cannot Self-Correct Reasoning Yet"
+- Berkeley 2025: "The Danger of Overthinking"
+- ACL 2024: "CriticBench" GQC framework
+- Paul-Elder Critical Thinking Framework
+
+#### Beads Tracking
+
+- Epic: Ways of Development-63
+- Phases 1-4: Ways of Development-64 through 67
+- Documentation: Ways of Development-68 through 70
+
+---
+
 ## [1.2.0] - 2026-01-16
 
 Agent command cleanup and architecture template improvements.
