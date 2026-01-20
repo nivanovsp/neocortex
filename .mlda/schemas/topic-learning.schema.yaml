@@ -1,0 +1,271 @@
+# Neocortex Topic Learning Schema
+# JSON Schema for topic-based learning files
+# Version: 2.0
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "neocortex/topic-learning"
+title: "Topic Learning File"
+description: "Accumulated learnings for a specific topic/domain"
+
+type: object
+
+required:
+  - topic
+  - version
+  - last_updated
+
+properties:
+  # ============================================
+  # IDENTIFICATION
+  # ============================================
+
+  topic:
+    type: string
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "Topic name (lowercase, hyphenated)"
+    examples:
+      - "authentication"
+      - "invoicing"
+      - "user-management"
+
+  version:
+    type: integer
+    minimum: 1
+    description: "Learning file version (increments on save)"
+
+  last_updated:
+    type: string
+    format: date
+    description: "Last update date (YYYY-MM-DD)"
+
+  sessions_contributed:
+    type: integer
+    minimum: 0
+    default: 0
+    description: "Number of sessions that contributed learnings"
+
+  # ============================================
+  # LEARNED GROUPINGS
+  # ============================================
+
+  groupings:
+    type: array
+    description: "Learned sub-domain groupings"
+    items:
+      type: object
+      required:
+        - name
+        - docs
+        - origin
+      properties:
+        name:
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+          description: "Sub-domain name"
+        docs:
+          type: array
+          items:
+            type: string
+            pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          minItems: 1
+          description: "Documents in this grouping"
+        origin:
+          type: string
+          enum:
+            - human      # User-defined grouping
+            - agent      # Agent-discovered grouping
+          description: "Who created this grouping"
+        confidence:
+          type: string
+          enum:
+            - high       # Used successfully multiple times
+            - medium     # Used a few times, seems valid
+            - low        # Newly discovered, unverified
+          default: medium
+          description: "Confidence in this grouping"
+        discovered_during:
+          type: string
+          description: "Task ID when agent discovered this grouping"
+        human_approved:
+          type: boolean
+          default: false
+          description: "Whether human approved agent-discovered grouping"
+        notes:
+          type: string
+          description: "Optional notes about this grouping"
+
+  # ============================================
+  # CO-ACTIVATION PATTERNS
+  # ============================================
+
+  activations:
+    type: array
+    description: "Documents frequently accessed together"
+    items:
+      type: object
+      required:
+        - docs
+        - frequency
+      properties:
+        docs:
+          type: array
+          items:
+            type: string
+            pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          minItems: 2
+          description: "Documents that co-activate"
+        frequency:
+          type: integer
+          minimum: 1
+          description: "Number of times accessed together"
+        typical_tasks:
+          type: array
+          items:
+            type: string
+            enum:
+              - eliciting
+              - documenting
+              - architecting
+              - reviewing_design
+              - implementing
+              - debugging
+              - testing
+          description: "Task types where this pattern occurs"
+        last_session:
+          type: string
+          format: date
+          description: "Date of last co-activation"
+
+  # ============================================
+  # VERIFICATION NOTES
+  # ============================================
+
+  verification_notes:
+    type: array
+    description: "What verification caught in past sessions"
+    items:
+      type: object
+      required:
+        - session
+        - caught
+        - lesson
+      properties:
+        session:
+          type: string
+          format: date
+          description: "Session date when this was caught"
+        caught:
+          type: string
+          description: "What was almost missed"
+        doc:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          description: "Document where issue was found"
+        section:
+          type: string
+          description: "Section in document"
+        lesson:
+          type: string
+          description: "Lesson learned for future sessions"
+
+  # ============================================
+  # CROSS-DOMAIN TOUCHPOINTS
+  # ============================================
+
+  related_domains:
+    type: array
+    description: "Connections to other domains"
+    items:
+      type: object
+      required:
+        - domain
+        - relationship
+      properties:
+        domain:
+          type: string
+          description: "Related domain name"
+        relationship:
+          type: string
+          description: "How this topic relates to that domain"
+        typical_overlap:
+          type: array
+          items:
+            type: string
+            pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          description: "Documents commonly involved in cross-domain work"
+
+  # ============================================
+  # ANTI-PATTERNS (what to avoid)
+  # ============================================
+
+  anti_patterns:
+    type: array
+    description: "Patterns that didn't work well"
+    items:
+      type: object
+      required:
+        - pattern
+        - reason
+      properties:
+        pattern:
+          type: string
+          description: "What was tried"
+        reason:
+          type: string
+          description: "Why it didn't work"
+        session:
+          type: string
+          format: date
+          description: "When this was discovered"
+
+additionalProperties: false
+
+# ============================================
+# EXAMPLES
+# ============================================
+
+examples:
+  - topic: "authentication"
+    version: 3
+    last_updated: "2026-01-20"
+    sessions_contributed: 12
+    groupings:
+      - name: "token-management"
+        docs:
+          - "DOC-AUTH-002"
+          - "DOC-AUTH-003"
+          - "DOC-AUTH-007"
+        origin: human
+        confidence: high
+        notes: "Core token handling documents"
+      - name: "oauth-integration"
+        docs:
+          - "DOC-AUTH-006"
+          - "DOC-AUTH-011"
+          - "DOC-AUTH-012"
+        origin: agent
+        confidence: medium
+        discovered_during: "TASK-AUTH-045"
+        human_approved: true
+    activations:
+      - docs:
+          - "DOC-AUTH-001"
+          - "DOC-AUTH-002"
+          - "DOC-SEC-001"
+        frequency: 7
+        typical_tasks:
+          - architecting
+          - implementing
+        last_session: "2026-01-18"
+    verification_notes:
+      - session: "2026-01-15"
+        caught: "PCI-DSS compliance requirement"
+        doc: "DOC-AUTH-003"
+        section: "Token Expiry Policy"
+        lesson: "Always check for compliance markers in token-related docs"
+    related_domains:
+      - domain: "rbac"
+        relationship: "Authentication provides identity claims for RBAC"
+        typical_overlap:
+          - "DOC-AUTH-008"
+          - "DOC-RBAC-001"

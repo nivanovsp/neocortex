@@ -1,0 +1,196 @@
+# MLDA Sidecar Template v2 (Neocortex)
+# Save as: {topic-name}.meta.yaml alongside {topic-name}.md
+# Schema: .mlda/schemas/sidecar-v2.schema.yaml
+#
+# This template includes all Neocortex v2 fields for enhanced context gathering,
+# predictive loading, and multi-agent coordination.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# REQUIRED FIELDS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+id: DOC-{DOMAIN}-{NNN}
+title: "{Document Title}"
+status: draft  # draft | review | active | deprecated
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIMESTAMPS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+created:
+  date: "{YYYY-MM-DD}"
+  by: "{Agent/Author}"
+
+updated:
+  date: "{YYYY-MM-DD}"
+  by: "{Agent/Author}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CLASSIFICATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+tags:
+  - {domain}           # e.g., authentication, api, security
+  - {document-type}    # e.g., overview, specification, guide
+  - {feature-area}     # e.g., token-management, oauth
+
+domain: "{DOMAIN}"     # AUTH, API, DATA, SEC, UI, INFRA, INT, TEST, PROC, METH
+
+summary: |
+  Brief description for quick context during navigation.
+  2-3 sentences covering the key topics in this document.
+  This helps agents assess relevance without full document load.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# RELATIONSHIPS (DENDRITES)
+# Critical for knowledge graph navigation - documents without relationships
+# are "dead neurons" that won't be discovered during context gathering.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+related:
+  # Strong signal - ALWAYS follow (cannot understand this doc without target)
+  - id: DOC-XXX-NNN
+    type: depends-on
+    why: "{Explanation of dependency - what understanding is needed}"
+
+  # Medium signal - Follow if depth allows (adds detail/context)
+  # - id: DOC-XXX-NNN
+  #   type: extends
+  #   why: "{What additional detail this provides}"
+
+  # Weak signal - Follow only if directly relevant to current task
+  # - id: DOC-XXX-NNN
+  #   type: references
+  #   why: "{What is mentioned and when it matters}"
+
+  # Redirect - Follow this INSTEAD of target (target is deprecated/replaced)
+  # - id: DOC-XXX-NNN
+  #   type: supersedes
+  #   why: "{What was replaced and why}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PREDICTIVE CONTEXT (NEW in v2)
+# Predicts which documents will be needed based on task type.
+# Enables proactive context loading for better agent performance.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+predictions:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Analyst tasks
+  # ─────────────────────────────────────────────────────────────────────────────
+  when_eliciting:
+    required: []       # DOC-IDs that MUST be loaded
+    likely: []         # DOC-IDs likely to be needed
+  # when_documenting:
+  #   required: []
+  #   likely: []
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Architect tasks
+  # ─────────────────────────────────────────────────────────────────────────────
+  when_architecting:
+    required: []
+    likely: []
+  # when_reviewing_design:
+  #   required: []
+  #   likely: []
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Developer tasks
+  # ─────────────────────────────────────────────────────────────────────────────
+  when_implementing:
+    required: []       # e.g., [DOC-API-001, DOC-DATA-002]
+    likely: []         # e.g., [DOC-TEST-001]
+  when_debugging:
+    required: []
+    likely: []
+  # when_testing:
+  #   required: []
+  #   likely: []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# REFERENCE FRAMES (NEW in v2)
+# Positional context within knowledge space - helps agents understand
+# where this document fits in the overall architecture.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+reference_frames:
+  domain: "{problem-space}"     # e.g., authentication, invoicing, user-management
+  layer: design                 # requirements | design | implementation | testing
+  stability: evolving           # evolving | stable | deprecated
+  scope: backend                # frontend | backend | infrastructure | cross-cutting
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TRAVERSAL BOUNDARIES (NEW in v2)
+# Controls how agents navigate the knowledge graph from this document.
+# Prevents context explosion and keeps focus on relevant domains.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+boundaries:
+  related_domains:              # Domains OK to traverse into from here
+    - {related-domain-1}        # e.g., rbac, session-management
+    # - {related-domain-2}
+  isolated_from:                # Domains to NEVER traverse into from here
+    - {unrelated-domain}        # e.g., invoicing, reporting
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CRITICAL MARKERS FLAG (NEW in v2)
+# Indicates whether document contains <!-- CRITICAL --> markers.
+# Sub-agents ALWAYS extract CRITICAL markers verbatim, never summarized.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+has_critical_markers: false     # Set to true if document contains CRITICAL markers
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TRACKING FIELDS (Optional)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# beads: "{Project-NNN}"        # Associated Beads task ID
+
+# version: "1.0"                # Document version (semver major.minor)
+
+# source:                       # Source material references
+#   research:
+#     - "{research-paper-id}"
+#   conversation: "{conversation-ref}"
+#   sections:
+#     - "1"
+#     - "2.1"
+
+# implementation:               # Implementation tracking (for decision records)
+#   phase-1: completed
+#   phase-2: in-progress
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUICK REFERENCE
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Relationship Types (Signal Strength):
+#   depends-on  → STRONG  - Always follow, cannot understand without
+#   extends     → MEDIUM  - Follow if depth allows, adds detail
+#   references  → WEAK    - Follow only if directly relevant
+#   supersedes  → REDIRECT - Follow this instead of target
+#
+# Domain Codes:
+#   AUTH   - Authentication       INFRA - Infrastructure
+#   API    - API specifications   INT   - Integrations
+#   DATA   - Data models          TEST  - Testing
+#   SEC    - Security             PROC  - Processes/protocols
+#   UI     - User interface       METH  - Methodology
+#
+# Layer Values:
+#   requirements   - What needs to be built
+#   design         - How it will be structured
+#   implementation - How it will be coded
+#   testing        - How it will be verified
+#
+# Stability Values:
+#   evolving   - Document is actively changing
+#   stable     - Document is settled, changes rare
+#   deprecated - Document is being phased out
+#
+# Scope Values:
+#   frontend       - Client-side concerns
+#   backend        - Server-side concerns
+#   infrastructure - DevOps/platform concerns
+#   cross-cutting  - Spans multiple areas

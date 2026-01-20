@@ -1,0 +1,359 @@
+# Neocortex Configuration Schema
+# JSON Schema for .mlda/config.yaml
+# Version: 2.0
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "neocortex/config"
+title: "Neocortex Configuration"
+description: "Project-level configuration for Neocortex methodology"
+
+type: object
+
+required:
+  - version
+
+properties:
+  # ============================================
+  # VERSION
+  # ============================================
+
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+$"
+    description: "Neocortex configuration version"
+    examples:
+      - "2.0"
+
+  # ============================================
+  # CONTEXT LIMITS
+  # ============================================
+
+  context_limits:
+    type: object
+    description: "Token budget management settings"
+    properties:
+      # Default thresholds
+      soft_threshold_tokens:
+        type: integer
+        minimum: 10000
+        maximum: 100000
+        default: 35000
+        description: "Token count to trigger self-assessment (default ~17% of 200k)"
+      hardstop_tokens:
+        type: integer
+        minimum: 20000
+        maximum: 150000
+        default: 50000
+        description: "Token count requiring decomposition or pause (default 25% of 200k)"
+      soft_threshold_documents:
+        type: integer
+        minimum: 3
+        maximum: 30
+        default: 8
+        description: "Document count to trigger self-assessment"
+      hardstop_documents:
+        type: integer
+        minimum: 5
+        maximum: 50
+        default: 12
+        description: "Document count requiring decomposition or pause"
+
+      # Task-specific overrides
+      by_task_type:
+        type: object
+        description: "Task-specific threshold overrides"
+        additionalProperties:
+          type: object
+          properties:
+            soft_threshold:
+              type: integer
+              minimum: 10000
+              maximum: 100000
+            hardstop:
+              type: integer
+              minimum: 20000
+              maximum: 150000
+        examples:
+          - research:
+              soft_threshold: 50000
+              hardstop: 70000
+            document_creation:
+              soft_threshold: 30000
+              hardstop: 45000
+            review:
+              soft_threshold: 40000
+              hardstop: 55000
+            architecture:
+              soft_threshold: 30000
+              hardstop: 45000
+
+  # ============================================
+  # LEARNING BEHAVIOR
+  # ============================================
+
+  learning:
+    type: object
+    description: "Topic-based learning settings"
+    properties:
+      auto_save_prompt:
+        type: boolean
+        default: true
+        description: "Prompt to save learnings at session end"
+      activation_logging:
+        type: boolean
+        default: true
+        description: "Track document co-activation patterns"
+      min_activation_frequency:
+        type: integer
+        minimum: 1
+        default: 2
+        description: "Minimum co-activations before recording pattern"
+      max_learnings_per_topic:
+        type: integer
+        minimum: 10
+        maximum: 1000
+        default: 100
+        description: "Maximum learning entries per topic before pruning"
+
+  # ============================================
+  # VERIFICATION SETTINGS
+  # ============================================
+
+  verification:
+    type: object
+    description: "Verification stack settings"
+    properties:
+      # Layer 1: Structured extraction (always on)
+      extraction_template:
+        type: string
+        enum:
+          - standard     # Default extraction categories
+          - minimal      # Just requirements and dependencies
+          - comprehensive # All categories plus custom fields
+        default: standard
+        description: "Extraction template to use"
+
+      # Layer 2: Critical markers
+      critical_marker_syntax:
+        type: string
+        default: "<!-- CRITICAL: {type} -->"
+        description: "Syntax for critical markers in documents"
+
+      # Layer 5: Cross-verification
+      cross_verification_domains:
+        type: array
+        items:
+          type: string
+        default: []
+        description: "Domains that always use cross-verification (Layer 5)"
+        examples:
+          - - "security"
+            - "compliance"
+            - "authentication"
+
+      cross_verification_threshold:
+        type: integer
+        minimum: 1
+        maximum: 20
+        default: 10
+        description: "Document count above which to recommend cross-verification"
+
+      # Layer 6: Verification pass
+      auto_verification_pass:
+        type: boolean
+        default: false
+        description: "Automatically run verification pass after synthesis"
+      verification_pass_sample_rate:
+        type: number
+        minimum: 0
+        maximum: 1
+        default: 0.2
+        description: "Fraction of claims to spot-check (0-1)"
+
+  # ============================================
+  # MULTI-AGENT SETTINGS
+  # ============================================
+
+  multi_agent:
+    type: object
+    description: "Multi-agent scaling settings"
+    properties:
+      enabled:
+        type: boolean
+        default: true
+        description: "Allow multi-agent decomposition"
+      max_recursion_depth:
+        type: integer
+        minimum: 1
+        maximum: 5
+        default: 2
+        description: "Maximum sub-agent recursion depth"
+      parallel_agents:
+        type: boolean
+        default: true
+        description: "Allow parallel sub-agent execution"
+      max_parallel_agents:
+        type: integer
+        minimum: 1
+        maximum: 10
+        default: 4
+        description: "Maximum concurrent sub-agents"
+      auto_decompose:
+        type: boolean
+        default: false
+        description: "Automatically decompose without user confirmation"
+      decomposition_strategy:
+        type: string
+        enum:
+          - by_sub_domain    # Use domain.yaml sub-domains
+          - by_document_count # Split into chunks
+          - dynamic          # Agent decides
+        default: by_sub_domain
+        description: "Default decomposition strategy"
+
+  # ============================================
+  # NAVIGATION SETTINGS
+  # ============================================
+
+  navigation:
+    type: object
+    description: "Knowledge graph navigation settings"
+    properties:
+      max_traversal_depth:
+        type: integer
+        minimum: 1
+        maximum: 10
+        default: 3
+        description: "Maximum relationship hops to follow"
+      follow_weak_links:
+        type: boolean
+        default: true
+        description: "Whether to follow 'references' type relationships"
+      respect_boundaries:
+        type: boolean
+        default: true
+        description: "Whether to respect domain boundaries"
+      two_phase_loading:
+        type: boolean
+        default: true
+        description: "Use metadata-first, then selective full load"
+
+  # ============================================
+  # DOMAIN SETTINGS
+  # ============================================
+
+  domains:
+    type: object
+    description: "Domain-specific settings"
+    properties:
+      default_codes:
+        type: array
+        items:
+          type: string
+          pattern: "^[A-Z]+$"
+        default:
+          - "API"
+          - "AUTH"
+          - "DATA"
+          - "SEC"
+          - "UI"
+          - "INFRA"
+          - "INT"
+          - "TEST"
+          - "PROC"
+          - "METH"
+        description: "Standard domain codes"
+      custom_codes:
+        type: array
+        items:
+          type: string
+          pattern: "^[A-Z]+$"
+        default: []
+        description: "Project-specific domain codes"
+      auto_discover:
+        type: boolean
+        default: true
+        description: "Automatically discover new domain codes from DOC-IDs"
+
+  # ============================================
+  # BEADS INTEGRATION
+  # ============================================
+
+  beads:
+    type: object
+    description: "Beads task tracker integration"
+    properties:
+      auto_link:
+        type: boolean
+        default: true
+        description: "Automatically link documents to beads tasks"
+      extract_topic_from_task:
+        type: boolean
+        default: true
+        description: "Extract topic from task DOC-ID references"
+      create_tasks_for_docs:
+        type: boolean
+        default: false
+        description: "Create beads tasks when creating documents"
+
+  # ============================================
+  # OUTPUT SETTINGS
+  # ============================================
+
+  output:
+    type: object
+    description: "Output and reporting settings"
+    properties:
+      context_status_reporting:
+        type: boolean
+        default: true
+        description: "Report context usage status during work"
+      learning_summary_at_end:
+        type: boolean
+        default: true
+        description: "Show learning summary at session end"
+      verbose_navigation:
+        type: boolean
+        default: false
+        description: "Show detailed navigation decisions"
+
+additionalProperties: true  # Allow custom project settings
+
+# ============================================
+# EXAMPLES
+# ============================================
+
+examples:
+  - version: "2.0"
+    context_limits:
+      soft_threshold_tokens: 35000
+      hardstop_tokens: 50000
+      soft_threshold_documents: 8
+      hardstop_documents: 12
+      by_task_type:
+        research:
+          soft_threshold: 50000
+          hardstop: 70000
+        document_creation:
+          soft_threshold: 30000
+          hardstop: 45000
+    learning:
+      auto_save_prompt: true
+      activation_logging: true
+    verification:
+      cross_verification_domains:
+        - "security"
+        - "compliance"
+      critical_marker_syntax: "<!-- CRITICAL: {type} -->"
+    multi_agent:
+      enabled: true
+      max_recursion_depth: 2
+      parallel_agents: true
+      max_parallel_agents: 4
+    navigation:
+      max_traversal_depth: 3
+      two_phase_loading: true
+    domains:
+      custom_codes:
+        - "INV"
+        - "ORD"

@@ -1,0 +1,155 @@
+# Neocortex Topic Domain Configuration Template
+# Location: .mlda/topics/{topic}/domain.yaml
+# Schema: .mlda/schemas/topic-domain.schema.yaml
+#
+# This file defines the structure of a domain/topic, including sub-domains,
+# entry points, and decomposition strategy for multi-agent processing.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IDENTIFICATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+domain: "{topic-name}"          # e.g., authentication, invoicing, user-management
+version: 1                      # Increments on structure changes
+last_updated: "{YYYY-MM-DD}"    # Date of last update
+source: human                   # human | agent | hybrid
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUB-DOMAIN DEFINITIONS
+# Logical subdivisions within this domain. Used for context organization
+# and multi-agent decomposition. Each sub-domain can be assigned to a sub-agent.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+sub_domains:
+  # Example: Human-defined sub-domain
+  # - name: token-management
+  #   docs:
+  #     - DOC-AUTH-002
+  #     - DOC-AUTH-003
+  #     - DOC-AUTH-007
+  #   origin: human
+  #   human_approved: true
+  #   description: "JWT tokens, refresh tokens, token lifecycle management"
+  #   entry_point: DOC-AUTH-002   # Best starting point for this sub-domain
+
+  # Example: Agent-discovered sub-domain
+  # - name: oauth-integration
+  #   docs:
+  #     - DOC-AUTH-006
+  #     - DOC-AUTH-011
+  #     - DOC-AUTH-012
+  #   origin: agent
+  #   discovered_during: "TASK-AUTH-045"
+  #   human_approved: false       # Needs review
+  #   description: "OAuth 2.0 and OIDC provider integration"
+  #   entry_point: DOC-AUTH-006
+
+  []  # Remove this line when adding sub-domains
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENTRY POINTS
+# Recommended starting documents by task type. Helps agents know where to
+# begin navigation based on what they're trying to accomplish.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+entry_points:
+  default: DOC-{DOMAIN}-001     # Default entry point for this domain
+
+  by_task:
+    # Analyst tasks
+    # eliciting: DOC-XXX-NNN
+    # documenting: DOC-XXX-NNN
+
+    # Architect tasks
+    architecting: DOC-{DOMAIN}-001    # Usually the overview doc
+    # reviewing_design: DOC-XXX-NNN
+
+    # Developer tasks
+    implementing: DOC-{DOMAIN}-002    # Usually the spec doc
+    debugging: DOC-{DOMAIN}-010       # Usually troubleshooting doc
+    # testing: DOC-XXX-NNN
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DECOMPOSITION STRATEGY
+# How to split this domain when context exceeds thresholds.
+# Determines how work is distributed across sub-agents.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+decomposition:
+  strategy: by_sub_domain       # by_sub_domain | by_document_count | by_task_type | custom
+  max_docs_per_agent: 5         # Maximum documents assigned to each sub-agent
+  parallel_allowed: true        # Can sub-agents run in parallel?
+
+  # Strategy explanations:
+  # - by_sub_domain: Split along sub_domains defined above (recommended)
+  # - by_document_count: Split into chunks of max_docs_per_agent docs
+  # - by_task_type: Group docs by what they're used for (requirements, impl, etc.)
+  # - custom: Agent decides based on task context
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OVERRIDE SETTINGS
+# Controls whether agents can deviate from this structure for specific tasks.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+override_allowed: true          # Agents can override structure for specific tasks
+override_requires_approval: false  # Overrides need user confirmation
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CROSS-DOMAIN RELATIONSHIPS
+# How this domain connects to others. Determines traversal rules and
+# identifies boundary documents that bridge domains.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+related_domains:
+  # Example: Strong relationship with another domain
+  # - domain: rbac
+  #   relationship: "Authentication provides identity claims for RBAC authorization"
+  #   boundary_docs:
+  #     - DOC-AUTH-008        # Permission model (auth side)
+  #     - DOC-RBAC-001        # RBAC overview (rbac side)
+  #   traversal_allowed: true
+
+  # Example: Weaker relationship
+  # - domain: api
+  #   relationship: "Auth tokens validated in API middleware"
+  #   boundary_docs:
+  #     - DOC-AUTH-002        # Token format
+  #     - DOC-API-003         # Middleware docs
+  #   traversal_allowed: true
+
+  []  # Remove this line when adding related domains
+
+# Domains to NEVER traverse into from this domain (even if references exist)
+isolated_from:
+  # - invoicing
+  # - reporting
+  []  # Remove this line when adding isolated domains
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUICK REFERENCE
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Source Types:
+#   human  - Manually defined structure
+#   agent  - Structure discovered by agent during work
+#   hybrid - Mix of human and agent definitions
+#
+# Decomposition Strategies:
+#   by_sub_domain     - Split along defined sub-domains (best for organized domains)
+#   by_document_count - Split into N-doc chunks (for flat domains)
+#   by_task_type      - Group by document purpose (requirements, impl, etc.)
+#   custom            - Agent decides based on task context
+#
+# Sub-Domain Origin:
+#   human  - User created this grouping
+#   agent  - Agent discovered during work (may need human_approved)
+#
+# Entry Point Task Types:
+#   eliciting, documenting         - Analyst tasks
+#   architecting, reviewing_design - Architect tasks
+#   implementing, debugging, testing - Developer tasks
+#
+# Cross-Domain Traversal:
+#   - boundary_docs identify documents that bridge two domains
+#   - traversal_allowed controls whether agents can follow links
+#   - isolated_from prevents traversal even if relationships exist

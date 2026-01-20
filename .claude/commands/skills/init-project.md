@@ -3,7 +3,7 @@ description: 'Initialize new project with optional MLDA documentation scaffoldin
 ---
 # Initialize Project Skill
 
-**RMS Skill** | Project initialization with MLDA (Modular Linked Documentation Architecture) setup
+**RMS Skill v2.0** | Project initialization with MLDA (Modular Linked Documentation Architecture) and Neocortex setup
 
 ## Purpose
 
@@ -75,19 +75,29 @@ Select 1-3:
 
 Run the scaffolding process:
 
-1. **Create `.mlda/` folder structure:**
+1. **Create `.mlda/` folder structure (Neocortex v2):**
    ```
    .mlda/
    ├── docs/
    │   └── {selected-domains}/
+   ├── schemas/                    # NEW in v2
+   │   └── sidecar-v2.schema.yaml
    ├── scripts/
    │   ├── mlda-create.ps1
    │   ├── mlda-registry.ps1
    │   ├── mlda-validate.ps1
+   │   ├── mlda-learning.ps1       # NEW in v2 (topic learning)
    │   └── mlda-brief.ps1
    ├── templates/
    │   ├── topic-doc.md
-   │   └── topic-meta.yaml
+   │   ├── topic-meta-v2.yaml      # v2 sidecar template
+   │   ├── topic-domain.yaml       # NEW in v2 (domain decomposition)
+   │   └── topic-learning.yaml     # NEW in v2 (topic learnings)
+   ├── topics/                     # NEW in v2 (Neocortex topic-based learning)
+   │   └── {domain}/
+   │       ├── domain.yaml         # Sub-domain structure
+   │       └── learning.yaml       # Accumulated learnings
+   ├── config.yaml                 # NEW in v2 (Neocortex config)
    ├── registry.yaml
    └── README.md
    ```
@@ -100,8 +110,32 @@ Run the scaffolding process:
    project: {project_name}
    created: {date}
    domains: [{selected_domains}]
+   schema_version: "2.0"           # v2 indicator
 
    documents: []
+   ```
+
+4. **Initialize config.yaml (Neocortex v2):**
+   ```yaml
+   # Neocortex Configuration
+   version: "2.0"
+
+   context_limits:
+     soft_threshold_tokens: 35000
+     hardstop_tokens: 50000
+     soft_threshold_documents: 8
+     hardstop_documents: 12
+
+   topic_learning:
+     enabled: true
+     auto_save: false              # Prompt before saving
+     min_sessions_for_grouping: 3
+
+   validation:
+     require_domain: true
+     require_summary: true
+     require_relationships: true
+     warn_missing_predictions: true
    ```
 
 4. **Create README.md** with project-specific instructions
@@ -109,12 +143,15 @@ Run the scaffolding process:
 ### Step 5: Provide Next Steps
 
 ```
-MLDA initialized successfully!
+MLDA initialized successfully with Neocortex v2 support!
 
 Created:
 - .mlda/docs/{domains}/
-- .mlda/scripts/ (4 scripts)
-- .mlda/templates/ (2 templates)
+- .mlda/schemas/ (v2 schema)
+- .mlda/scripts/ (5 scripts including mlda-learning.ps1)
+- .mlda/templates/ (4 templates including v2 sidecar)
+- .mlda/topics/ (topic-based learning folders)
+- .mlda/config.yaml (Neocortex configuration)
 - .mlda/registry.yaml
 - .mlda/README.md
 
@@ -122,6 +159,11 @@ Next steps:
 1. Create new documents: .mlda/scripts/mlda-create.ps1 -Title "Doc Name" -Domain API
 2. Rebuild registry: .mlda/scripts/mlda-registry.ps1
 3. Validate links: .mlda/scripts/mlda-validate.ps1
+
+Neocortex features:
+- Topic learning persists across sessions in .mlda/topics/{domain}/learning.yaml
+- Use *gather-context to load topic learnings when starting work
+- Sidecars support predictions, boundaries, and reference_frames (v2)
 
 For existing documents, add .meta.yaml sidecars manually or use migration guidance.
 ```
@@ -181,10 +223,17 @@ scripts:
   - mlda-create.ps1
   - mlda-registry.ps1
   - mlda-validate.ps1
+  - mlda-learning.ps1            # v2 topic learning
   - mlda-brief.ps1
 templates:
   - topic-doc.md
-  - topic-meta.yaml
+  - topic-meta-v2.yaml           # v2 sidecar template
+  - topic-domain.yaml            # v2 domain decomposition
+  - topic-learning.yaml          # v2 topic learnings
+schemas:
+  - sidecar-v2.schema.yaml       # v2 schema
+configs:
+  - neocortex-config.yaml        # v2 default config template
 ```
 
 ## Invocation

@@ -1,0 +1,356 @@
+# Neocortex Sidecar Schema v2
+# JSON Schema for MLDA document sidecars
+# Version: 2.0
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "neocortex/sidecar-v2"
+title: "MLDA Sidecar v2"
+description: "Metadata sidecar for MLDA documents with Neocortex extensions"
+
+type: object
+
+required:
+  - id
+  - title
+  - status
+
+properties:
+  # ============================================
+  # REQUIRED FIELDS
+  # ============================================
+
+  id:
+    type: string
+    pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+    description: "Unique document identifier (DOC-{DOMAIN}-{NNN})"
+    examples:
+      - "DOC-AUTH-001"
+      - "DOC-API-003"
+      - "DOC-SEC-012"
+
+  title:
+    type: string
+    minLength: 1
+    maxLength: 200
+    description: "Human-readable document title"
+
+  status:
+    type: string
+    enum:
+      - draft
+      - review
+      - active
+      - deprecated
+    description: "Document lifecycle status"
+
+  # ============================================
+  # TIMESTAMP FIELDS
+  # ============================================
+
+  created:
+    type: object
+    required:
+      - date
+      - by
+    properties:
+      date:
+        type: string
+        format: date
+        description: "Creation date (YYYY-MM-DD)"
+      by:
+        type: string
+        description: "Creator name or identifier"
+
+  updated:
+    type: object
+    required:
+      - date
+      - by
+    properties:
+      date:
+        type: string
+        format: date
+        description: "Last update date (YYYY-MM-DD)"
+      by:
+        type: string
+        description: "Updater name or identifier"
+
+  # ============================================
+  # CLASSIFICATION FIELDS
+  # ============================================
+
+  tags:
+    type: array
+    items:
+      type: string
+      pattern: "^[a-z0-9-]+$"
+    uniqueItems: true
+    description: "Classification tags (lowercase, hyphenated)"
+
+  domain:
+    type: string
+    pattern: "^[A-Z]+$"
+    description: "Domain code (AUTH, API, DATA, SEC, etc.)"
+    examples:
+      - "AUTH"
+      - "API"
+      - "DATA"
+      - "SEC"
+      - "UI"
+      - "INFRA"
+      - "INT"
+      - "TEST"
+      - "PROC"
+      - "METH"
+
+  summary:
+    type: string
+    maxLength: 1000
+    description: "Brief summary of document content"
+
+  # ============================================
+  # RELATIONSHIPS (existing, enhanced)
+  # ============================================
+
+  related:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - type
+        - why
+      properties:
+        id:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          description: "Related document ID"
+        type:
+          type: string
+          enum:
+            - depends-on    # Strong - cannot understand without target
+            - extends       # Medium - adds detail to target
+            - references    # Weak - mentions target
+            - supersedes    # Redirect - replaces target
+          description: "Relationship type (determines signal strength)"
+        why:
+          type: string
+          minLength: 1
+          description: "Explanation of why this relationship exists"
+    description: "Related documents (dendrites in neural model)"
+
+  # ============================================
+  # PREDICTIVE CONTEXT (NEW in v2)
+  # ============================================
+
+  predictions:
+    type: object
+    description: "Task-type predictions for context gathering"
+    properties:
+      # Analyst tasks
+      when_eliciting:
+        $ref: "#/$defs/prediction_entry"
+      when_documenting:
+        $ref: "#/$defs/prediction_entry"
+
+      # Architect tasks
+      when_architecting:
+        $ref: "#/$defs/prediction_entry"
+      when_reviewing_design:
+        $ref: "#/$defs/prediction_entry"
+
+      # Developer tasks
+      when_implementing:
+        $ref: "#/$defs/prediction_entry"
+      when_debugging:
+        $ref: "#/$defs/prediction_entry"
+      when_testing:
+        $ref: "#/$defs/prediction_entry"
+    additionalProperties: false
+
+  # ============================================
+  # REFERENCE FRAMES (NEW in v2)
+  # ============================================
+
+  reference_frames:
+    type: object
+    description: "Positional context within knowledge space"
+    properties:
+      domain:
+        type: string
+        description: "Problem space (e.g., authentication, invoicing)"
+      layer:
+        type: string
+        enum:
+          - requirements
+          - design
+          - implementation
+          - testing
+        description: "Abstraction layer"
+      stability:
+        type: string
+        enum:
+          - evolving
+          - stable
+          - deprecated
+        description: "Document stability status"
+      scope:
+        type: string
+        enum:
+          - frontend
+          - backend
+          - infrastructure
+          - cross-cutting
+        description: "Technical scope"
+    additionalProperties: false
+
+  # ============================================
+  # TRAVERSAL BOUNDARIES (NEW in v2)
+  # ============================================
+
+  boundaries:
+    type: object
+    description: "Domain traversal rules"
+    properties:
+      related_domains:
+        type: array
+        items:
+          type: string
+        description: "Domains OK to traverse into from this document"
+      isolated_from:
+        type: array
+        items:
+          type: string
+        description: "Domains to never traverse into from this document"
+    additionalProperties: false
+
+  # ============================================
+  # CRITICAL MARKERS FLAG (NEW in v2)
+  # ============================================
+
+  has_critical_markers:
+    type: boolean
+    default: false
+    description: "Whether document contains <!-- CRITICAL --> markers"
+
+  # ============================================
+  # TRACKING FIELDS
+  # ============================================
+
+  beads:
+    type: string
+    description: "Associated Beads task ID"
+    examples:
+      - "Project-123"
+      - "Ways of Development-71"
+
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+$"
+    description: "Document version (semver major.minor)"
+
+  source:
+    type: object
+    description: "Source material references"
+    properties:
+      research:
+        type: array
+        items:
+          type: string
+        description: "Research documents or papers"
+      conversation:
+        type: string
+        description: "Conversation reference"
+      sections:
+        type: array
+        items:
+          type: string
+        description: "Specific sections referenced"
+
+  implementation:
+    type: object
+    description: "Implementation tracking (for decision records)"
+    additionalProperties:
+      type: string
+
+# ============================================
+# SHARED DEFINITIONS
+# ============================================
+
+$defs:
+  prediction_entry:
+    type: object
+    properties:
+      required:
+        type: array
+        items:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+        description: "Documents that must be loaded for this task type"
+      likely:
+        type: array
+        items:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+        description: "Documents likely needed for this task type"
+    additionalProperties: false
+
+# ============================================
+# ADDITIONAL CONSTRAINTS
+# ============================================
+
+additionalProperties: true  # Allow custom fields for extensibility
+
+# ============================================
+# EXAMPLES
+# ============================================
+
+examples:
+  - id: "DOC-AUTH-001"
+    title: "Authentication Overview"
+    status: active
+    created:
+      date: "2026-01-15"
+      by: "Analyst"
+    updated:
+      date: "2026-01-20"
+      by: "Architect"
+    tags:
+      - authentication
+      - security
+      - overview
+    domain: "AUTH"
+    summary: "Overview of authentication architecture and patterns"
+    related:
+      - id: "DOC-AUTH-002"
+        type: extends
+        why: "Detailed token management specifications"
+      - id: "DOC-SEC-001"
+        type: depends-on
+        why: "Security baseline requirements"
+    predictions:
+      when_implementing:
+        required:
+          - "DOC-AUTH-002"
+          - "DOC-SEC-001"
+        likely:
+          - "DOC-API-001"
+      when_debugging:
+        required:
+          - "DOC-LOG-001"
+        likely: []
+    reference_frames:
+      domain: authentication
+      layer: design
+      stability: stable
+      scope: backend
+    boundaries:
+      related_domains:
+        - rbac
+        - session-management
+      isolated_from:
+        - invoicing
+        - reporting
+    has_critical_markers: true
+    beads: "Project-AUTH-001"
+    version: "1.0"

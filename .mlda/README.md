@@ -2,7 +2,8 @@
 
 A **knowledge graph** that agents navigate to gather context.
 
-**Core idea:** Documents are neurons, relationships are dendrites, agents send signals through the network.
+**Version:** 2.0 (Neocortex Methodology)
+**Full Documentation:** [docs/NEOCORTEX.md](../docs/NEOCORTEX.md)
 
 ---
 
@@ -11,17 +12,17 @@ A **knowledge graph** that agents navigate to gather context.
 MLDA models documentation as a neural network:
 
 ```
-           ┌──────────────┐
-           │ DOC-API-001  │  ← Neuron (document)
-           │  (neuron)    │
-           └──────┬───────┘
-                  │ dendrite (relationship)
-     ┌────────────┼────────────┐
-     ▼            ▼            ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│DOC-AUTH  │ │DOC-DATA  │ │DOC-SEC   │
-│  -001    │ │  -003    │ │  -002    │
-└──────────┘ └──────────┘ └──────────┘
+           +---------------+
+           |  DOC-API-001  |  <- Neuron (document)
+           |   (neuron)    |
+           +-------+-------+
+                   | dendrite (relationship)
+      +------------+------------+
+      v            v            v
++----------+ +----------+ +----------+
+|DOC-AUTH  | |DOC-DATA  | |DOC-SEC   |
+|  -001    | |  -003    | |  -002    |
++----------+ +----------+ +----------+
 
 Agent signal propagates through the network,
 following dendrites based on task requirements.
@@ -37,23 +38,21 @@ following dendrites based on task requirements.
 
 **Key Principle:** Stories and tasks are **entry points**, not complete specs. Agents navigate the graph to gather context.
 
-See `docs/core/mlda-neocortex-paradigm.md` (DOC-CORE-001) for the full paradigm documentation.
-
 ---
 
 ## Quick Start
 
 ### Initialize MLDA in a New Project
 
-**Via Analyst Mode (Recommended):**
+**Via Skill (Recommended):**
+```
+/skills:init-project
+```
+
+**Via Analyst Mode:**
 ```
 /modes:analyst
 *init-project
-```
-
-**Via Skill:**
-```
-/skills:init-project
 ```
 
 **Via PowerShell:**
@@ -61,15 +60,28 @@ See `docs/core/mlda-neocortex-paradigm.md` (DOC-CORE-001) for the full paradigm 
 .\.mlda\scripts\mlda-init-project.ps1 -Domains API,AUTH,INV
 ```
 
+### Essential Commands
+
+```bash
+# Context gathering
+/skills:gather-context       # Navigate knowledge graph from entry point
+
+# Topic learning
+/skills:manage-learning      # Save/load topic-based learnings
+
+# In any mode
+*explore {DOC-ID}           # Navigate from a document
+*related                    # Show related documents
+*context                    # Display gathered context
+```
+
 ### Automatic Integration
 
 Once MLDA is initialized, document-creating commands **automatically**:
 - Assign DOC-IDs from the registry
-- Create `.meta.yaml` sidecars
+- Create `.meta.yaml` sidecars (v2 schema)
 - Update the registry
 - Ask about related documents
-
-Just use `*create-project-brief`, `*brainstorm`, etc. as normal!
 
 ---
 
@@ -77,21 +89,22 @@ Just use `*create-project-brief`, `*brainstorm`, etc. as normal!
 
 ```
 .mlda/
-├── docs/              # Your topic documents go here
-│   └── {domain}/      # Organized by domain (auth/, api/, inv/, etc.)
-│       ├── {topic}.md
-│       └── {topic}.meta.yaml
-├── scripts/           # MLDA tooling
-│   ├── mlda-init-project.ps1
-│   ├── mlda-create.ps1
-│   ├── mlda-registry.ps1
-│   ├── mlda-validate.ps1
-│   └── mlda-brief.ps1
-├── templates/         # Copy these when creating new docs
-│   ├── topic-doc.md
-│   └── topic-meta.yaml
-├── registry.yaml      # Index of all documents
-└── README.md          # You are here
++-- topics/                    # Topic-based learning (Neocortex v2)
+|   +-- {topic}/
+|   |   +-- domain.yaml        # Sub-domain structure
+|   |   +-- learning.yaml      # Accumulated learnings + activations
+|   +-- _cross-domain/         # Cross-domain patterns
+|   +-- _example/              # Template for new topics
++-- docs/                      # Topic documents
+|   +-- {domain}/              # Organized by domain (auth/, api/, etc.)
+|       +-- {topic}.md
+|       +-- {topic}.meta.yaml  # Sidecar with relationships
++-- schemas/                   # YAML schemas for validation
++-- scripts/                   # MLDA tooling
++-- templates/                 # Document and config templates
++-- registry.yaml              # Index of all documents
++-- config.yaml                # Neocortex configuration (optional)
++-- README.md                  # You are here
 ```
 
 ---
@@ -102,9 +115,121 @@ Just use `*create-project-brief`, `*brainstorm`, etc. as normal!
 |--------|---------|-------|
 | `mlda-init-project.ps1` | Initialize MLDA in a project | `-Domains API,INV [-Migrate]` |
 | `mlda-create.ps1` | Create a new topic document | `-Domain API -Title "My Doc"` |
-| `mlda-registry.ps1` | Rebuild document registry | No arguments |
-| `mlda-validate.ps1` | Check link integrity | No arguments |
-| `mlda-brief.ps1` | Regenerate project brief | No arguments |
+| `mlda-registry.ps1` | Rebuild document registry | No args, or `-Graph` for connectivity |
+| `mlda-validate.ps1` | Check link integrity | No args |
+| `mlda-learning.ps1` | Manage topic learning | `-Topic X [-Save\|-Load]` |
+| `mlda-handoff.ps1` | Generate handoff document | `-Phase analyst -Status completed` |
+| `mlda-graph.ps1` | Visualize relationships | No args |
+| `mlda-brief.ps1` | Regenerate project brief | No args |
+
+---
+
+## Templates
+
+| Template | Purpose |
+|----------|---------|
+| `topic-doc.md` | Standard topic document |
+| `topic-meta.yaml` | Basic sidecar (v1) |
+| `topic-meta-v2.yaml` | Full sidecar with predictions/boundaries |
+| `topic-domain.yaml` | Topic domain structure |
+| `topic-learning.yaml` | Topic learning file |
+| `neocortex-config.yaml` | Project configuration |
+| `project-claude-md.md` | Project CLAUDE.md template |
+
+---
+
+## Topic-Based Learning
+
+Learning persists in project files, loaded lazily per topic.
+
+**Session Workflow:**
+```
+1. Session starts (minimal context)
+2. User checks: bd ready
+3. User selects task -> Agent identifies topic
+4. Agent loads: .mlda/topics/{topic}/learning.yaml
+5. Work proceeds with topic context
+6. Session ends: Agent proposes saving new learnings
+```
+
+**Learning captures:**
+- Document co-activation patterns
+- Task-specific groupings
+- Verification notes and lessons learned
+- Cross-domain relationships
+
+See [docs/NEOCORTEX.md](../docs/NEOCORTEX.md) for full schema and workflow.
+
+---
+
+## Sidecar Schema v2
+
+Every document has a companion `.meta.yaml` sidecar:
+
+```yaml
+# Required
+id: DOC-XXX-NNN
+title: "Document Title"
+status: draft | review | active | deprecated
+
+# Timestamps & classification
+created: { date: "YYYY-MM-DD", by: "Author" }
+updated: { date: "YYYY-MM-DD", by: "Author" }
+tags: []
+domain: XXX
+
+# Relationships (dendrites)
+related:
+  - id: DOC-YYY-NNN
+    type: depends-on | extends | references | supersedes
+    why: "Explanation"
+
+# Neocortex v2 additions (optional)
+predictions:          # What docs are needed for specific tasks
+  when_implementing: { required: [], likely: [] }
+  when_debugging: { required: [], likely: [] }
+
+reference_frames:     # Classification metadata
+  layer: requirements | design | implementation
+  stability: evolving | stable | deprecated
+
+boundaries:           # Traversal limits
+  related_domains: []
+  isolated_from: []
+
+has_critical_markers: true | false
+```
+
+### Relationship Types
+
+| Type | Signal | When to Follow |
+|------|--------|----------------|
+| `depends-on` | **Strong** | Always - cannot understand without target |
+| `extends` | **Medium** | If depth allows - adds detail |
+| `references` | **Weak** | If relevant to current task |
+| `supersedes` | **Redirect** | Follow this instead of target |
+
+---
+
+## Context Management
+
+### Thresholds
+
+| Threshold | Tokens | Documents | Action |
+|-----------|--------|-----------|--------|
+| **Soft** | 35,000 | 8 | Self-assess, consider decomposition |
+| **Hard** | 50,000 | 12 | Must decompose or pause |
+
+### Multi-Agent Scaling
+
+When context exceeds thresholds, propose decomposition:
+```
+1. Spawn sub-agents for sub-domains (recommended)
+2. Progressive summarization
+3. Proceed anyway (risk: degradation)
+```
+
+See [docs/NEOCORTEX.md](../docs/NEOCORTEX.md) for verification stack and structured return formats.
 
 ---
 
@@ -124,26 +249,13 @@ This automatically:
 ### Option 2: Manual Creation
 
 1. **Pick a domain** (e.g., `auth`, `api`, `inv`)
-
-2. **Create the folder** if it doesn't exist:
-   ```
-   .mlda/docs/auth/
-   ```
-
+2. **Create the folder** if needed: `.mlda/docs/auth/`
 3. **Copy templates** and rename:
-   ```
-   .mlda/docs/auth/access-control.md
-   .mlda/docs/auth/access-control.meta.yaml
-   ```
-
-4. **Assign a DOC-ID** using format `DOC-{DOMAIN}-{NNN}`:
-   ```
-   DOC-AUTH-001
-   ```
-
-5. **Fill in the content** and metadata
-
-6. **Add to registry.yaml**
+   - `.mlda/docs/auth/access-control.md`
+   - `.mlda/docs/auth/access-control.meta.yaml`
+4. **Assign DOC-ID**: `DOC-AUTH-001`
+5. **Fill in content** and metadata
+6. **Run**: `.\.mlda\scripts\mlda-registry.ps1`
 
 ---
 
@@ -155,7 +267,7 @@ DOC-{DOMAIN}-{NNN}
 Examples:
 - DOC-AUTH-001   (Authentication topic #1)
 - DOC-API-003    (API topic #3)
-- DOC-INV-012    (Invoicing topic #12)
+- DOC-SEC-012    (Security topic #12)
 ```
 
 ### Standard Domains
@@ -165,35 +277,15 @@ Examples:
 | API | API specifications |
 | AUTH | Authentication |
 | DATA | Data models |
-| INV | Invoicing |
 | SEC | Security |
 | UI | User Interface |
 | INFRA | Infrastructure |
 | INT | Integrations |
 | TEST | Testing |
+| PROC | Processes/protocols |
+| METH | Methodology |
 
 Custom domains can be added per project.
-
----
-
-## Linking Documents
-
-In your `.md` file, reference other docs by DOC-ID:
-
-```markdown
-See [DOC-AUTH-001](../auth/access-control.md) for authentication details.
-```
-
-In your `.meta.yaml`, track relationships:
-
-```yaml
-related:
-  - id: DOC-AUTH-001
-    type: depends-on
-    why: "Defines auth patterns used here"
-```
-
-Relationship types: `references`, `extends`, `depends-on`, `supersedes`
 
 ---
 
@@ -210,6 +302,22 @@ The `-Migrate` flag:
 - Assigns DOC-IDs sequentially
 - Adds entries to registry
 
+### Backward Compatibility
+
+- Sidecar v2 fields are **optional** - old sidecars work
+- Topics folder is **optional** - works without learning
+- Config is **optional** - default thresholds apply
+
 ---
 
-*MLDA v1.1 | RMS-BMAD Methodology*
+## References
+
+| Document | Purpose |
+|----------|---------|
+| [docs/NEOCORTEX.md](../docs/NEOCORTEX.md) | Full methodology documentation |
+| [DEC-002](../docs/decisions/DEC-002-neocortex-methodology.md) | Decision record with rationale |
+| [CLAUDE.md](../CLAUDE.md) | Project rules layer |
+
+---
+
+*MLDA v2.0 | Neocortex Methodology*

@@ -1,18 +1,31 @@
-# MLDA Sidecar - DOC-CORE-004
-# Usage patterns guide for structuring documents
+# MLDA Sidecar v2 - Neocortex Format
+# Schema: .mlda/schemas/sidecar-v2.schema.yaml
 
 id: DOC-CORE-004
 title: "MLDA Usage Patterns"
 status: active
-created: 2026-01-14
-updated: 2026-01-14
+
+created:
+  date: "2026-01-14"
+  by: "Claude (Architect)"
+
+updated:
+  date: "2026-01-20"
+  by: "Claude (Developer)"
+
 tags:
   - mlda
   - user-guide
   - best-practices
   - navigation
 
-# Dendrites - connections to other neurons
+domain: CORE
+
+summary: |
+  Practical guide for using MLDA effectively. Covers common patterns
+  for structuring documents, creating relationships, and navigating
+  the knowledge graph. User-facing complement to the core specs.
+
 related:
   - id: DOC-CORE-001
     type: extends
@@ -23,3 +36,30 @@ related:
   - id: DOC-CORE-003
     type: references
     why: "References sidecar schema for relationship examples"
+
+# Neocortex v2: Predictive Context
+predictions:
+  when_documenting:
+    required: [DOC-CORE-003]
+    likely: [DOC-CORE-001, DOC-CORE-002]
+  when_implementing:
+    required: []
+    likely: [DOC-CORE-001, DOC-CORE-002, DOC-CORE-003]
+
+# Neocortex v2: Reference Frames
+reference_frames:
+  domain: methodology
+  layer: design
+  stability: stable
+  scope: cross-cutting
+
+# Neocortex v2: Traversal Boundaries
+boundaries:
+  related_domains:
+    - paradigm
+    - navigation
+    - schema
+  isolated_from: []
+
+# Neocortex v2: Critical Markers
+has_critical_markers: false

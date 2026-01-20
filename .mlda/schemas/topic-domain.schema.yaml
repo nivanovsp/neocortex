@@ -1,0 +1,261 @@
+# Neocortex Topic Domain Schema
+# JSON Schema for domain/topic configuration files
+# Version: 2.0
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "neocortex/topic-domain"
+title: "Topic Domain Configuration"
+description: "Sub-domain structure and decomposition strategy for a topic"
+
+type: object
+
+required:
+  - domain
+  - version
+  - last_updated
+
+properties:
+  # ============================================
+  # IDENTIFICATION
+  # ============================================
+
+  domain:
+    type: string
+    pattern: "^[a-z][a-z0-9-]*$"
+    description: "Domain/topic name (lowercase, hyphenated)"
+    examples:
+      - "authentication"
+      - "invoicing"
+      - "user-management"
+
+  version:
+    type: integer
+    minimum: 1
+    description: "Domain map version (increments on update)"
+
+  last_updated:
+    type: string
+    format: date
+    description: "Last update date (YYYY-MM-DD)"
+
+  source:
+    type: string
+    enum:
+      - human     # Manually defined by user
+      - agent     # Discovered by agent
+      - hybrid    # Mix of human and agent definitions
+    default: human
+    description: "Who defined this domain structure"
+
+  # ============================================
+  # SUB-DOMAIN DEFINITIONS
+  # ============================================
+
+  sub_domains:
+    type: array
+    description: "Logical subdivisions within this domain"
+    items:
+      type: object
+      required:
+        - name
+        - docs
+      properties:
+        name:
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+          description: "Sub-domain name"
+        docs:
+          type: array
+          items:
+            type: string
+            pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          minItems: 1
+          uniqueItems: true
+          description: "Documents belonging to this sub-domain"
+        origin:
+          type: string
+          enum:
+            - human
+            - agent
+          default: human
+          description: "Who defined this sub-domain"
+        discovered_during:
+          type: string
+          description: "Task ID when agent discovered this (if origin=agent)"
+        human_approved:
+          type: boolean
+          default: true
+          description: "Whether human approved this grouping"
+        description:
+          type: string
+          description: "What this sub-domain covers"
+        entry_point:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          description: "Recommended starting document for this sub-domain"
+
+  # ============================================
+  # ENTRY POINTS
+  # ============================================
+
+  entry_points:
+    type: object
+    description: "Recommended entry documents by task type"
+    properties:
+      default:
+        type: string
+        pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+        description: "Default entry point for this domain"
+      by_task:
+        type: object
+        additionalProperties:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+        description: "Entry points keyed by task type"
+        examples:
+          - implementing: "DOC-AUTH-002"
+            debugging: "DOC-AUTH-010"
+            architecting: "DOC-AUTH-001"
+
+  # ============================================
+  # DECOMPOSITION STRATEGY
+  # ============================================
+
+  decomposition:
+    type: object
+    description: "How to split this domain for multi-agent processing"
+    properties:
+      strategy:
+        type: string
+        enum:
+          - by_sub_domain      # Split along sub-domain boundaries
+          - by_document_count  # Split into N-document chunks
+          - by_task_type       # Split by what the documents are for
+          - custom             # Use custom splitting logic
+        default: by_sub_domain
+        description: "Default decomposition strategy"
+      max_docs_per_agent:
+        type: integer
+        minimum: 1
+        maximum: 20
+        default: 5
+        description: "Maximum documents per sub-agent"
+      parallel_allowed:
+        type: boolean
+        default: true
+        description: "Whether sub-agents can run in parallel"
+
+  # ============================================
+  # OVERRIDE SETTINGS
+  # ============================================
+
+  override_allowed:
+    type: boolean
+    default: true
+    description: "Whether agents can override this structure for specific tasks"
+
+  override_requires_approval:
+    type: boolean
+    default: false
+    description: "Whether overrides need user approval"
+
+  # ============================================
+  # CROSS-DOMAIN RELATIONSHIPS
+  # ============================================
+
+  related_domains:
+    type: array
+    description: "Domains this one commonly interacts with"
+    items:
+      type: object
+      required:
+        - domain
+      properties:
+        domain:
+          type: string
+          description: "Related domain name"
+        relationship:
+          type: string
+          description: "Nature of the relationship"
+        boundary_docs:
+          type: array
+          items:
+            type: string
+            pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          description: "Documents that bridge the two domains"
+        traversal_allowed:
+          type: boolean
+          default: true
+          description: "Whether to allow traversal into this domain"
+
+  isolated_from:
+    type: array
+    items:
+      type: string
+    description: "Domains to never traverse into from this domain"
+
+additionalProperties: false
+
+# ============================================
+# EXAMPLES
+# ============================================
+
+examples:
+  - domain: "authentication"
+    version: 2
+    last_updated: "2026-01-20"
+    source: hybrid
+    sub_domains:
+      - name: "token-management"
+        docs:
+          - "DOC-AUTH-002"
+          - "DOC-AUTH-003"
+          - "DOC-AUTH-007"
+          - "DOC-AUTH-009"
+        origin: human
+        description: "JWT tokens, refresh tokens, token lifecycle"
+        entry_point: "DOC-AUTH-002"
+      - name: "session-handling"
+        docs:
+          - "DOC-AUTH-004"
+          - "DOC-AUTH-005"
+          - "DOC-AUTH-010"
+        origin: human
+        description: "Session creation, management, invalidation"
+        entry_point: "DOC-AUTH-004"
+      - name: "oauth-integration"
+        docs:
+          - "DOC-AUTH-006"
+          - "DOC-AUTH-011"
+          - "DOC-AUTH-012"
+          - "DOC-AUTH-013"
+        origin: agent
+        discovered_during: "TASK-AUTH-045"
+        human_approved: true
+        description: "OAuth 2.0 and OIDC integration"
+        entry_point: "DOC-AUTH-006"
+    entry_points:
+      default: "DOC-AUTH-001"
+      by_task:
+        implementing: "DOC-AUTH-002"
+        debugging: "DOC-AUTH-010"
+        architecting: "DOC-AUTH-001"
+    decomposition:
+      strategy: by_sub_domain
+      max_docs_per_agent: 5
+      parallel_allowed: true
+    override_allowed: true
+    override_requires_approval: false
+    related_domains:
+      - domain: "rbac"
+        relationship: "Authentication provides identity for RBAC"
+        boundary_docs:
+          - "DOC-AUTH-008"
+          - "DOC-RBAC-001"
+        traversal_allowed: true
+      - domain: "session-management"
+        relationship: "Sessions depend on authentication"
+        traversal_allowed: true
+    isolated_from:
+      - "invoicing"
+      - "reporting"

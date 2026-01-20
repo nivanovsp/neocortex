@@ -3,7 +3,7 @@ description: 'Create documents from YAML templates with interactive elicitation 
 ---
 # Create Document Skill
 
-**RMS Skill** | Template-driven document creation with user interaction
+**RMS Skill v2.0** | Template-driven document creation with user interaction and Neocortex sidecar v2 support
 
 ## MLDA Auto-Integration
 
@@ -17,15 +17,21 @@ description: 'Create documents from YAML templates with interactive elicitation 
    - Ask user about related documents
 3. **If MLDA not present**: Proceed with standard document creation
 
-### MLDA Sidecar Template
+### MLDA Sidecar v2 Template
 
 When MLDA is detected, create this sidecar alongside the document:
 
 ```yaml
-id: {DOC-ID}           # e.g., DOC-INV-016
+# ============================================
+# REQUIRED FIELDS
+# ============================================
+id: {DOC-ID}                    # e.g., DOC-INV-016 (from registry)
 title: "{Document Title}"
-status: active
+status: draft                   # draft | review | active | deprecated
 
+# ============================================
+# TIMESTAMP FIELDS
+# ============================================
 created:
   date: "{YYYY-MM-DD}"
   by: "{current_mode or 'analyst'}"
@@ -34,11 +40,60 @@ updated:
   date: "{YYYY-MM-DD}"
   by: "{current_mode or 'analyst'}"
 
+# ============================================
+# CLASSIFICATION FIELDS
+# ============================================
+domain: "{DOMAIN}"              # e.g., AUTH, API, DATA, SEC, UI, PROC
 tags:
-  - {domain}           # e.g., inv, api, auth
-  - {template_type}    # e.g., project-brief, market-research
+  - {domain-lowercase}          # e.g., auth, api, data
+  - {template_type}             # e.g., project-brief, prd, epic
 
-related: []            # Ask user if any related docs
+summary: "{Brief summary of document content - 1-2 sentences}"
+
+# ============================================
+# RELATIONSHIPS (ask user)
+# ============================================
+related: []                     # Ask user - REQUIRED for non-orphan status
+# Example relationship:
+#   - id: DOC-XXX-001
+#     type: depends-on         # depends-on | extends | references | supersedes
+#     why: "Reason for connection"
+
+# ============================================
+# PREDICTIVE CONTEXT (v2)
+# ============================================
+# Optional - add if document is likely entry point for tasks
+predictions: {}
+# Example:
+#   when_implementing:
+#     required: [DOC-XXX-001]
+#     likely: [DOC-XXX-002]
+
+# ============================================
+# REFERENCE FRAMES (v2)
+# ============================================
+reference_frames:
+  layer: requirements           # requirements | design | implementation | testing
+  stability: evolving           # evolving | stable | deprecated
+  # scope: cross-cutting        # frontend | backend | infrastructure | cross-cutting
+
+# ============================================
+# TRAVERSAL BOUNDARIES (v2)
+# ============================================
+boundaries:
+  related_domains: []           # Domains OK to traverse into
+  # isolated_from: []           # Domains to never traverse into
+
+# ============================================
+# CRITICAL MARKERS (v2)
+# ============================================
+has_critical_markers: false     # Set to true if document contains <!-- CRITICAL --> markers
+
+# ============================================
+# TRACKING (optional)
+# ============================================
+# beads: "Project-XXX"          # Associated Beads task ID
+# version: "1.0"                # Document version
 ```
 
 ### Registry Update
@@ -49,9 +104,13 @@ Add entry to `.mlda/registry.yaml`:
 - id: {DOC-ID}
   title: "{Document Title}"
   path: "{relative_path_to_document}"
-  status: active
-  type: {template_type}
+  sidecar: "{relative_path_to_sidecar}"    # e.g., docs/auth-overview.meta.yaml
+  status: draft
+  domain: {DOMAIN}                          # e.g., AUTH, API, DATA
+  type: {template_type}                     # e.g., prd, epic, story
 ```
+
+**Note:** After running `mlda-registry.ps1`, the registry will be updated with relationship connectivity analysis.
 
 ---
 
@@ -107,10 +166,38 @@ If a YAML Template has not been provided, list all templates from .claude/comman
    - Save to file if possible
 5. **Continue until complete**
 6. **MLDA Finalization** (if MLDA active):
-   - Create `.meta.yaml` sidecar file alongside the document
-   - Ask: "Are there related documents? Enter DOC-IDs or 'none'"
+   - Create `.meta.yaml` sidecar file (v2 schema) alongside the document
+   - Elicit sidecar v2 fields (see below)
    - Update `.mlda/registry.yaml` with new entry
    - Confirm: "Document registered as {DOC-ID} in MLDA"
+
+### Sidecar v2 Elicitation (Step 6 Details)
+
+When finalizing the document, prompt user for sidecar v2 fields:
+
+**Required elicitation:**
+
+1. **Summary**: "Please provide a 1-2 sentence summary of this document's purpose."
+
+2. **Related documents**: "Are there related documents? Enter DOC-IDs with relationship type:"
+   - `depends-on` - Cannot understand this without the target
+   - `extends` - Adds detail to the target
+   - `references` - Mentions the target
+   - `supersedes` - Replaces the target
+
+3. **Reference frames** (confirm or adjust):
+   - Layer: requirements | design | implementation | testing
+   - Stability: evolving (default for new) | stable | deprecated
+
+**Optional elicitation (for entry-point documents):**
+
+4. **Predictions**: "Will this document be an entry point for tasks? If yes, which DOC-IDs are typically needed?"
+   - When implementing: required/likely docs
+   - When debugging: required/likely docs
+
+5. **Boundaries**: "Are there domains this document should NOT traverse into? (e.g., invoicing docs shouldn't pull in marketing)"
+
+6. **Critical markers**: "Does this document contain compliance or safety-critical information marked with `<!-- CRITICAL -->`?"
 
 ## Detailed Rationale Requirements
 

@@ -1,0 +1,65 @@
+# Example Topic Domain Configuration
+# Schema: .mlda/schemas/topic-domain.schema.yaml
+#
+# This is a template/example. Copy this folder and rename for your domain.
+# Delete this file's comments when creating a real domain.
+
+domain: example-domain
+version: 1
+last_updated: "2026-01-20"
+source: human  # human | agent | hybrid
+
+# Sub-domain definitions
+# Break your domain into logical subdivisions
+sub_domains:
+  - name: core-concepts
+    docs:
+      - DOC-EXAMPLE-001
+      - DOC-EXAMPLE-002
+    origin: human
+    description: "Core concepts and foundational documents"
+    entry_point: DOC-EXAMPLE-001
+
+  # Add more sub-domains as needed:
+  # - name: advanced-features
+  #   docs:
+  #     - DOC-EXAMPLE-003
+  #     - DOC-EXAMPLE-004
+  #   origin: human
+  #   description: "Advanced feature documentation"
+
+# Entry points by task type
+# Where to start navigating based on what you're doing
+entry_points:
+  default: DOC-EXAMPLE-001
+  by_task:
+    implementing: DOC-EXAMPLE-002
+    debugging: DOC-EXAMPLE-001
+    architecting: DOC-EXAMPLE-001
+    # Add more task-specific entry points:
+    # testing: DOC-EXAMPLE-003
+
+# Multi-agent decomposition strategy
+decomposition:
+  strategy: by_sub_domain  # by_sub_domain | by_document_count | by_task_type | custom
+  max_docs_per_agent: 5
+  parallel_allowed: true
+
+# Override settings
+override_allowed: true
+override_requires_approval: false
+
+# Related domains
+# Which other domains does this one interact with?
+related_domains: []
+  # Example:
+  # - domain: authentication
+  #   relationship: "Uses auth for access control"
+  #   boundary_docs:
+  #     - DOC-EXAMPLE-005
+  #     - DOC-AUTH-001
+  #   traversal_allowed: true
+
+# Domains to never traverse into from here
+isolated_from: []
+  # Example: [invoicing, legacy-system]

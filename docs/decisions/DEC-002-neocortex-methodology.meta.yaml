@@ -1,0 +1,95 @@
+# MLDA Sidecar for Neocortex Methodology Decision Document
+# DOC-METH-001
+
+id: DOC-METH-001
+title: "Neocortex Methodology"
+status: active
+
+created:
+  date: "2026-01-20"
+  by: "Human + Claude collaboration"
+
+updated:
+  date: "2026-01-20"
+  by: "Claude (Opus 4.5)"
+
+tags:
+  - methodology
+  - neocortex
+  - rms
+  - mlda
+  - knowledge-graph
+  - neural-network
+  - predictive-context
+  - multi-agent
+  - verification
+  - learning
+  - architecture
+
+summary: |
+  Defines the Neocortex methodology - an evolution of RMS-BMAD that transforms
+  how AI agents gather, process, and learn from documentation. Implements
+  predictive context gathering, topic-based learning persistence, multi-agent
+  scaling with recursive decomposition, six-layer verification stack, and
+  token budget management with self-assessment. Based on Hawkins' Thousand
+  Brains Theory, MIT's Recursive Language Models paper, and Claude Code 2.1.0
+  capabilities.
+
+source:
+  research:
+    - "arxiv.org/2512.24601v1 (Recursive Language Models)"
+    - "A Thousand Brains by Jeff Hawkins (2021)"
+    - "Claude Code 2.1.0 Changelog"
+  conversation: "2026-01-20 methodology evolution discussion"
+
+related:
+  - id: DOC-PROC-001
+    type: references
+    why: "Critical Thinking Protocol integrates with Neocortex methodology"
+  - id: DOC-CORE-001
+    type: supersedes
+    why: "Updates the MLDA Neocortex paradigm with new features"
+  - id: DOC-CORE-002
+    type: supersedes
+    why: "Updates navigation protocol for predictive context"
+  - id: DOC-CORE-003
+    type: supersedes
+    why: "Defines new sidecar schema v2"
+
+# Predictive context (new in Neocortex)
+predictions:
+  when_architecting:
+    required: [DOC-PROC-001]
+    likely: []
+  when_implementing:
+    required: [DOC-CORE-001, DOC-CORE-002, DOC-CORE-003]
+    likely: []
+  when_documenting:
+    required: []
+    likely: [DOC-PROC-001]
+
+# Reference frames (new in Neocortex)
+reference_frames:
+  domain: methodology
+  layer: design
+  stability: stable
+  scope: cross-cutting
+
+beads: "Ways of Development-71"
+
+domain: METH
+
+version: "2.0"
+
+# Implementation tracking
+implementation:
+  epic: "Ways of Development-71"
+  phase_1_foundation: "Ways of Development-72,73,74"
+  phase_2_schemas: "Ways of Development-75,76,77,78"
+  phase_3_structure: "Ways of Development-79,80,81"
+  phase_4_templates: "Ways of Development-82,83,84,85"
+  phase_5_claude_md: "Ways of Development-86,87"
+  phase_6_modes_skills: "Ways of Development-88,89,90,91"
+  phase_7_documentation: "Ways of Development-92,93,94,95,96"
+  phase_8_validation: "Ways of Development-97,98"
+  phase_9_github: "Ways of Development-99"

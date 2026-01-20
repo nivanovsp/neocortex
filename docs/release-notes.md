@@ -4,6 +4,48 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [1.4.0] - 2026-01-20
+
+### Added: UX Skills with Neocortex Integration
+
+Converted 4 UX manual workflows to proper skills with full Neocortex integration.
+
+#### New Skills
+
+| Skill | Purpose | Key Features |
+|-------|---------|--------------|
+| `create-wireframe` | Generate wireframe descriptions | Grid systems, component specs, responsive breakpoints, design system refs |
+| `review-accessibility` | WCAG 2.1 compliance audit | Full checklist, severity levels, remediation tracking, traceability |
+| `design-system` | Define design system components | Design tokens, component library, governance, versioning |
+| `user-flow` | Map user journeys | Entry/exit points, step mapping, error scenarios, Mermaid diagrams |
+
+#### Neocortex Integration
+
+All skills support:
+- Context gathering from design system, requirements, and existing patterns
+- Topic-based learning integration (`.mlda/topics/{topic}/learning.yaml`)
+- DOC-ID references for traceability
+- Domain-specific context (DOC-DS-xxx, DOC-UI-xxx, DOC-UF-xxx, DOC-A11Y-xxx)
+
+#### Updated Files
+
+- `.claude/commands/modes/ux-expert.md` - Commands now reference skills
+- `.claude/commands/bmad-agents/ux-expert.md` - Updated persona (Uma) and commands
+- `.claude/commands/README.md` - Added new skills to quick reference
+- `docs/USER-GUIDE.md` - Updated UX-Expert Mode section
+
+#### Validation Script Fix
+
+- Fixed `mlda-validate.ps1` to skip DOC-IDs inside code blocks (fenced and inline)
+- Example DOC-IDs in documentation no longer cause false positive validation errors
+
+#### Beads Tracking
+
+- Discussion: Ways of Development-100
+- Validation fix: Ways of Development-103
+
+---
+
 ## [1.3.0] - 2026-01-17
 
 ### Added: Critical Thinking Protocol

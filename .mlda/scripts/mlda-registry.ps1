@@ -39,6 +39,7 @@ $DocsDir = Join-Path $MldaRoot "docs"
 $RegistryFile = Join-Path $MldaRoot "registry.yaml"
 
 # Simple YAML parser for meta files (handles our specific format)
+# Updated for sidecar v2 with Neocortex fields
 function Read-MetaYaml {
     param([string]$Path)
 
@@ -52,6 +53,16 @@ function Read-MetaYaml {
         created_by = ""
         related = @()
         summary = ""
+        # v2 fields
+        domain = ""
+        has_critical_markers = $false
+        has_predictions = $false
+        reference_layer = ""
+        reference_stability = ""
+        reference_scope = ""
+        boundaries_related = @()
+        boundaries_isolated = @()
+        is_v2 = $false
     }
 
     $content = Get-Content $Path -ErrorAction SilentlyContinue
@@ -61,6 +72,11 @@ function Read-MetaYaml {
     $inCreated = $false
     $inRelated = $false
     $inRelatedItem = $false
+    $inReferenceFrames = $false
+    $inBoundaries = $false
+    $inBoundariesRelated = $false
+    $inBoundariesIsolated = $false
+    $inPredictions = $false
     $currentRelated = @{}
 
     foreach ($line in $content) {
@@ -74,6 +90,11 @@ function Read-MetaYaml {
             $inCreated = $false
             $inRelated = $false
             $inRelatedItem = $false
+            $inReferenceFrames = $false
+            $inBoundaries = $false
+            $inBoundariesRelated = $false
+            $inBoundariesIsolated = $false
+            $inPredictions = $false
             $currentRelated = @{}
         }
 
@@ -130,6 +151,51 @@ function Read-MetaYaml {
         }
         elseif ($inRelatedItem -and $line -match "^\s+why:\s*[`"']?([^`"']+)[`"']?") {
             $currentRelated.why = $Matches[1].Trim()
+        }
+        # v2 fields parsing
+        elseif ($line -match "^domain:\s*(\w+)") {
+            $meta.domain = $Matches[1].Trim()
+            $meta.is_v2 = $true
+        }
+        elseif ($line -match "^has_critical_markers:\s*(true|false)") {
+            $meta.has_critical_markers = $Matches[1].Trim() -eq "true"
+            $meta.is_v2 = $true
+        }
+        elseif ($line -match "^predictions:") {
+            $inPredictions = $true
+            $meta.has_predictions = $true
+            $meta.is_v2 = $true
+        }
+        elseif ($line -match "^reference_frames:") {
+            $inReferenceFrames = $true
+            $meta.is_v2 = $true
+        }
+        elseif ($inReferenceFrames -and $line -match "^\s+layer:\s*(\w+)") {
+            $meta.reference_layer = $Matches[1].Trim()
+        }
+        elseif ($inReferenceFrames -and $line -match "^\s+stability:\s*(\w+)") {
+            $meta.reference_stability = $Matches[1].Trim()
+        }
+        elseif ($inReferenceFrames -and $line -match "^\s+scope:\s*([\w-]+)") {
+            $meta.reference_scope = $Matches[1].Trim()
+        }
+        elseif ($line -match "^boundaries:") {
+            $inBoundaries = $true
+            $meta.is_v2 = $true
+        }
+        elseif ($inBoundaries -and $line -match "^\s+related_domains:") {
+            $inBoundariesRelated = $true
+            $inBoundariesIsolated = $false
+        }
+        elseif ($inBoundaries -and $line -match "^\s+isolated_from:") {
+            $inBoundariesIsolated = $true
+            $inBoundariesRelated = $false
+        }
+        elseif ($inBoundariesRelated -and $line -match "^\s+-\s*(.+)") {
+            $meta.boundaries_related += $Matches[1].Trim()
+        }
+        elseif ($inBoundariesIsolated -and $line -match "^\s+-\s*(.+)") {
+            $meta.boundaries_isolated += $Matches[1].Trim()
         }
     }
 
@@ -218,6 +284,16 @@ else {
             MdExists = $mdExists
             MetaPath = $metaFile.FullName
             ReferencedBy = @()  # Will be computed
+            # v2 fields
+            Domain = $meta.domain
+            HasCriticalMarkers = $meta.has_critical_markers
+            HasPredictions = $meta.has_predictions
+            ReferenceLayer = $meta.reference_layer
+            ReferenceStability = $meta.reference_stability
+            ReferenceScope = $meta.reference_scope
+            BoundariesRelated = $meta.boundaries_related
+            BoundariesIsolated = $meta.boundaries_isolated
+            IsV2 = $meta.is_v2
         }
     }
 }
@@ -259,6 +335,12 @@ $docStats = @{
     TotalRelationships = ($documents | ForEach-Object { $_.Related.Count } | Measure-Object -Sum).Sum
     ByDomain = @{}
     ByRelationType = @{}
+    # v2 stats
+    V2Sidecars = ($documents | Where-Object { $_.IsV2 }).Count
+    V1Sidecars = ($documents | Where-Object { -not $_.IsV2 }).Count
+    WithCriticalMarkers = ($documents | Where-Object { $_.HasCriticalMarkers }).Count
+    WithPredictions = ($documents | Where-Object { $_.HasPredictions }).Count
+    ByLayer = @{}
 }
 
 # Count by domain
@@ -283,6 +365,16 @@ foreach ($doc in $documents) {
     }
 }
 
+# Count by reference layer (v2)
+foreach ($doc in $documents) {
+    if ($doc.ReferenceLayer) {
+        if (-not $docStats.ByLayer[$doc.ReferenceLayer]) {
+            $docStats.ByLayer[$doc.ReferenceLayer] = 0
+        }
+        $docStats.ByLayer[$doc.ReferenceLayer]++
+    }
+}
+
 # Find high-connectivity nodes (hubs)
 $hubThreshold = 3
 $hubs = $documents | Where-Object {
@@ -299,6 +391,19 @@ Write-Host "  With Relationships: $($docStats.WithRelationships)"
 
 if ($docStats.MissingMd -gt 0) {
     Write-Host "  Missing .md:        $($docStats.MissingMd)" -ForegroundColor Red
+}
+
+Write-Host "`nNeocortex v2 Status:"
+Write-Host "  v2 sidecars:        $($docStats.V2Sidecars)" -ForegroundColor $(if ($docStats.V2Sidecars -gt 0) { "Green" } else { "Gray" })
+Write-Host "  v1 sidecars:        $($docStats.V1Sidecars)" -ForegroundColor $(if ($docStats.V1Sidecars -gt 0) { "Yellow" } else { "Gray" })
+Write-Host "  With predictions:   $($docStats.WithPredictions)"
+Write-Host "  Critical markers:   $($docStats.WithCriticalMarkers)"
+
+if ($docStats.ByLayer.Count -gt 0) {
+    Write-Host "`nBy Reference Layer:"
+    foreach ($layer in $docStats.ByLayer.Keys | Sort-Object) {
+        Write-Host "  ${layer}: $($docStats.ByLayer[$layer])"
+    }
 }
 
 Write-Host "`nRelationships:        $($docStats.TotalRelationships) total"
@@ -453,6 +558,13 @@ graph:
   documents_with_relationships: $($docStats.WithRelationships)
   orphan_documents: $($documents | Where-Object { $_.Related.Count -eq 0 -and $_.ReferencedBy.Count -eq 0 } | Measure-Object).Count
 
+# Neocortex v2 Statistics
+neocortex:
+  v2_sidecars: $($docStats.V2Sidecars)
+  v1_sidecars: $($docStats.V1Sidecars)
+  with_predictions: $($docStats.WithPredictions)
+  with_critical_markers: $($docStats.WithCriticalMarkers)
+
 # Relationship type counts
 relationship_types:
 "@
@@ -533,6 +645,20 @@ else {
 
         if ($doc.Beads) {
             $registryContent += "`n    beads: `"$($doc.Beads)`""
+        }
+
+        # v2 fields
+        if ($doc.Domain) {
+            $registryContent += "`n    domain: $($doc.Domain)"
+        }
+        if ($doc.ReferenceLayer) {
+            $registryContent += "`n    layer: $($doc.ReferenceLayer)"
+        }
+        if ($doc.HasCriticalMarkers) {
+            $registryContent += "`n    has_critical_markers: true"
+        }
+        if ($doc.HasPredictions) {
+            $registryContent += "`n    has_predictions: true"
         }
 
         # Forward relationships (relates_to)

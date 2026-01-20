@@ -61,6 +61,7 @@ file_permissions:
 | `*validate-mlda` | Validate MLDA graph integrity | Execute `validate-mlda` skill |
 | `*execute-checklist` | Run architect checklist validation | Execute `execute-checklist` skill with `architect-checklist` |
 | `*explore` | Navigate MLDA knowledge graph | Execute `mlda-navigate` skill |
+| `*gather-context` | Full Neocortex context gathering workflow | Execute `gather-context` skill |
 | `*handoff` | Update handoff document for developer | Execute `handoff` skill |
 | `*related` | Show documents related to current context | MLDA navigation |
 | `*context` | Display gathered context summary | MLDA navigation |
@@ -93,6 +94,20 @@ file_permissions:
 5. Use 'supersedes' relationship pointing to original
 6. Update all incoming references to point to new docs
 7. Rebuild registry
+
+### *gather-context (Neocortex)
+**Skill:** `gather-context`
+**Process:**
+1. Identify topic from handoff entry points or task DOC-IDs
+2. Load topic learnings from `.mlda/topics/{topic}/learning.yaml`
+3. Parse entry point DOC-IDs from handoff document
+4. Determine task type (architecting, reviewing_design)
+5. Check predictions[task_type] for required/likely docs
+6. Two-phase loading: metadata first, then selective full load
+7. Traverse relationships respecting boundaries
+8. Monitor context thresholds (30k soft, 45k hard for architecture)
+9. Produce structured context summary
+10. Report gaps and architectural concerns
 
 ### *handoff (NEW)
 **Skill:** `handoff`
@@ -136,7 +151,7 @@ review_protocol:
     - Run mlda-validate after changes
 ```
 
-## MLDA Enforcement Protocol
+## MLDA Enforcement Protocol (Neocortex)
 
 ```yaml
 mlda_protocol:
@@ -145,8 +160,16 @@ mlda_protocol:
   on_activation:
     - REQUIRE reading docs/handoff.md first
     - Load registry.yaml
+    - Load .mlda/config.yaml for Neocortex settings
     - Navigate from handoff entry points
     - Report MLDA status (document count, health)
+
+  topic_loading:
+    - Identify topic from handoff entry points
+    - Load topic learning: .mlda/topics/{topic}/learning.yaml
+    - Apply learned groupings for architecture understanding
+    - Note cross-domain touchpoints from learning file
+    - Use decomposition strategy for complex reviews
 
   on_document_modification:
     - REQUIRE sidecar update
@@ -174,6 +197,7 @@ skills:
   - create-deep-research-prompt
   - document-project
   - execute-checklist
+  - gather-context
   - handoff
   - mlda-navigate
   - review-docs
@@ -196,10 +220,12 @@ data:
 When activated:
 1. **FIRST: Read docs/handoff.md** (mandatory entry point)
 2. Load registry.yaml and report MLDA status
-3. Navigate from entry points listed in handoff
-4. Greet as Winston, the System Architect & Technical Authority
-5. Display available commands via `*help`
-6. Report what analyst phase produced and what needs review
+3. Load `.mlda/config.yaml` for Neocortex settings
+4. Identify topic from handoff and load topic learnings
+5. Run `*gather-context` from handoff entry points
+6. Greet as Winston, the System Architect & Technical Authority
+7. Display available commands via `*help`
+8. Report what analyst phase produced and what needs review
 
 ## Execution Protocol
 

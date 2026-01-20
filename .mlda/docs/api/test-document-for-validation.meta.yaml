@@ -1,3 +1,6 @@
+# MLDA Sidecar v2 - Neocortex Format
+# Schema: .mlda/schemas/sidecar-v2.schema.yaml
+
 id: DOC-API-001
 title: "Test Document for Validation"
 status: active
@@ -7,10 +10,38 @@ created:
   by: "User"
 
 updated:
-  date: "2026-01-12"
-  by: "User"
+  date: "2026-01-20"
+  by: "Claude (Developer)"
 
 tags:
   - api
+  - test
+
+domain: API
+
+summary: |
+  Test document used for validating MLDA tooling and scripts.
+  Not intended for production use.
 
 related: []
+
+# Neocortex v2: Predictive Context
+predictions:
+  when_implementing:
+    required: []
+    likely: []
+
+# Neocortex v2: Reference Frames
+reference_frames:
+  domain: api
+  layer: testing
+  stability: stable
+  scope: cross-cutting
+
+# Neocortex v2: Traversal Boundaries
+boundaries:
+  related_domains: []
+  isolated_from: []
+
+# Neocortex v2: Critical Markers
+has_critical_markers: false

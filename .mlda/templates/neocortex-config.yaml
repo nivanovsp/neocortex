@@ -1,0 +1,180 @@
+# Neocortex Configuration Template
+# Location: .mlda/config.yaml
+# Schema: .mlda/schemas/neocortex-config.schema.yaml
+#
+# Project-level configuration for Neocortex methodology.
+# Controls context limits, learning behavior, verification, and multi-agent settings.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERSION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "2.0"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONTEXT LIMITS
+# Token budget management. Prevents context overflow and triggers decomposition.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+context_limits:
+  # Default thresholds (tokens)
+  soft_threshold_tokens: 35000    # Triggers self-assessment (~17% of 200k context)
+  hardstop_tokens: 50000          # Requires decomposition or pause (~25% of 200k)
+
+  # Default thresholds (document count)
+  soft_threshold_documents: 8     # Triggers self-assessment
+  hardstop_documents: 12          # Requires decomposition or pause
+
+  # Task-specific overrides (optional)
+  by_task_type:
+    research:
+      soft_threshold: 50000
+      hardstop: 70000
+    document_creation:
+      soft_threshold: 30000
+      hardstop: 45000
+    review:
+      soft_threshold: 40000
+      hardstop: 55000
+    architecture:
+      soft_threshold: 30000
+      hardstop: 45000
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEARNING BEHAVIOR
+# Controls how topic-based learning accumulates across sessions.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+learning:
+  auto_save_prompt: true          # Prompt to save learnings at session end
+  activation_logging: true        # Track document co-activation patterns
+  min_activation_frequency: 2     # Min co-activations before recording pattern
+  max_learnings_per_topic: 100    # Max entries per topic before pruning old ones
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFICATION SETTINGS
+# Controls the 6-layer verification stack for sub-agent summaries.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+verification:
+  # Layer 1: Structured extraction (always on)
+  extraction_template: standard   # standard | minimal | comprehensive
+
+  # Layer 2: Critical markers
+  critical_marker_syntax: "<!-- CRITICAL: {type} -->"
+
+  # Layer 5: Cross-verification (optional)
+  cross_verification_domains:     # Domains that always use cross-verification
+    - security
+    - compliance
+    # - authentication
+  cross_verification_threshold: 10  # Doc count above which to recommend cross-verify
+
+  # Layer 6: Verification pass (optional)
+  auto_verification_pass: false   # Auto-run spot-checks after synthesis
+  verification_pass_sample_rate: 0.2  # Fraction of claims to spot-check (0-1)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MULTI-AGENT SETTINGS
+# Controls multi-agent decomposition when context exceeds thresholds.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+multi_agent:
+  enabled: true                   # Allow multi-agent decomposition
+  max_recursion_depth: 2          # Max sub-agent nesting levels
+  parallel_agents: true           # Allow parallel sub-agent execution
+  max_parallel_agents: 4          # Max concurrent sub-agents
+  auto_decompose: false           # Auto-decompose without user confirmation
+  decomposition_strategy: by_sub_domain  # by_sub_domain | by_document_count | dynamic
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# NAVIGATION SETTINGS
+# Controls how agents traverse the knowledge graph.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+navigation:
+  max_traversal_depth: 3          # Max relationship hops to follow
+  follow_weak_links: true         # Follow 'references' type relationships
+  respect_boundaries: true        # Respect domain boundaries in sidecars
+  two_phase_loading: true         # Metadata-first, then selective full load
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DOMAIN SETTINGS
+# Project-specific domain configuration.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+domains:
+  # Standard domain codes (built-in)
+  default_codes:
+    - API      # API specifications
+    - AUTH     # Authentication
+    - DATA     # Data models
+    - SEC      # Security
+    - UI       # User interface
+    - INFRA    # Infrastructure
+    - INT      # Integrations
+    - TEST     # Testing
+    - PROC     # Processes/protocols
+    - METH     # Methodology
+
+  # Project-specific domain codes (add your own)
+  custom_codes: []
+    # - INV    # Invoicing
+    # - ORD    # Orders
+    # - RPT    # Reporting
+
+  auto_discover: true             # Auto-discover new codes from DOC-IDs
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BEADS INTEGRATION
+# Integration with Beads task tracker.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+beads:
+  auto_link: true                 # Auto-link documents to beads tasks
+  extract_topic_from_task: true   # Extract topic from task DOC-ID references
+  create_tasks_for_docs: false    # Create beads tasks when creating documents
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OUTPUT SETTINGS
+# Controls what agents report during work.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+output:
+  context_status_reporting: true  # Report context usage during work
+  learning_summary_at_end: true   # Show learning summary at session end
+  verbose_navigation: false       # Show detailed navigation decisions
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUICK REFERENCE
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Context Thresholds:
+#   soft_threshold  - Triggers self-assessment, consider decomposition
+#   hardstop        - Must decompose or pause, cannot continue loading
+#
+# Extraction Templates:
+#   minimal       - Just requirements and dependencies
+#   standard      - Default categories (requirements, constraints, deps, etc.)
+#   comprehensive - All categories plus custom fields
+#
+# Decomposition Strategies:
+#   by_sub_domain     - Use domain.yaml sub-domains
+#   by_document_count - Split into N-doc chunks
+#   dynamic           - Agent decides based on task
+#
+# Verification Layers:
+#   1. Structured Extraction  (mandatory) - Template-driven, not open summarization
+#   2. Critical Markers       (mandatory) - <!-- CRITICAL --> always extracted verbatim
+#   3. Confidence Assessment  (mandatory) - Sub-agents report uncertainty
+#   4. Provenance Tracking    (mandatory) - Every claim traces to source
+#   5. Cross-Verification     (optional)  - Two agents compare outputs
+#   6. Verification Pass      (optional)  - Primary spot-checks results
+#
+# Self-Assessment Questions (at soft threshold):
+#   1. Can I recall key points from earlier documents?
+#   2. Am I re-reading sections I already processed?
+#   3. Are my extractions becoming vague?
+#   4. Can I see connections between documents?
+#   5. Am I making assumptions I shouldn't need to?
+#   → If 2+ concerning: decompose

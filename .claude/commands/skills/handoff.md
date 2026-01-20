@@ -3,7 +3,7 @@ description: 'Generate or update the handoff document for phase transitions'
 ---
 # Handoff Skill
 
-**RMS Skill** | Discrete workflow for phase handoff document management
+**RMS Skill v2.0** | Discrete workflow for phase handoff document management with Neocortex awareness
 
 Generate or update the handoff document (`docs/handoff.md`) to pass context between workflow phases.
 
@@ -156,9 +156,18 @@ If it exists, update the current phase section and preserve previous phases.
 - DATA: [count]
 ...
 
+**Sidecar v2 Coverage:**
+- Documents with predictions: [count]
+- Documents with boundaries: [count]
+- Documents with CRITICAL markers: [count]
+
 **Relationship Health:**
 - Orphan documents: [count]
 - Broken links: [count]
+
+**Context Readiness:**
+- Entry point documents: [count with predictions defined]
+- Cross-domain boundaries defined: [yes/no]
 ```
 
 ## Enforcement Rules
@@ -196,7 +205,29 @@ When running this skill, prompt the user for:
 1. Create/update `docs/handoff.md` with phase-appropriate content
 2. Run `mlda-validate` to check MLDA integrity
 3. Report any orphan documents as warnings
-4. Confirm handoff is complete
+4. Report sidecar v2 coverage (predictions, boundaries, critical markers)
+5. Confirm handoff is complete
+
+## Neocortex v2 Considerations
+
+During handoff, assess and report on:
+
+### For Analyst → Architect Handoff
+- Are key documents marked as entry points (have `predictions` defined)?
+- Are domain boundaries clear (documents have `boundaries.related_domains`)?
+- Are compliance items marked with `<!-- CRITICAL -->` and `has_critical_markers: true`?
+
+### For Architect → Developer Handoff
+- Do implementation-relevant docs have `predictions.when_implementing`?
+- Are there documents with `reference_frames.layer: implementation`?
+- Are cross-domain dependencies noted in boundaries?
+
+### Sidecar v2 Validation Checklist
+- [ ] All documents have `domain` field set
+- [ ] All documents have `summary` field
+- [ ] Entry points have `predictions` for relevant task types
+- [ ] Security/compliance docs have `has_critical_markers: true` if applicable
+- [ ] Documents define `related_domains` for cross-domain traversal
 
 ## Key Principles
 

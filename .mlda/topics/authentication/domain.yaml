@@ -1,0 +1,25 @@
+# Topic Domain Configuration
+# Schema: .mlda/schemas/topic-domain.schema.yaml
+
+domain: authentication
+version: 1
+last_updated: "2026-01-20"
+source: human
+
+sub_domains: []
+
+entry_points:
+  default: null
+  by_task: {}
+
+decomposition:
+  strategy: by_sub_domain
+  max_docs_per_agent: 5
+  parallel_allowed: true
+
+override_allowed: true
+override_requires_approval: false
+
+related_domains: []
+
+isolated_from: []

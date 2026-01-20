@@ -3,7 +3,7 @@ description: 'Split monolithic documents into properly modular MLDA documents'
 ---
 # Split Document Skill
 
-**RMS Skill** | Discrete workflow for splitting monolithic documents into modules
+**RMS Skill v2.0** | Discrete workflow for splitting monolithic documents into modules with Neocortex sidecar v2
 
 Split a monolithic document into multiple focused MLDA documents with proper relationships.
 
@@ -62,27 +62,48 @@ For each new document:
 
 2. **Copy relevant content** from original document
 
-3. **Create sidecar** with relationships:
+3. **Create sidecar (v2 format)** with relationships:
    ```yaml
-   doc_id: DOC-AUTH-002
+   # Required fields
+   id: DOC-AUTH-002
    title: User Registration
-   domain: AUTH
    status: draft
-   created: 2026-01-16
-   modified: 2026-01-16
-   author: Winston (Architect)
 
-   related:
-     - doc_id: DOC-AUTH-003
-       type: references
-       why: "Login depends on registered users"
-     - doc_id: DOC-AUTH-001
-       type: supersedes
-       why: "This document replaces the registration section of the original"
+   # Timestamps
+   created:
+     date: "2026-01-16"
+     by: "architect"
+   updated:
+     date: "2026-01-16"
+     by: "architect"
 
+   # Classification
+   domain: AUTH
    tags:
      - authentication
      - registration
+   summary: "User registration flow including validation, email verification, and account creation"
+
+   # Relationships
+   related:
+     - id: DOC-AUTH-003
+       type: references
+       why: "Login depends on registered users"
+     - id: DOC-AUTH-001
+       type: supersedes
+       why: "This document replaces the registration section of the original"
+
+   # Reference frames (v2)
+   reference_frames:
+     layer: design
+     stability: evolving
+     scope: backend
+
+   # Boundaries (v2)
+   boundaries:
+     related_domains:
+       - session-management
+       - email-verification
    ```
 
 ### Step 4: Update Original Document
@@ -92,21 +113,47 @@ Transform the original into a **summary document** that:
 2. References all the new detailed documents
 3. Acts as an entry point/index
 
-Update original sidecar:
+Update original sidecar (v2 format):
 ```yaml
-doc_id: DOC-AUTH-001
+id: DOC-AUTH-001
 title: Authentication System Overview
-status: superseded-partial
-note: "Detailed content split into DOC-AUTH-002 through DOC-AUTH-006"
+status: active              # Keep as entry point
+summary: "Overview and index of authentication system components - detailed content split into focused documents"
+
+updated:
+  date: "2026-01-16"
+  by: "architect"
+
+domain: AUTH
+tags:
+  - authentication
+  - overview
+  - entry-point
 
 related:
-  - doc_id: DOC-AUTH-002
-    type: references
+  - id: DOC-AUTH-002
+    type: extends
     why: "User registration details"
-  - doc_id: DOC-AUTH-003
-    type: references
+  - id: DOC-AUTH-003
+    type: extends
     why: "Login flow details"
-  # ... etc
+  # ... etc for all split documents
+
+# v2: Now serves as entry point with predictions
+predictions:
+  when_implementing:
+    required: []            # Overview only, no direct requirements
+    likely:
+      - DOC-AUTH-002
+      - DOC-AUTH-003
+      - DOC-AUTH-004
+      - DOC-AUTH-005
+      - DOC-AUTH-006
+
+reference_frames:
+  layer: design
+  stability: stable         # Overview structure is stable
+  scope: cross-cutting      # Covers all auth aspects
 ```
 
 ### Step 5: Update Referencing Documents

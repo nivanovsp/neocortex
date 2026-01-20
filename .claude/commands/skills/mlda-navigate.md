@@ -3,7 +3,7 @@ description: 'Navigate MLDA knowledge graph - explore documents, follow relation
 ---
 # MLDA Navigate Skill
 
-**RMS Skill** | Knowledge graph traversal and context gathering
+**RMS Skill v2.0** | Knowledge graph traversal and context gathering with Neocortex sidecar v2 support
 
 This skill enables agents to navigate the MLDA documentation graph by following relationships (dendrites) between documents (neurons). See DOC-CORE-001 (Neocortex Paradigm) and DOC-CORE-002 (Navigation Protocol) for conceptual foundation.
 
@@ -131,10 +131,28 @@ WHILE queue NOT empty
 
 ### Step 6: Should Follow Decision
 
-Evaluate each relationship:
+Evaluate each relationship using v2 fields:
 
 ```
-FUNCTION should_follow(relationship, task_context):
+FUNCTION should_follow(relationship, task_context, current_sidecar, target_sidecar):
+
+  # Check v2 boundaries first
+  IF current_sidecar.boundaries.isolated_from CONTAINS target_sidecar.domain:
+    LOG "Boundary: isolated from " + target_sidecar.domain
+    RETURN false
+
+  # Check if crossing domain boundary
+  IF target_sidecar.domain != entry_domain:
+    IF target_sidecar.domain NOT IN current_sidecar.boundaries.related_domains:
+      LOG "Boundary: stopping at " + target_sidecar.domain
+      NOTE_DEPENDENCY(target_sidecar)  # Note but don't traverse
+      RETURN false
+
+  # Check v2 reference_frames alignment (optional filter)
+  IF task_context.scope AND target_sidecar.reference_frames.scope:
+    IF target_sidecar.reference_frames.scope NOT IN [task_context.scope, "cross-cutting"]:
+      # Lower priority, may skip if at depth limit
+      priority = LOW
 
   # Always follow dependencies
   IF relationship.type == "depends-on":

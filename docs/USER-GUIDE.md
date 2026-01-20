@@ -176,7 +176,7 @@ Modes are specialists you summon for specific work:
 | `/modes:analyst` | Maya | Requirements, PRDs, epics, stories, user guides, handoff |
 | `/modes:architect` | Winston | Critical review, architecture docs, technical refinement |
 | `/modes:dev` | Devon | Implementation, testing, quality gates (Dev+QA combined) |
-| `/modes:ux-expert` | Sally | UI/UX design, wireframes, front-end specs |
+| `/modes:ux-expert` | Uma | UI/UX design, wireframes, accessibility, design systems |
 | `/modes:bmad-master` | BMad Master | Multi-domain work, one-off tasks |
 | `/modes:bmad-orchestrator` | Oscar | Workflow guidance, mode selection |
 
@@ -641,10 +641,12 @@ Each command below shows exactly which skill and template it uses.
 | Command | Skill | Template |
 |---------|-------|----------|
 | `*create-frontend-spec` | `create-doc` | `front-end-spec-tmpl.yaml` |
-| `*create-wireframe` | Manual workflow | - |
-| `*review-accessibility` | Manual workflow | - |
-| `*design-system` | Manual workflow | - |
-| `*user-flow` | Manual workflow | - |
+| `*create-wireframe` | `create-wireframe` | - |
+| `*review-accessibility` | `review-accessibility` | - |
+| `*design-system` | `design-system` | - |
+| `*user-flow` | `user-flow` | - |
+| `*gather-context` | `gather-context` | - |
+| `*explore` | `mlda-navigate` | - |
 
 #### BMAD-Master Mode (Brian)
 
@@ -776,4 +778,4 @@ Each command below shows exactly which skill and template it uses.
 
 ---
 
-*User Guide v1.2 | RMS + MLDA + BMAD | 2026-01-16*
+*User Guide v1.3 | RMS + MLDA + BMAD | 2026-01-20*

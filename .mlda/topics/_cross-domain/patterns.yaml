@@ -1,0 +1,46 @@
+# Cross-Domain Patterns
+# Patterns that span multiple domains
+# Version: 1
+
+# This file tracks patterns that emerge across domain boundaries.
+# Use this when:
+# - A pattern involves documents from 2+ domains
+# - The pattern doesn't belong to any single domain
+# - You need to document cross-cutting concerns
+
+version: 1
+last_updated: "2026-01-20"
+
+# Patterns spanning multiple domains
+patterns:
+  # Example pattern (remove when adding real patterns):
+  # - name: "auth-rbac-bridge"
+  #   domains:
+  #     - authentication
+  #     - rbac
+  #   docs:
+  #     - DOC-AUTH-008  # Identity claims
+  #     - DOC-RBAC-001  # Role definitions
+  #   description: "Authentication provides identity claims that RBAC uses for authorization"
+  #   typical_tasks:
+  #     - implementing
+  #     - architecting
+  #   frequency: 5
+  #   discovered: "2026-01-20"
+  #   origin: agent  # human | agent
+
+# Domain interaction matrix
+# Documents which domains commonly interact
+domain_interactions:
+  # Example (remove when adding real data):
+  # - domains: [authentication, rbac]
+  #   frequency: high  # high | medium | low
+  #   typical_direction: "authentication -> rbac"
+  #   notes: "Auth always provides identity to RBAC, not reverse"
+
+# Anti-patterns (cross-domain patterns that didn't work)
+anti_patterns: []
+  # Example:
+  # - pattern: "Direct invoicing-to-auth dependency"
+  #   reason: "Creates tight coupling between unrelated domains"
+  #   discovered: "2026-01-15"

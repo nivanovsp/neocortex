@@ -39,7 +39,7 @@ param(
     [string]$Title,
 
     [Parameter(Mandatory=$true, Position=1)]
-    [ValidateSet("AUTH", "UM", "API", "UI", "DATA", "INT", "SEC", "PERF", "ONBOARD", "BILL", "INFRA", "TEST", "DOC")]
+    [ValidateSet("AUTH", "UM", "API", "UI", "DATA", "INT", "SEC", "PERF", "ONBOARD", "BILL", "INFRA", "TEST", "DOC", "CORE", "METH", "PROC")]
     [string]$Domain,
 
     [Parameter()]
@@ -232,9 +232,12 @@ $mdContent = @"
 | $date | $Author | Initial creation |
 "@
 
-# Create metadata sidecar
-$beadLine = if ($beadId) { "`nbeads: `"$beadId`"" } else { "" }
+# Create metadata sidecar (v2 format with Neocortex fields)
+$beadLine = if ($beadId) { "beads: `"$beadId`"" } else { "# beads: `"Project-NNN`"" }
 $metaContent = @"
+# MLDA Sidecar v2 - Neocortex Format
+# Schema: .mlda/schemas/sidecar-v2.schema.yaml
+
 id: $docId
 title: "$Title"
 status: active
@@ -250,7 +253,39 @@ updated:
 tags:
   - $domainLower
 
+domain: $Domain
+
 related: []
+# related:
+#   - id: DOC-XXX-NNN
+#     type: depends-on    # depends-on | extends | references | supersedes
+#     why: "Explanation of relationship"
+
+# Neocortex v2: Predictive Context
+# Uncomment and populate based on document usage patterns
+# predictions:
+#   when_implementing:
+#     required: []
+#     likely: []
+#   when_debugging:
+#     required: []
+#     likely: []
+
+# Neocortex v2: Reference Frames
+reference_frames:
+  domain: $domainLower
+  layer: requirements    # requirements | design | implementation | testing
+  stability: evolving    # evolving | stable | deprecated
+  scope: cross-cutting   # frontend | backend | infrastructure | cross-cutting
+
+# Neocortex v2: Traversal Boundaries
+boundaries:
+  related_domains: []    # Domains OK to traverse into
+  isolated_from: []      # Domains to never traverse into
+
+# Neocortex v2: Critical Markers
+has_critical_markers: false
+
 $beadLine
 "@
 

@@ -1,0 +1,77 @@
+  # Research: Critical Thinking - Understanding and Implementation for AI Agents
+
+  ## Context
+  I am developing a "Critical Thinking Protocol" for AI coding agents
+  (Claude Code, Augment Code, Cursor, Copilot, etc.). The goal is to make
+  critical thinking an always-on cognitive substrate - not a skill to invoke,
+  but a fundamental way of processing information.
+
+  ## Research Questions
+
+  ### Part 1: Understanding Critical Thinking
+
+  1. **Definition and Components**
+     - What is critical thinking? How is it defined in cognitive science?
+     - What are the core components/skills of critical thinking?
+     - How does critical thinking differ from skepticism or cynicism?
+     - What role does metacognition play in critical thinking?
+
+  2. **Critical Thinking Models**
+     - What established frameworks exist? (Paul-Elder, Bloom's Taxonomy, etc.)
+     - How do these models decompose critical thinking into teachable elements?
+     - Which models are most applicable to information processing agents?
+
+  3. **Human Critical Thinking Process**
+     - How do humans apply critical thinking automatically vs. deliberately?
+     - What triggers deeper critical analysis in humans?
+     - How do experts differ from novices in critical thinking application?
+     - What makes critical thinking "always-on" vs. "invoked"?
+
+  ### Part 2: Implementation in AI Agents
+
+  4. **Existing Approaches**
+     - Has anyone implemented critical thinking protocols in LLM agents?
+     - How do Constitutional AI, RLHF, or chain-of-thought relate to this?
+     - What does "metacognition" look like in LLMs?
+     - Are there papers on self-reflection or self-critique in AI?
+
+  5. **Prompt Engineering for Critical Thinking**
+     - What prompting techniques encourage critical analysis?
+     - How can instructions make critical thinking automatic vs. explicit?
+     - What's the difference between "think step by step" and true critical thinking?
+     - How do you encode "epistemic humility" in instructions?
+
+  6. **Balancing Action and Analysis**
+     - How to prevent analysis paralysis while maintaining critical stance?
+     - How should agents handle disagreement with user instructions?
+     - What's the right balance between questioning and executing?
+     - How to maintain critical thinking without being obstructive?
+
+  7. **Confidence Calibration**
+     - How can AI agents accurately assess their own confidence?
+     - What techniques exist for uncertainty quantification in LLMs?
+     - How should uncertainty be communicated to users?
+     - What does "knowing what you don't know" look like for AI?
+
+  ### Part 3: Practical Application
+
+  8. **Domain-Specific Considerations**
+     - How does critical thinking manifest in software development contexts?
+     - What are common reasoning failures in coding agents?
+     - How should critical thinking differ for analysis vs. implementation tasks?
+
+  9. **Integration Patterns**
+     - How to embed critical thinking into agent instructions/system prompts?
+     - Should it be explicit rules or implicit guidance?
+     - How to make it automatic without making it performative?
+
+  ## Desired Output
+  - Clear definition of critical thinking applicable to AI agents
+  - Framework or model for implementation
+  - Concrete techniques for embedding critical thinking in agent instructions
+  - Examples of good vs. poor critical thinking in AI outputs
+  - Guidance on balancing analysis with action
+  - Pitfalls to avoid in implementation
+  
+  ## Output File Format
+  - Provide the output in a markdown file ready for download

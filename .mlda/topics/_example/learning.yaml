@@ -1,0 +1,64 @@
+# Example Topic Learning File
+# Schema: .mlda/schemas/topic-learning.schema.yaml
+#
+# This file accumulates learnings over multiple sessions.
+# Agents propose updates at session end; you approve/modify.
+# Delete this file's comments when creating a real topic.
+
+topic: example-domain
+version: 1
+last_updated: "2026-01-20"
+sessions_contributed: 0
+
+# Learned sub-domain groupings
+# These emerge from usage patterns and agent suggestions
+groupings: []
+  # Example grouping:
+  # - name: core-apis
+  #   docs:
+  #     - DOC-EXAMPLE-001
+  #     - DOC-EXAMPLE-002
+  #   origin: human  # human | agent
+  #   confidence: medium  # high | medium | low
+  #   notes: "Core API documents that are always needed together"
+
+# Co-activation patterns
+# Documents frequently accessed together
+activations: []
+  # Example activation pattern:
+  # - docs:
+  #     - DOC-EXAMPLE-001
+  #     - DOC-EXAMPLE-002
+  #   frequency: 3
+  #   typical_tasks:
+  #     - implementing
+  #     - debugging
+  #   last_session: "2026-01-20"
+
+# Verification notes
+# What verification caught in past sessions
+verification_notes: []
+  # Example:
+  # - session: "2026-01-20"
+  #   caught: "Missing error handling requirement"
+  #   doc: DOC-EXAMPLE-003
+  #   section: "Error Handling"
+  #   lesson: "Always check error handling section before implementing"
+
+# Cross-domain touchpoints
+# How this topic connects to other domains
+related_domains: []
+  # Example:
+  # - domain: authentication
+  #   relationship: "Uses auth tokens for API calls"
+  #   typical_overlap:
+  #     - DOC-EXAMPLE-005
+  #     - DOC-AUTH-002
+
+# Anti-patterns
+# What didn't work well (learn from mistakes)
+anti_patterns: []
+  # Example:
+  # - pattern: "Loading all docs upfront"
+  #   reason: "Context overflow, degraded quality"
+  #   session: "2026-01-15"

@@ -430,4 +430,4 @@ These roles have been consolidated into the 3-role workflow to reduce handoffs a
 
 ---
 
-*RMS-BMAD Methodology v1.3 | Rules Layer*
+*RMS-BMAD Methodology v1.4 | Rules Layer*

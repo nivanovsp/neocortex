@@ -51,6 +51,10 @@ Skills are discrete workflows you can run independently:
 | `/skills:create-next-story` | Create next user story |
 | `/skills:advanced-elicitation` | Requirements gathering |
 | `/skills:facilitate-brainstorming-session` | Run brainstorming session |
+| `/skills:create-wireframe` | Generate wireframe descriptions (UX) |
+| `/skills:review-accessibility` | WCAG compliance audit (UX) |
+| `/skills:design-system` | Define design system components (UX) |
+| `/skills:user-flow` | Map user journeys and flows (UX) |
 
 ### Available Checklists
 

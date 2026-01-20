@@ -3,7 +3,7 @@ description: 'Validate MLDA knowledge graph integrity and health'
 ---
 # Validate MLDA Skill
 
-**RMS Skill** | Discrete workflow for MLDA validation
+**RMS Skill v2.0** | Discrete workflow for MLDA validation with Neocortex sidecar v2 support
 
 Validate the MLDA knowledge graph to ensure integrity, identify issues, and report health metrics.
 
@@ -39,6 +39,26 @@ Verify every document has:
 - [ ] At least one relationship (except root documents)
 - [ ] Valid status
 
+### Step 2.1: Check Sidecar v2 Compliance
+
+Verify sidecars have v2 required and recommended fields:
+
+**Required v2 fields:**
+- [ ] `id` (DOC-{DOMAIN}-{NNN} format)
+- [ ] `title`
+- [ ] `status` (draft | review | active | deprecated)
+
+**Recommended v2 fields:**
+- [ ] `domain` (classification)
+- [ ] `summary` (1-2 sentence description)
+- [ ] `related` array with `id`, `type`, `why` for each relationship
+
+**Optional v2 enhancements:**
+- [ ] `predictions` (for entry point documents)
+- [ ] `reference_frames` (layer, stability, scope)
+- [ ] `boundaries` (related_domains, isolated_from)
+- [ ] `has_critical_markers` (if document contains CRITICAL markers)
+
 ### Step 3: Check Relationships
 
 For each relationship in sidecars:
@@ -57,6 +77,18 @@ For each relationship in sidecars:
 | **Circular Dependency** | Error | A depends-on B depends-on A |
 | **Superseded Active** | Warning | Document marked superseded but still referenced |
 | **Missing DOC-ID** | Error | Document without DOC-ID in registry |
+
+**Sidecar v2 Issues:**
+
+| Issue Type | Severity | Description |
+|------------|----------|-------------|
+| **Missing Domain** | Warning | Sidecar lacks `domain` field |
+| **Missing Summary** | Info | Sidecar lacks `summary` field |
+| **Invalid Relationship Type** | Error | Relationship type not in: depends-on, extends, references, supersedes |
+| **Missing Relationship Why** | Warning | Relationship lacks `why` explanation |
+| **Entry Point Without Predictions** | Info | Document frequently referenced but lacks `predictions` |
+| **CRITICAL Markers Without Flag** | Warning | Document has `<!-- CRITICAL -->` but `has_critical_markers: false` |
+| **Invalid Reference Frame** | Warning | `reference_frames` has invalid enum values |
 
 ### Step 5: Generate Validation Report
 
@@ -77,6 +109,19 @@ For each relationship in sidecars:
 | Circular Dependencies | 0 | OK |
 
 **Overall Health:** HEALTHY / WARNINGS / UNHEALTHY
+
+## Sidecar v2 Coverage
+
+| v2 Field | Documents With | Coverage |
+|----------|---------------|----------|
+| `domain` | 42/45 | 93% |
+| `summary` | 38/45 | 84% |
+| `predictions` | 8/45 | 18% (entry points) |
+| `reference_frames` | 30/45 | 67% |
+| `boundaries` | 15/45 | 33% |
+| `has_critical_markers` | 5/45 | 11% |
+
+**v2 Compliance:** FULL / PARTIAL / MINIMAL
 
 ## Document Statistics
 

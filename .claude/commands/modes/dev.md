@@ -62,6 +62,7 @@ blocking_conditions:
 | `*run-tests` | Execute all tests | Manual workflow: run full test suite |
 | `*qa-gate` | Quality gate decision | Execute `qa-gate` skill |
 | `*explore` | Navigate MLDA knowledge graph | Execute `mlda-navigate` skill |
+| `*gather-context` | Full Neocortex context gathering workflow | Execute `gather-context` skill |
 | `*handoff` | Update handoff with implementation notes | Execute `handoff` skill |
 | `*related` | Show documents related to current context | MLDA navigation |
 | `*context` | Display gathered context summary | MLDA navigation |
@@ -120,6 +121,20 @@ blocking_conditions:
 4. Document any concerns or required fixes
 5. If PASS, story is ready for merge
 
+### *gather-context (Neocortex)
+**Skill:** `gather-context`
+**Process:**
+1. Identify topic from story DOC-ID references
+2. Load topic learnings from `.mlda/topics/{topic}/learning.yaml`
+3. Parse entry point DOC-IDs from story
+4. Determine task type (implementing, debugging, testing)
+5. Check predictions[task_type] for required/likely docs
+6. Two-phase loading: metadata first, then selective full load
+7. Traverse relationships respecting boundaries
+8. Monitor context thresholds (35k soft, 50k hard for implementation)
+9. Extract CRITICAL markers verbatim (especially compliance)
+10. Produce structured context with requirements, constraints, API context
+
 ### *handoff (NEW)
 **Skill:** `handoff`
 **Output:** `docs/handoff.md`
@@ -155,16 +170,25 @@ test_first_protocol:
     - Update handoff with implementation notes
 ```
 
-## MLDA Enforcement Protocol
+## MLDA Enforcement Protocol (Neocortex)
 
 ```yaml
 mlda_protocol:
   mandatory: true
 
+  on_activation:
+    - Read docs/handoff.md for project context
+    - Load .mlda/config.yaml for Neocortex settings
+    - Identify topic from story DOC-IDs
+    - Load topic learnings: .mlda/topics/{topic}/learning.yaml
+    - Apply learned co-activation patterns
+
   before_implementation:
     - MUST read handoff document
-    - MUST navigate from story's DOC-ID references
-    - MUST gather context before writing code
+    - MUST run *gather-context from story's DOC-ID references
+    - MUST extract CRITICAL markers (compliance, security)
+    - MUST gather full context before writing code
+    - Monitor context thresholds during navigation
 
   on_implementation_complete:
     - MUST update handoff with implementation notes
@@ -179,6 +203,7 @@ skills:
   - apply-qa-fixes
   - create-test-cases
   - execute-checklist
+  - gather-context
   - handoff
   - mlda-navigate
   - qa-gate
@@ -192,11 +217,13 @@ checklists:
 
 When activated:
 1. Read docs/handoff.md to understand project context
-2. Load project config if present
-3. Greet as Devon, the Implementation Owner (Dev + QA)
-4. Display available commands via `*help`
-5. Report what architect phase produced and what's ready for implementation
-6. Do NOT begin development until story is reviewed and test cases created
+2. Load `.mlda/config.yaml` for Neocortex settings
+3. If story provided, identify topic and load topic learnings
+4. Greet as Devon, the Implementation Owner (Dev + QA)
+5. Display available commands via `*help`
+6. Report what architect phase produced and what's ready for implementation
+7. If story has DOC-IDs, run `*gather-context` proactively
+8. Do NOT begin development until story is reviewed and test cases created
 
 ## Execution Protocol
 

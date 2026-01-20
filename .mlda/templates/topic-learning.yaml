@@ -1,0 +1,160 @@
+# Neocortex Topic Learning Template
+# Location: .mlda/topics/{topic}/learning.yaml
+# Schema: .mlda/schemas/topic-learning.schema.yaml
+#
+# This file accumulates learnings across sessions for a specific topic.
+# Agents load this at session start and propose updates at session end.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IDENTIFICATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+topic: "{topic-name}"           # e.g., authentication, invoicing, user-management
+version: 1                      # Increments on each save
+last_updated: "{YYYY-MM-DD}"    # Auto-updated on save
+sessions_contributed: 0         # Number of sessions that added learnings
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEARNED GROUPINGS
+# Sub-domain groupings discovered through work. Helps agents understand
+# which documents belong together and how to decompose for multi-agent work.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+groupings:
+  # Example: Human-defined grouping (high confidence)
+  # - name: token-management
+  #   docs:
+  #     - DOC-AUTH-002
+  #     - DOC-AUTH-003
+  #     - DOC-AUTH-007
+  #   origin: human              # human | agent
+  #   confidence: high           # high | medium | low
+  #   notes: "Core token handling - JWT creation, validation, refresh"
+
+  # Example: Agent-discovered grouping (needs approval)
+  # - name: oauth-integration
+  #   docs:
+  #     - DOC-AUTH-006
+  #     - DOC-AUTH-011
+  #   origin: agent
+  #   confidence: medium
+  #   discovered_during: "TASK-AUTH-045"
+  #   human_approved: false      # Set true after review
+  #   notes: "Agent noticed these always needed together for OAuth work"
+
+  []  # Remove this line when adding groupings
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CO-ACTIVATION PATTERNS
+# Documents frequently accessed together. Tracks which docs "fire together"
+# during specific task types, enabling predictive loading.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+activations:
+  # Example: Documents that co-activate during implementation
+  # - docs:
+  #     - DOC-AUTH-001
+  #     - DOC-AUTH-002
+  #     - DOC-SEC-001
+  #   frequency: 7               # Times accessed together
+  #   typical_tasks:             # Task types where this occurs
+  #     - architecting
+  #     - implementing
+  #   last_session: "2026-01-18"
+
+  []  # Remove this line when adding activations
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFICATION NOTES
+# What the verification stack caught in past sessions. These lessons help
+# future sessions avoid similar oversights.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+verification_notes:
+  # Example: Caught a compliance requirement
+  # - session: "2026-01-15"
+  #   caught: "PCI-DSS compliance requirement for token expiry"
+  #   doc: DOC-AUTH-003
+  #   section: "Token Expiry Policy"
+  #   lesson: "Always check for <!-- CRITICAL: compliance --> markers in token docs"
+
+  # Example: Caught a cross-domain dependency
+  # - session: "2026-01-18"
+  #   caught: "RBAC role definitions needed for permission checks"
+  #   doc: DOC-AUTH-008
+  #   section: "Permission Model"
+  #   lesson: "Auth permission work requires loading DOC-RBAC-001 first"
+
+  []  # Remove this line when adding verification notes
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CROSS-DOMAIN TOUCHPOINTS
+# How this topic connects to other domains. Helps agents understand when
+# to cross domain boundaries and which documents are typically involved.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+related_domains:
+  # Example: Relationship with RBAC domain
+  # - domain: rbac
+  #   relationship: "Authentication provides identity claims used by RBAC for authorization"
+  #   typical_overlap:
+  #     - DOC-AUTH-008      # Permission model doc
+  #     - DOC-RBAC-001      # RBAC overview
+
+  # Example: Relationship with API domain
+  # - domain: api
+  #   relationship: "Auth tokens are validated in API middleware"
+  #   typical_overlap:
+  #     - DOC-AUTH-002      # Token format
+  #     - DOC-API-003       # Middleware pipeline
+
+  []  # Remove this line when adding related domains
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ANTI-PATTERNS
+# Patterns that didn't work well. Helps future sessions avoid repeating
+# mistakes or trying approaches that have failed before.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+anti_patterns:
+  # Example: Approach that caused problems
+  # - pattern: "Loading all AUTH docs at once for simple token validation"
+  #   reason: "Context overflow - only DOC-AUTH-002 and DOC-AUTH-003 needed"
+  #   session: "2026-01-10"
+
+  # Example: Grouping that didn't hold
+  # - pattern: "Treating OAuth and SAML as single 'external-auth' grouping"
+  #   reason: "Requirements differ significantly - separate groupings work better"
+  #   session: "2026-01-12"
+
+  []  # Remove this line when adding anti-patterns
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUICK REFERENCE
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Grouping Origin:
+#   human  - User defined this grouping
+#   agent  - Agent discovered during work
+#
+# Confidence Levels:
+#   high   - Used successfully multiple times, proven reliable
+#   medium - Used a few times, seems valid but not extensively tested
+#   low    - Newly discovered, unverified hypothesis
+#
+# Task Types (for activations):
+#   eliciting        - Gathering requirements (Analyst)
+#   documenting      - Writing documentation (Analyst)
+#   architecting     - Designing solutions (Architect)
+#   reviewing_design - Reviewing architecture (Architect)
+#   implementing     - Writing code (Developer)
+#   debugging        - Fixing issues (Developer)
+#   testing          - Writing/running tests (Developer)
+#
+# Session Workflow:
+#   1. Agent loads this file at session start (if topic identified)
+#   2. Learnings inform context gathering and decomposition
+#   3. Agent tracks new patterns during work
+#   4. At session end, agent proposes updates to this file
+#   5. User approves/modifies proposed learnings
+#   6. Version increments, sessions_contributed increases

@@ -39,7 +39,17 @@
       "WebFetch(domain:github.com)",
       "Bash(git remote set-url:*)",
       "Bash(done)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "Bash(findstr:*)",
+      "Bash(copy \"D:\\\\BA Projects\\\\14. Matrix Business Labs\\\\Gamma\\\\Dominaite\\\\Ways of Development\\\\.claude\\\\commands\\\\modes\\\\analyst.md\" \"C:\\\\Users\\\\User\\\\.claude\\\\commands\\\\modes\\\\analyst.md\")",
+      "Bash(copy:*)",
+      "WebFetch(domain:arxiv.org)",
+      "Bash(bd ls:*)",
+      "Bash(sort:*)",
+      "Bash(ls:*)",
+      "Bash(test:*)",
+      "Bash(bd search:*)",
+      "Bash(del nul)"
     ]
   }
 }

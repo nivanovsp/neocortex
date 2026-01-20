@@ -1,202 +1,186 @@
-# RMS-BMAD Methodology
+# Neocortex Methodology
 
-A comprehensive AI-assisted software development methodology for Claude Code.
+A knowledge-graph-based AI-assisted software development methodology for Claude Code.
 
-**RMS** (Rules - Modes - Skills) provides a structured framework for AI assistant behavior, while **BMAD** (Business, Marketing, Architecture, Development) extends this with specialized workflows for the full software development lifecycle.
+**Neocortex** treats documentation as a neural network that agents navigate to gather context. Built on the **RMS** (Rules - Modes - Skills) framework.
+
+## Overview
+
+```
+Documentation = Knowledge Graph
+
+Documents → Neurons (units of knowledge)
+Relationships → Dendrites (connections)
+DOC-IDs → Axons (unique identifiers)
+Agent reading → Signal activation
+Following relationships → Signal propagation
+```
+
+**Key Principle:** Tasks are entry points into the knowledge graph, not self-contained specs. Agents navigate to gather context.
 
 ## Quick Start
 
 ### Installation
 
-1. **Clone this repository** into your project or a dedicated folder:
+1. **Clone this repository**:
    ```bash
-   git clone https://github.com/nivanovsp/rms-bmad-framework.git
+   git clone https://github.com/nicholasgriffintn/neocortex-methodology.git
    ```
 
-2. **Open Claude Code** in the repository folder:
+2. **Open Claude Code** in the folder:
    ```bash
-   cd rms-bmad-framework
+   cd neocortex-methodology
    claude
    ```
 
 3. **Start using modes and skills** - they work automatically!
 
-That's it! Claude Code automatically detects the `CLAUDE.md` file and `.claude/commands/` folder.
-
 ### Alternative: Global Installation
 
-To make RMS-BMAD available in ALL your projects:
+To make Neocortex available in all projects:
 
-1. Copy `CLAUDE.md` to `~/.claude/CLAUDE.md` (or `C:\Users\<username>\.claude\CLAUDE.md` on Windows)
-2. Copy the `.claude/commands/` folder to `~/.claude/commands/`
+1. Copy `CLAUDE.md` to `~/.claude/CLAUDE.md`
+2. Copy `.claude/commands/` to `~/.claude/commands/`
 
-## What's Included
+## Core Workflow (3 Roles)
 
-### RMS Framework (Rules - Modes - Skills)
+```
+Analyst → Architect → Developer
+(Requirements)  (Design)    (Implementation)
+```
+
+| Role | Mode | Purpose |
+|------|------|---------|
+| **Analyst** | `/modes:analyst` | Requirements, PRDs, epics, stories, user documentation |
+| **Architect** | `/modes:architect` | Critical review, technical refinement, architecture docs |
+| **Developer** | `/modes:dev` | Implementation, test-first development, quality gates |
+
+Each role hands off via `docs/handoff.md`.
+
+## RMS Framework
 
 | Layer | Purpose | How to Use |
 |-------|---------|------------|
 | **Rules** | Universal standards (always active) | Automatic via `CLAUDE.md` |
-| **Modes** | Expert personas | `/modes:architect`, `/modes:qa`, etc. |
-| **Skills** | Discrete workflows | `/skills:qa-gate`, `/skills:create-doc`, etc. |
+| **Modes** | Expert personas | `/modes:analyst`, `/modes:architect`, `/modes:dev` |
+| **Skills** | Discrete workflows | `/skills:gather-context`, `/skills:create-doc`, etc. |
 
-### Critical Thinking Protocol
-
-All agents operate with an **always-on critical thinking substrate** that shapes how they process information:
-
-- **Layer 1: Dispositions** — Accuracy over speed, acknowledge uncertainty, question assumptions
-- **Layer 2: Triggers** — Automatic deeper analysis for ambiguous/high-stakes tasks
-- **Layer 3: Standards** — Quality checks before responding (clarity, accuracy, relevance)
-- **Layer 4: Metacognition** — Self-monitoring for pattern-matching vs. reasoning
-
-Agents use calibrated language ("This will..." / "This should..." / "This might...") and surface assumptions explicitly. See `docs/decisions/DEC-001-critical-thinking-protocol.md` for full specification.
-
-### Available Modes (Expert Personas)
-
-| Mode | Use For |
-|------|---------|
-| `/modes:analyst` | Market research, brainstorming, competitive analysis, project briefs |
-| `/modes:architect` | System design, architecture docs, technology selection, API design |
-| `/modes:pm` | PRDs, product strategy, feature prioritization, roadmaps |
-| `/modes:po` | Backlog management, story refinement, acceptance criteria, sprints |
-| `/modes:dev` | Code implementation, debugging, refactoring, best practices |
-| `/modes:qa` | Test architecture, quality gates, code improvement, risk assessment |
-| `/modes:sm` | Story creation, epic management, retrospectives, agile guidance |
-| `/modes:ux-expert` | UI/UX design, wireframes, prototypes, front-end specs |
-| `/modes:bmad-master` | Comprehensive expertise across all domains |
-| `/modes:bmad-orchestrator` | Workflow coordination, multi-agent tasks |
-
-### Available Skills (Workflows)
+### Essential Skills
 
 | Skill | Purpose |
 |-------|---------|
+| `/skills:gather-context` | Navigate knowledge graph from entry point |
+| `/skills:manage-learning` | Save/load topic-based learnings |
+| `/skills:handoff` | Generate phase transition document |
 | `/skills:init-project` | Initialize project with MLDA scaffolding |
 | `/skills:create-doc` | Create documents from YAML templates |
 | `/skills:qa-gate` | Quality gate decisions (PASS/CONCERNS/FAIL/WAIVED) |
-| `/skills:execute-checklist` | Validate against checklists |
-| `/skills:create-next-story` | Create the next story from backlog |
-| `/skills:review-story` | Review story for completeness |
-| `/skills:document-project` | Document an existing project |
-| `/skills:facilitate-brainstorming-session` | Run structured brainstorming |
-| ...and more | See `.claude/commands/skills/` |
 
-### Supporting Resources
+See `.claude/commands/skills/` for all available skills.
 
-| Resource | Location | Purpose |
-|----------|----------|---------|
-| Checklists | `.claude/commands/checklists/` | Quality validation |
-| Templates | `.claude/commands/templates/` | Document scaffolds (YAML-driven) |
-| Data | `.claude/commands/data/` | Reference knowledge bases |
+### Mode Commands
 
-## Usage Examples
-
-### Start a New Project
-
-```
-/modes:analyst
-*help
-```
-Then follow the analyst's guidance for project discovery.
-
-### Create Architecture Documentation
-
-```
-/modes:architect
-*help
-```
-Or directly: `/skills:create-doc architecture`
-
-### Run a Quality Gate
-
-```
-/skills:qa-gate
-```
-
-### Validate Against a Checklist
-
-```
-/skills:execute-checklist architect-checklist
-```
-
-## Mode Commands
-
-Once in a mode, these universal commands are available:
+Once in a mode:
 
 | Command | Action |
 |---------|--------|
-| `*help` | Show available commands for current mode |
+| `*help` | Show available commands |
 | `*exit` | Leave current mode |
-| `*yolo` | Toggle autonomous mode (where supported) |
+| `*explore {DOC-ID}` | Navigate from a document |
+| `*related` | Show related documents |
+| `*context` | Display gathered context |
 
-## Quick Command Reference
+## Neocortex Features
 
-Each mode command automatically loads the right skill and template:
+### Knowledge Graph Navigation
 
-### Key Analyst Commands
-| Command | Skill | Template |
-|---------|-------|----------|
-| `*create-project-brief` | `create-doc` | `project-brief-tmpl.yaml` |
-| `*brainstorm` | `facilitate-brainstorming-session` | `brainstorming-output-tmpl.yaml` |
-| `*init-project` | `init-project` | MLDA scaffolding |
+Documents connect via relationships in `.meta.yaml` sidecars:
 
-### Key Architect Commands
-| Command | Skill | Template |
-|---------|-------|----------|
-| `*create-fullstack-architecture` | `create-doc` | `fullstack-architecture-tmpl.yaml` |
-| `*execute-checklist` | `execute-checklist` | + `architect-checklist` |
+| Relationship | Signal | When to Follow |
+|--------------|--------|----------------|
+| `depends-on` | **Strong** | Always - cannot understand without target |
+| `extends` | **Medium** | If depth allows - adds detail |
+| `references` | **Weak** | If relevant to current task |
+| `supersedes` | **Redirect** | Follow this instead of target |
 
-### Key PM Commands
-| Command | Skill | Template |
-|---------|-------|----------|
-| `*create-prd` | `create-doc` | `prd-tmpl.yaml` |
-| `*create-story` | `create-doc` | `story-tmpl.yaml` |
+### Topic-Based Learning
 
-### Key QA Commands
-| Command | Skill | Template |
-|---------|-------|----------|
-| `*gate` | `qa-gate` | `qa-gate-tmpl.yaml` |
-| `*review` | `review-story` | `qa-gate-tmpl.yaml` |
+Learning persists across sessions per topic:
 
-See [USER-GUIDE.md](docs/USER-GUIDE.md) for the complete command reference with all skill/template mappings.
+```
+1. Session starts (minimal context)
+2. User selects task → Agent identifies topic
+3. Agent loads: .mlda/topics/{topic}/learning.yaml
+4. Work proceeds with topic context
+5. Session ends: Agent proposes saving learnings
+```
+
+### Context Management
+
+| Threshold | Tokens | Documents | Action |
+|-----------|--------|-----------|--------|
+| **Soft** | 35,000 | 8 | Self-assess, consider decomposition |
+| **Hard** | 50,000 | 12 | Must decompose or pause |
+
+When context exceeds thresholds, agents propose multi-agent decomposition.
+
+### Critical Thinking Protocol
+
+All agents operate with an always-on critical thinking substrate:
+
+- **Dispositions** — Accuracy over speed, acknowledge uncertainty, question assumptions
+- **Triggers** — Automatic deeper analysis for ambiguous/high-stakes tasks
+- **Standards** — Quality checks before responding (clarity, accuracy, relevance)
+- **Metacognition** — Self-monitoring for pattern-matching vs. reasoning
+
+See `docs/decisions/DEC-001-critical-thinking-protocol.md` for specification.
 
 ## Repository Structure
 
 ```
-rms-bmad-methodology/
+neocortex-methodology/
 ├── CLAUDE.md                      # Rules layer (auto-loaded)
 ├── README.md                      # This file
 ├── .claude/
-│   ├── commands/
-│   │   ├── modes/                 # Expert personas
-│   │   ├── skills/                # Reusable workflows
-│   │   ├── checklists/            # Quality validation
-│   │   ├── templates/             # Document templates
-│   │   ├── data/                  # Knowledge bases
-│   │   ├── bmad-agents/           # Agent definitions
-│   │   └── bmad-tasks/            # Task definitions
-│   └── settings.local.json        # Project permissions
-├── .mlda/                         # MLDA starter kit (optional)
+│   └── commands/
+│       ├── modes/                 # Expert personas (analyst, architect, dev)
+│       ├── skills/                # Reusable workflows
+│       ├── checklists/            # Quality validation
+│       ├── templates/             # Document templates (YAML-driven)
+│       └── data/                  # Reference knowledge bases
+├── .mlda/                         # MLDA knowledge graph
+│   ├── topics/                    # Topic-based learning
+│   │   └── {topic}/
+│   │       ├── domain.yaml        # Sub-domain structure
+│   │       └── learning.yaml      # Accumulated learnings
+│   ├── docs/                      # Topic documents
+│   │   └── {domain}/
+│   │       ├── {topic}.md
+│   │       └── {topic}.meta.yaml
 │   ├── scripts/                   # PowerShell automation
-│   ├── templates/                 # Topic doc templates
-│   └── docs/                      # Your topic documents
+│   ├── templates/                 # Document templates
+│   ├── schemas/                   # YAML validation schemas
+│   ├── registry.yaml              # Document index
+│   └── config.yaml                # Neocortex configuration
+├── .beads/                        # Issue tracking (optional)
 └── docs/
-    ├── USER-GUIDE.md              # Comprehensive guide
-    ├── RMS-Framework.md           # Methodology specification
-    └── development-history/       # How this was built
+    ├── NEOCORTEX.md               # Full methodology documentation
+    ├── handoff.md                 # Phase transition document
+    └── decisions/                 # Decision records
 ```
 
-## Optional: MLDA Integration
+## MLDA Integration
 
-**MLDA** (Modular Linked Documentation Architecture) replaces monolithic docs with interconnected topic documents.
+**MLDA** (Modular Linked Documentation Architecture) implements the knowledge graph:
 
 - Each topic = 1 markdown file + 1 metadata YAML sidecar
 - Documents link via DOC-IDs: `DOC-{DOMAIN}-{NNN}`
 - PowerShell scripts automate registry and validation
 
-### Quick Setup
+### Initialize MLDA
 
 ```bash
-# Via skill (recommended for 15+ documents)
+# Via skill (recommended)
 /skills:init-project
 
 # Or via analyst mode
@@ -204,34 +188,40 @@ rms-bmad-methodology/
 *init-project
 ```
 
-### Automatic Integration
+See `.mlda/README.md` for details.
 
-When `.mlda/` exists in your project, document-creating commands automatically:
-- Assign DOC-IDs from the registry
-- Create `.meta.yaml` sidecars alongside documents
-- Update the registry
-- Ask about related documents
+## Beads Issue Tracking
 
-No manual steps required - just use `*create-project-brief`, `*brainstorm`, etc. as normal.
-
-See `.mlda/README.md` for the starter kit.
-
-## Optional: Beads Issue Tracking
-
-**Beads** is a lightweight issue tracking system with dependency management.
+**Beads** provides lightweight issue tracking with dependency management:
 
 ```bash
-bd init                           # Initialize in your project
-bd create "Task description" -p 1 # Create a task
-bd ready                          # See unblocked work
-bd close <id> --reason "Done"     # Complete a task
+bd init                           # Initialize
+bd ready                          # Show unblocked work
+bd create "Task" -p 1             # Create task (priority 0-4)
+bd update <id> --status in_progress
+bd close <id> --reason "Done"
 ```
 
 ## Documentation
 
-- **[USER-GUIDE.md](docs/USER-GUIDE.md)** - Comprehensive usage guide
-- **[RMS-Framework.md](docs/RMS-Framework.md)** - Methodology specification
-- **[Development History](docs/development-history/)** - How this framework was built
+| Document | Purpose |
+|----------|---------|
+| [docs/NEOCORTEX.md](docs/NEOCORTEX.md) | Full methodology documentation |
+| [.mlda/README.md](.mlda/README.md) | MLDA quick start |
+| [docs/decisions/](docs/decisions/) | Decision records |
+
+## Deprecated Modes
+
+The following modes are deprecated (January 2026) and will be removed in February 2026:
+
+| Deprecated | Use Instead |
+|------------|-------------|
+| `/modes:pm` | `/modes:analyst` |
+| `/modes:po` | `/modes:analyst` |
+| `/modes:sm` | `/modes:analyst` |
+| `/modes:qa` | `/modes:dev` |
+
+These roles were consolidated into the 3-role workflow to reduce handoffs.
 
 ## Contributing
 
@@ -243,4 +233,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-*RMS-BMAD Methodology v1.0*
+*Neocortex Methodology v2.0 | Built on the RMS Framework*

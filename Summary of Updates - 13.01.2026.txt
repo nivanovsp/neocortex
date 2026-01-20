@@ -1,0 +1,51 @@
+  Summary of Updates
+
+  All 10 Modes Updated
+
+  Each mode now has:
+  1. Commands Table - Shows command, description, and execution mapping
+  2. Command Execution Details - Explicit skill, template, checklist, and data for each command
+  3. Execution Protocol - Step-by-step instructions for Claude to follow
+
+  Documentation Updated
+  ┌───────────────┬──────────────────────────────────────────────────────────────────────────┐
+  │   Document    │                                 Changes                                  │
+  ├───────────────┼──────────────────────────────────────────────────────────────────────────┤
+  │ USER-GUIDE.md │ Complete command reference with skill/template mappings for all 10 modes │
+  ├───────────────┼──────────────────────────────────────────────────────────────────────────┤
+  │ README.md     │ Quick command reference section with key commands                        │
+  └───────────────┴──────────────────────────────────────────────────────────────────────────┘
+  Example of New Mode Structure
+
+  ## Commands
+
+  | Command | Description | Execution |
+  |---------|-------------|-----------|
+  | `*create-project-brief` | Create project brief | Execute `create-doc` skill with `project-brief-tmpl.yaml` |
+
+  ## Command Execution Details
+
+  ### *create-project-brief
+  **Skill:** `create-doc`
+  **Template:** `project-brief-tmpl.yaml`
+  **Process:** Interactive document creation with elicitation...
+
+  ## Execution Protocol
+
+  When user invokes a command:
+  1. Identify the command from the table above
+  2. Load the specified skill from `.claude/commands/skills/`
+  3. If a template is specified, load it from `.claude/commands/templates/`
+  4. Execute the skill following its instructions completely
+
+  Ready for Stress Testing
+
+  When you activate a mode (e.g., /modes:analyst) and run a command (e.g., *create-project-brief), Claude will now:
+
+  1. Look up the command in the mode's table
+  2. See it needs create-doc skill with project-brief-tmpl.yaml
+  3. Load the skill from .claude/commands/skills/create-doc.md
+  4. Load the template from .claude/commands/templates/project-brief-tmpl.yaml
+  5. Execute the skill's workflow completely
+
+  Repository: https://github.com/nivanovsp/rms-bmad-framework

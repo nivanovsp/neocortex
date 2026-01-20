@@ -1,3 +1,6 @@
+# MLDA Sidecar v2 - Neocortex Format
+# Schema: .mlda/schemas/sidecar-v2.schema.yaml
+
 id: DOC-CORE-001
 title: "MLDA Neocortex Paradigm"
 status: active
@@ -7,8 +10,8 @@ created:
   by: "Claude (Architect)"
 
 updated:
-  date: "2026-01-14"
-  by: "Claude (Architect)"
+  date: "2026-01-20"
+  by: "Claude (Developer)"
 
 tags:
   - architecture
@@ -17,6 +20,8 @@ tags:
   - knowledge-graph
   - navigation
   - paradigm
+
+domain: CORE
 
 summary: |
   Foundational document explaining the neocortex model for MLDA.
@@ -30,5 +35,31 @@ related:
   - id: DOC-CORE-003
     type: extends
     why: "Sidecar schema - defines the dendrite structure"
+
+# Neocortex v2: Predictive Context
+predictions:
+  when_architecting:
+    required: []
+    likely: [DOC-CORE-002, DOC-CORE-003]
+  when_implementing:
+    required: [DOC-CORE-002]
+    likely: [DOC-CORE-003, DOC-CORE-004]
+
+# Neocortex v2: Reference Frames
+reference_frames:
+  domain: methodology
+  layer: design
+  stability: stable
+  scope: cross-cutting
+
+# Neocortex v2: Traversal Boundaries
+boundaries:
+  related_domains:
+    - navigation
+    - schema
+  isolated_from: []
+
+# Neocortex v2: Critical Markers
+has_critical_markers: false
 
 beads: "Ways of Development-23"

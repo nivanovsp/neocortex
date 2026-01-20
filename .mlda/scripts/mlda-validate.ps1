@@ -46,6 +46,11 @@ $stats = @{
     OrphanDocs = 0
     MissingMeta = 0
     FixedIssues = 0
+    # v2 stats
+    V2Sidecars = 0
+    V1Sidecars = 0
+    PredictionRefs = 0
+    BrokenPredictionRefs = 0
 }
 
 $issues = @()
@@ -106,15 +111,88 @@ function Load-Registry {
     return $registry
 }
 
-# Extract DOC-ID references from markdown content
+# Find code block regions (fenced ``` and inline `) to exclude from validation
+function Find-CodeBlockRegions {
+    param([string]$Content)
+
+    $regions = @()
+
+    # Find fenced code blocks (```...```)
+    $fencedPattern = '(?s)```[^\n]*\n.*?```'
+    $fencedMatches = [regex]::Matches($Content, $fencedPattern)
+    foreach ($match in $fencedMatches) {
+        $regions += [PSCustomObject]@{
+            Start = $match.Index
+            End = $match.Index + $match.Length
+        }
+    }
+
+    # Find inline code blocks (`...`) - simple approach using character scan
+    # PowerShell backticks are tricky in regex, so we scan manually
+    $inBacktick = $false
+    $btStart = 0
+    for ($i = 0; $i -lt $Content.Length; $i++) {
+        $char = $Content[$i]
+        if ($char -eq [char]96) {  # 96 is ASCII for backtick
+            if (-not $inBacktick) {
+                $inBacktick = $true
+                $btStart = $i
+            } else {
+                # Check we're not inside a fenced block
+                $inFenced = $false
+                foreach ($region in $regions) {
+                    if ($btStart -ge $region.Start -and $btStart -lt $region.End) {
+                        $inFenced = $true
+                        break
+                    }
+                }
+                if (-not $inFenced) {
+                    $regions += [PSCustomObject]@{
+                        Start = $btStart
+                        End = $i + 1
+                    }
+                }
+                $inBacktick = $false
+            }
+        }
+        # Reset on newline (inline code doesn't span lines)
+        if ($char -eq "`n") {
+            $inBacktick = $false
+        }
+    }
+
+    return $regions
+}
+
+# Check if a position is inside any code block region
+function Test-InsideCodeBlock {
+    param([int]$Position, [array]$CodeRegions)
+
+    foreach ($region in $CodeRegions) {
+        if ($Position -ge $region.Start -and $Position -lt $region.End) {
+            return $true
+        }
+    }
+    return $false
+}
+
+# Extract DOC-ID references from markdown content (excluding code blocks)
 function Find-DocIdRefs {
     param([string]$Content, [string]$FilePath)
 
     $refs = @()
     $pattern = "DOC-[A-Z]+-\d{3}"
 
+    # Find code block regions to exclude
+    $codeRegions = Find-CodeBlockRegions -Content $Content
+
     $matches = [regex]::Matches($Content, $pattern)
     foreach ($match in $matches) {
+        # Skip DOC-IDs inside code blocks (these are examples, not real references)
+        if (Test-InsideCodeBlock -Position $match.Index -CodeRegions $codeRegions) {
+            continue
+        }
+
         $refs += [PSCustomObject]@{
             DocId = $match.Value
             File = $FilePath
@@ -191,6 +269,72 @@ function Find-MetaLinks {
     }
 
     return $links
+}
+
+# Check sidecar for v2 fields and extract prediction DOC-IDs
+function Get-MetaV2Info {
+    param([string]$MetaPath)
+
+    $info = @{
+        IsV2 = $false
+        PredictionRefs = @()
+        HasPredictions = $false
+        HasReferenceFrames = $false
+        HasBoundaries = $false
+        HasCriticalMarkers = $false
+    }
+
+    if (-not (Test-Path $MetaPath)) {
+        return $info
+    }
+
+    $content = Get-Content $MetaPath -Raw
+
+    # Check for v2 indicators
+    if ($content -match "^reference_frames:" -or $content -match "`nreference_frames:") {
+        $info.IsV2 = $true
+        $info.HasReferenceFrames = $true
+    }
+    if ($content -match "^predictions:" -or $content -match "`npredictions:") {
+        $info.IsV2 = $true
+        $info.HasPredictions = $true
+    }
+    if ($content -match "^boundaries:" -or $content -match "`nboundaries:") {
+        $info.IsV2 = $true
+        $info.HasBoundaries = $true
+    }
+    if ($content -match "^domain:\s*\w+" -or $content -match "`ndomain:\s*\w+") {
+        $info.IsV2 = $true
+    }
+    if ($content -match "has_critical_markers:\s*true") {
+        $info.HasCriticalMarkers = $true
+    }
+
+    # Extract DOC-IDs from predictions
+    if ($info.HasPredictions) {
+        $docIdPattern = "DOC-[A-Z]+-\d{3}"
+        $inPredictions = $false
+
+        foreach ($line in (Get-Content $MetaPath)) {
+            if ($line -match "^predictions:") {
+                $inPredictions = $true
+                continue
+            }
+            if ($inPredictions) {
+                if ($line -match "^\w" -and $line -notmatch "^\s") {
+                    break
+                }
+                $matches = [regex]::Matches($line, $docIdPattern)
+                foreach ($match in $matches) {
+                    if ($match.Value -notin $info.PredictionRefs) {
+                        $info.PredictionRefs += $match.Value
+                    }
+                }
+            }
+        }
+    }
+
+    return $info
 }
 
 # Main execution
@@ -312,6 +456,35 @@ foreach ($mdFile in $mdFiles) {
                 }
             }
         }
+
+        # Check v2 fields
+        $v2Info = Get-MetaV2Info -MetaPath $metaPath
+
+        if ($v2Info.IsV2) {
+            $stats.V2Sidecars++
+        } else {
+            $stats.V1Sidecars++
+        }
+
+        # Validate prediction DOC-ID references
+        if ($v2Info.PredictionRefs.Count -gt 0) {
+            $stats.PredictionRefs += $v2Info.PredictionRefs.Count
+
+            foreach ($predRef in $v2Info.PredictionRefs) {
+                if (-not $registry.DocIds.ContainsKey($predRef)) {
+                    $stats.BrokenPredictionRefs++
+                    $issues += [PSCustomObject]@{
+                        Type = "BrokenPrediction"
+                        Severity = "Warning"
+                        File = $relativePath
+                        Detail = "Prediction references unknown DOC-ID: $predRef"
+                    }
+                }
+                elseif ($Verbose) {
+                    Write-Host "    [OK] Prediction ref: $predRef" -ForegroundColor DarkGreen
+                }
+            }
+        }
     }
 }
 
@@ -343,6 +516,11 @@ Write-Host "DOC-ID refs found:    $($stats.DocIdRefsFound)"
 Write-Host "File links found:     $($stats.FileLinksFound)"
 Write-Host "Meta links found:     $($stats.MetaLinksFound)"
 
+Write-Host "`nNeocortex v2 Status:"
+Write-Host "  v2 sidecars:        $($stats.V2Sidecars)" -ForegroundColor $(if ($stats.V2Sidecars -gt 0) { "Green" } else { "Gray" })
+Write-Host "  v1 sidecars:        $($stats.V1Sidecars)" -ForegroundColor $(if ($stats.V1Sidecars -gt 0) { "Yellow" } else { "Gray" })
+Write-Host "  Prediction refs:    $($stats.PredictionRefs)"
+
 $hasIssues = $issues.Count -gt 0
 
 if ($hasIssues) {
@@ -365,6 +543,7 @@ if ($hasIssues) {
     Write-Host "Broken DOC-ID refs:   $($stats.BrokenDocIds)" -ForegroundColor $(if ($stats.BrokenDocIds -gt 0) { "Red" } else { "Green" })
     Write-Host "Broken file links:    $($stats.BrokenFileLinks)" -ForegroundColor $(if ($stats.BrokenFileLinks -gt 0) { "Red" } else { "Green" })
     Write-Host "Broken meta links:    $($stats.BrokenMetaLinks)" -ForegroundColor $(if ($stats.BrokenMetaLinks -gt 0) { "Red" } else { "Green" })
+    Write-Host "Broken predictions:   $($stats.BrokenPredictionRefs)" -ForegroundColor $(if ($stats.BrokenPredictionRefs -gt 0) { "Yellow" } else { "Green" })
     Write-Host "Missing .meta.yaml:   $($stats.MissingMeta)" -ForegroundColor $(if ($stats.MissingMeta -gt 0) { "Yellow" } else { "Green" })
     Write-Host "Orphan registry:      $($stats.OrphanDocs)" -ForegroundColor $(if ($stats.OrphanDocs -gt 0) { "Red" } else { "Green" })
 

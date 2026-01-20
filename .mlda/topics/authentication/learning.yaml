@@ -1,0 +1,24 @@
+# Topic Learning File
+# Schema: .mlda/schemas/topic-learning.schema.yaml
+
+topic: authentication
+version: 2
+last_updated: "2026-01-20"
+sessions_contributed: 0
+
+groupings:
+  - name: token-management
+    docs:
+      - DOC-AUTH-001
+      - DOC-AUTH-002
+    origin: human
+    confidence: medium
+
+activations: []
+
+verification_notes: []
+
+related_domains: []
+
+anti_patterns: []
+

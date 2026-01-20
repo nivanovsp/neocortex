@@ -1,0 +1,47 @@
+  # Research: Measuring Critical Thinking in AI Agents
+
+  ## Context
+  I am developing a "Critical Thinking Protocol" for AI coding agents
+  (like Claude Code, Cursor, Augment). This protocol makes critical
+  thinking an always-on cognitive substrate rather than an invocable
+  skill. The agent should automatically:
+  - Question incoming information (source bias, completeness, assumptions)
+  - Monitor its own reasoning (pattern-matching vs. logic, confirmation bias)
+  - Express confidence calibration honestly
+  - Offer alternative perspectives without obstructing action
+
+  ## Research Questions
+
+  1. **Evaluation Frameworks**
+     - How is critical thinking measured in humans (educational assessments)?
+     - Are there existing frameworks for evaluating AI reasoning quality?
+     - What metrics distinguish good critical thinking from poor?
+
+  2. **Observable Behaviors**
+     - What does good critical thinking LOOK like in AI outputs?
+     - What are signs of poor critical thinking (overconfidence, blind acceptance)?
+     - How can we create test cases that reveal critical thinking quality?
+
+  3. **Calibration Testing**
+     - How do we test if confidence expressions match actual accuracy?
+     - What methods exist for testing AI calibration (knowing what you don't know)?
+     - Are there benchmark datasets for this?
+
+  4. **Failure Modes**
+     - What are the failure modes of critical thinking protocols?
+       - Analysis paralysis (overthinking)
+       - Defensive skepticism (refusing to commit)
+       - Performative hedging (fake uncertainty)
+     - How do we detect and prevent these?
+
+  5. **Prior Art**
+     - Has anyone implemented "always-on" critical thinking in AI agents?
+     - What do Constitutional AI, RLHF, or other alignment methods say about this?
+     - Are there papers on metacognition in LLMs?
+
+  ## Desired Output
+  - Concrete evaluation methods I can apply
+  - Test case patterns or templates
+  - Metrics that indicate success/failure
+  - Warning signs of protocol failure
+  - Any existing tools or frameworks I can leverage
