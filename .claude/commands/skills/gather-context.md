@@ -60,6 +60,49 @@ This skill defines the standard context-gathering workflow that agents should fo
 
 ---
 
+## Prerequisite Check: Topic Learning Status
+
+Before proceeding with Phase 1, verify topic learning status:
+
+### Check Sequence
+
+1. **Is current topic identified?**
+   - From mode activation (should have been identified during activation protocol)
+   - From DOC-ID prefixes in the task/story
+   - From explicit user mention
+
+2. **Is topic learning loaded?**
+   - Check if `*learning load {topic}` was executed during mode activation
+   - If learnings are loaded, proceed to Phase 1
+
+3. **If topic learning NOT loaded and topic IS identified:**
+   ```
+   ⚠ Topic learning not loaded
+
+   Topic identified: {topic-name}
+   Action: Execute `*learning load {topic}` before proceeding
+
+   This ensures learned co-activation patterns are available for document prioritization.
+   ```
+
+   → Execute: `*learning load {topic}` first
+   → Then proceed with Phase 1
+
+4. **If topic NOT identified:**
+   - Proceed to Phase 1 to identify topic from DOC-IDs
+   - Load learnings once topic is determined
+
+### Why This Matters
+
+Topic learnings contain:
+- **Co-activation patterns**: Which documents are frequently needed together
+- **Groupings**: Sub-domain clusters for efficient loading
+- **Verification notes**: Past lessons learned to avoid repeating mistakes
+
+Loading these BEFORE context gathering makes the process more efficient and accurate.
+
+---
+
 ## Phase 1: Topic Identification
 
 **Goal:** Identify the topic domain and load relevant learnings.

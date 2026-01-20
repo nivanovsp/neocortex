@@ -31,6 +31,7 @@ This skill manages the topic-based learning system that allows agents to accumul
 | `*learning list` | List all available topics | `mlda-learning.ps1 -List` |
 | `*learning load {topic}` | Load learnings for a topic | `mlda-learning.ps1 -Topic {topic} -Load` |
 | `*learning init {topic}` | Initialize a new topic | `mlda-learning.ps1 -Topic {topic} -Init` |
+| `*learning status` | Show current learning state | Interactive (no script needed) |
 | `*learning save` | Propose saving session learnings | Interactive workflow |
 | `*learning grouping` | Add a document grouping | Interactive + script |
 | `*learning activation` | Add co-activation pattern | Interactive + script |
@@ -97,6 +98,74 @@ Use loaded learnings to inform work:
 | **Activations** | Prioritize loading frequently co-activated docs |
 | **Verification Notes** | Watch for issues caught in past sessions |
 | **Related Domains** | Know which domain boundaries might need crossing |
+
+---
+
+## Workflow: Check Learning Status
+
+**When:** Anytime during a session to see current learning state
+
+### Purpose
+
+Provides visibility into:
+- Whether learnings are currently loaded
+- What topic is active
+- Session tracking summary
+- Pending save status
+
+### Output Format
+
+**If learnings are loaded:**
+```
+=== Learning Status ===
+
+Topic: authentication
+Loaded: Yes (v3, 12 sessions contributed)
+Last updated: 2026-01-18
+
+Groupings Available:
+  - token-management (3 docs)
+  - session-handling (2 docs)
+  - oauth-integration (4 docs)
+
+High-Frequency Activations:
+  - [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001] (7 times)
+  - [DOC-AUTH-002, DOC-AUTH-003] (5 times)
+
+Verification Notes: 2 recorded
+
+--- Session Tracking ---
+Documents accessed this session: 4
+  - DOC-AUTH-001, DOC-AUTH-002, DOC-API-003, DOC-SEC-001
+Potential new co-activation: [DOC-AUTH-001, DOC-API-003]
+Pending verification notes: 1
+
+Pending Save: Yes (new patterns discovered)
+```
+
+**If no learnings loaded:**
+```
+=== Learning Status ===
+
+Topic: None loaded
+Loaded: No
+
+To load learnings, use: *learning load {topic}
+Available topics: authentication, user-management, payments
+
+--- Session Tracking ---
+Documents accessed this session: 0
+No patterns tracked yet.
+
+Pending Save: No
+```
+
+### When to Use
+
+- After activation to verify learnings loaded correctly
+- Mid-session to check what's been tracked
+- Before ending session to see what will be proposed for save
+- When switching topics to see current state
 
 ---
 

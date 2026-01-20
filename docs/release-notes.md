@@ -4,6 +4,72 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [1.5.0] - 2026-01-20
+
+### Added: Automatic Learning Integration
+
+Implemented **automatic topic-based learning integration** across all modes. The learning system infrastructure existed but agents weren't automatically loading and using topic learnings. This release makes learning automatic rather than manual.
+
+#### Key Features
+
+- **Mandatory Activation Protocol**: All modes now have a prescriptive, step-by-step activation protocol that MUST be executed (not just descriptive lists)
+- **Automatic Learning Load**: Agents automatically execute `*learning load {topic}` when topic is identified during activation
+- **Session Tracking**: All modes now track document access patterns, co-activations, and verification catches during sessions
+- **Session End Protocol**: Agents propose saving learnings at session end with tracked patterns
+- **Learning Status Command**: New `*learning status` command shows current learning state at any time
+
+#### Updated Modes
+
+| Mode | Key Changes |
+|------|-------------|
+| `analyst.md` | Mandatory protocol, `*learning` command, session tracking, session end protocol |
+| `architect.md` | Mandatory protocol (handoff-first), `*learning` command, session tracking |
+| `dev.md` | Mandatory protocol (story DOC-IDs), `*learning` command, session tracking |
+| `ux-expert.md` | Added MLDA Enforcement Protocol (was missing), mandatory protocol, session tracking |
+| `bmad-master.md` | Complete learning integration (was missing), MLDA protocol, session tracking |
+
+#### Updated Skills
+
+| Skill | Changes |
+|-------|---------|
+| `manage-learning.md` | Added `*learning status` command with output formats |
+| `gather-context.md` | Added prerequisite check for topic learnings before Phase 1 |
+
+#### Activation Protocol Structure
+
+All modes now follow this structure:
+1. **Step 1: MLDA Status Check** - Check for `.mlda/` folder, report document count
+2. **Step 2: Topic Identification & Learning Load** - Identify topic, execute `*learning load {topic}`
+3. **Step 3: Context Gathering** - Run `*gather-context` proactively if task provided
+4. **Step 4: Greeting & Ready State** - Greet as persona, display commands, await instructions
+5. **Session End Protocol** - Propose saving learnings when session ends
+
+#### Session Tracking Categories
+
+| Category | What to Track |
+|----------|--------------|
+| Documents Accessed | DOC-IDs loaded or referenced |
+| Co-Activations | Documents needed together |
+| Verification Catches | Issues discovered in docs |
+| Domain-Specific | Architecture patterns, implementation gotchas, etc. |
+
+#### Documentation
+
+| Document | Purpose |
+|----------|---------|
+| `docs/decisions/DEC-003-automatic-learning-integration.md` | Full specification |
+| Updated `docs/USER-GUIDE.md` | User-facing documentation |
+
+#### Beads Tracking
+
+- Epic: Ways of Development-104
+- Task 105: bmad-master.md update (closed)
+- Task 106: Session tracking mechanism (closed)
+- Task 107: Learning status command (closed)
+- Task 108: Documentation updates (closed)
+
+---
+
 ## [1.4.0] - 2026-01-20
 
 ### Added: UX Skills with Neocortex Integration

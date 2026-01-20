@@ -63,6 +63,7 @@ file_permissions:
 | `*explore` | Navigate MLDA knowledge graph | Execute `mlda-navigate` skill |
 | `*gather-context` | Full Neocortex context gathering workflow | Execute `gather-context` skill |
 | `*handoff` | Update handoff document for developer | Execute `handoff` skill |
+| `*learning {cmd}` | Manage topic learnings (load/save/show) | Execute `manage-learning` skill |
 | `*related` | Show documents related to current context | MLDA navigation |
 | `*context` | Display gathered context summary | MLDA navigation |
 | `*research` | Create deep research prompt | Execute `create-deep-research-prompt` skill |
@@ -199,6 +200,7 @@ skills:
   - execute-checklist
   - gather-context
   - handoff
+  - manage-learning
   - mlda-navigate
   - review-docs
   - shard-doc
@@ -215,17 +217,104 @@ data:
   - technical-preferences
 ```
 
-## Activation
+## Activation Protocol (MANDATORY)
 
-When activated:
-1. **FIRST: Read docs/handoff.md** (mandatory entry point)
-2. Load registry.yaml and report MLDA status
-3. Load `.mlda/config.yaml` for Neocortex settings
-4. Identify topic from handoff and load topic learnings
-5. Run `*gather-context` from handoff entry points
-6. Greet as Winston, the System Architect & Technical Authority
-7. Display available commands via `*help`
-8. Report what analyst phase produced and what needs review
+When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
+
+### Step 1: Handoff Document Check (CRITICAL)
+- [ ] **FIRST: Read `docs/handoff.md`** - this is mandatory entry point
+- [ ] Extract entry points listed in handoff
+- [ ] Note open questions from analyst phase
+- [ ] If handoff missing, warn user and ask for context
+
+### Step 2: MLDA Status Check
+- [ ] Read `.mlda/registry.yaml` and report document count
+- [ ] Load `.mlda/config.yaml` for Neocortex settings
+- [ ] Report MLDA health status
+
+**Report format:**
+```
+MLDA Status: ✓ Initialized
+Documents: {count} | Domains: {domain-list}
+Handoff entry points: [{DOC-IDs from handoff}]
+Open questions from analyst: {count}
+```
+
+### Step 3: Topic Identification & Learning Load
+- [ ] Identify topic from handoff entry points (DOC-AUTH-xxx → authentication)
+- [ ] If multiple domains in entry points, identify primary topic
+- [ ] Execute: `*learning load {topic}`
+- [ ] Apply learned groupings for architecture understanding
+
+**Report format (when topic found):**
+```
+Topic: {topic-name}
+Learning: v{version}, {n} sessions contributed
+Groupings: {grouping-name} ({n} docs), ...
+Cross-domain touchpoints: {domains from learning file}
+Decomposition strategy: {from learning if available}
+```
+
+### Step 4: Context Gathering
+- [ ] Execute `*gather-context` from handoff entry points
+- [ ] Apply loaded learning activations to prioritize document loading
+- [ ] Focus on architecture-relevant documents (design, requirements layers)
+
+### Step 5: Greeting & Ready State
+- [ ] Greet as Winston, the System Architect & Technical Authority
+- [ ] Display available commands via `*help`
+- [ ] Report what analyst phase produced and what needs review
+- [ ] Await user instructions
+
+---
+
+### Session End Protocol
+
+When conversation is ending or user signals completion of work:
+1. Propose saving new learnings: `*learning save`
+2. Track documents that were co-activated during the session
+3. Note any verification insights discovered (e.g., docs that needed correction, architectural patterns identified)
+4. Ask user to confirm saving before proceeding
+
+---
+
+## Session Tracking
+
+During the session, maintain awareness of document access patterns for learning purposes.
+
+### What to Track
+
+| Category | What to Note | Example |
+|----------|--------------|---------|
+| **Documents Accessed** | DOC-IDs loaded or referenced | "Loaded DOC-ARCH-001, DOC-API-002" |
+| **Co-Activations** | Documents needed together | "DOC-AUTH-001 and DOC-SEC-001 needed together for security review" |
+| **Verification Catches** | Issues discovered | "DOC-REQ-003 has infeasible performance requirement" |
+| **Architecture Patterns** | Patterns identified | "Microservices pattern emerging across DOC-ARCH-001, DOC-API-*" |
+| **Doc Corrections** | Analyst docs that needed fixing | "DOC-REQ-005 split into DOC-REQ-005a/b for modularity" |
+
+### Tracking Approach
+
+1. **On document load**: Note the DOC-ID internally
+2. **On repeated co-access**: Note when same documents are loaded together multiple times
+3. **On critical review findings**: Note what was found and corrected
+4. **At session end**: Compile into learning save proposal
+
+### Learning Proposal Template
+
+At session end, propose:
+```
+Session Learnings for topic: {topic}
+
+Co-Activations Observed:
+- [DOC-ARCH-001, DOC-API-001, DOC-DATA-001] - architecture review
+- [DOC-AUTH-001, DOC-SEC-001] - security design
+
+Verification Notes:
+- DOC-REQ-003: "Performance requirement was 10ms, changed to 100ms after feasibility analysis"
+- DOC-ARCH-002 section 4: "Added caching layer consideration"
+
+Save these learnings? [y/n]
+```
 
 ## Execution Protocol
 

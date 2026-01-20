@@ -347,6 +347,68 @@ The skill will:
    .mlda/scripts/mlda-brief.ps1
    ```
 
+### Automatic Learning Integration
+
+All modes now **automatically load topic learnings** during activation. This happens without manual intervention:
+
+#### What Happens on Mode Activation
+
+1. **MLDA Status Check** - Agent checks for `.mlda/` folder and reports status
+2. **Topic Identification** - Agent identifies topic from:
+   - DOC-ID references in task (DOC-AUTH-xxx → authentication)
+   - Beads task labels
+   - Explicit user mention
+3. **Learning Load** - Agent executes `*learning load {topic}` automatically
+4. **Context Gathering** - If task provided, runs `*gather-context` proactively
+
+#### Example Activation Output
+
+```
+MLDA Status: ✓ Initialized
+Documents: 24 | Domains: AUTH, API, SEC, DATA
+Last registry update: 2026-01-20
+
+Topic: authentication
+Learning: v3, 12 sessions contributed
+Groupings: token-management (3 docs), session-handling (2 docs)
+Activations: [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001] (freq: 7)
+Verification note: "Always check compliance markers in token docs"
+
+Hello! I'm Maya, the Business Analyst...
+```
+
+#### Session Tracking
+
+During your session, the agent tracks:
+- **Documents accessed** - DOC-IDs loaded or referenced
+- **Co-activations** - Documents frequently needed together
+- **Verification catches** - Issues discovered (ambiguous docs, corrections made)
+
+#### Session End
+
+When ending a session, the agent proposes saving learnings:
+
+```
+Session Learnings for topic: authentication
+
+Co-Activations Observed:
+- [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001] - authentication work
+
+Verification Notes:
+- DOC-AUTH-007 section 3.2: "Ambiguous language clarified"
+
+Save these learnings? [y/n]
+```
+
+#### Learning Commands
+
+| Command | Description |
+|---------|-------------|
+| `*learning load {topic}` | Load learnings for a topic |
+| `*learning save` | Propose saving session learnings |
+| `*learning status` | Show current learning state |
+| `*learning list` | List all available topics |
+
 ### Automatic MLDA Integration
 
 When `.mlda/` exists in your project, document-creating commands **automatically integrate**:
@@ -778,4 +840,4 @@ Each command below shows exactly which skill and template it uses.
 
 ---
 
-*User Guide v1.3 | RMS + MLDA + BMAD | 2026-01-20*
+*User Guide v1.5 | RMS + MLDA + BMAD | 2026-01-20*
