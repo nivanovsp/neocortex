@@ -240,16 +240,28 @@ Ready for implementation: {stories/tasks from handoff}
 ### Step 3: Topic Identification & Learning Load
 - [ ] If story provided, extract topic from story DOC-ID references (DOC-AUTH-xxx → authentication)
 - [ ] If no story yet, identify topic from handoff entry points
-- [ ] Execute: `*learning load {topic}`
-- [ ] Apply learned co-activation patterns for efficient context gathering
+- [ ] If topic identified:
+  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, verification_notes
+  - [ ] Report using MANDATORY format below
+  - [ ] Apply learned co-activation patterns for efficient context gathering
 
-**Report format (when topic found):**
+**MANDATORY Learning Status Report:**
 ```
 Topic: {topic-name}
 Learning: v{version}, {n} sessions contributed
-Groupings: {grouping-name} ({n} docs), ...
-Activations: [{DOC-IDs}] (freq: {n})
-Verification note: "{any relevant notes for implementation}"
+Groupings: {grouping-name} ({n} docs), ... | or "none yet"
+Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
+Note: "{relevant verification note for implementation}" | or omit if none
+```
+
+**Example:**
+```
+Topic: authentication
+Learning: v2, 3 sessions contributed
+Groupings: token-management (2 docs)
+Activations: [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001] (freq: 5)
+Note: "Token refresh requires checking DOC-SEC-001 for compliance"
 ```
 
 ### Step 4: Context Gathering (if story provided)

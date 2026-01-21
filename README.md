@@ -110,17 +110,18 @@ Learning **automatically** loads during mode activation and persists across sess
 ```
 1. Mode activated → Agent checks MLDA status
 2. Topic identified from DOC-IDs, beads labels, or user mention
-3. Agent auto-executes: *learning load {topic}
-4. Work proceeds with topic context + session tracking
-5. Session ends: Agent proposes saving new learnings
+3. Agent reads: .mlda/topics/{topic}/learning.yaml (direct file read)
+4. Learning status displayed in greeting (MANDATORY visible confirmation)
+5. Work proceeds with topic context + session tracking
+6. Session ends: Agent proposes saving new learnings
 ```
 
 **Session Tracking**: Agents track documents accessed, co-activation patterns, and verification catches throughout the session.
 
 **Learning Commands**:
-- `*learning load {topic}` - Load topic learnings
 - `*learning status` - Show current learning state
 - `*learning save` - Save session learnings
+- `*learning note` - Add verification note
 
 ### Context Management
 

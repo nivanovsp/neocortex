@@ -192,17 +192,29 @@ Last registry update: {date from registry}
   - Beads task labels (if working from beads)
   - Explicit user mention ("working on authentication")
   - Context from conversation
-- [ ] If topic identified and MLDA present, execute: `*learning load {topic}`
+- [ ] If topic identified and MLDA present:
+  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, verification_notes
+  - [ ] Report using MANDATORY format below
 - [ ] For multi-domain work, identify primary topic or note "Multi-domain task"
-- [ ] If topic not identified, note "Topic: None identified - will determine from work"
+- [ ] If topic not identified, note "Topic: None identified - will determine from task"
 
-**Report format (when topic found):**
+**MANDATORY Learning Status Report:**
 ```
 Topic: {topic-name}
 Learning: v{version}, {n} sessions contributed
-Groupings: {grouping-name} ({n} docs), ...
-Activations: [{DOC-IDs}] (freq: {n})
-Verification note: "{any relevant notes}"
+Groupings: {grouping-name} ({n} docs), ... | or "none yet"
+Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
+Note: "{relevant verification note}" | or omit if none
+```
+
+**Example:**
+```
+Topic: authentication
+Learning: v2, 3 sessions contributed
+Groupings: token-management (2 docs)
+Activations: [DOC-AUTH-001, DOC-AUTH-002] (freq: 3)
+Note: "Check compliance markers in token docs"
 ```
 
 ### Step 3: Context Gathering (if task provided)

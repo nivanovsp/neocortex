@@ -4,10 +4,12 @@
 
 ---
 
-**Status:** Approved - Implementation In Progress
+**Status:** Approved - Amended by DEC-004
 **Date:** 2026-01-20
 **Authors:** Human + Claude collaboration
-**Related:** DEC-002-neocortex-methodology.md
+**Related:** DEC-002-neocortex-methodology.md, DEC-004-learning-load-optimization.md
+
+> **Note:** DEC-004 amends the learning load approach. Instead of invoking `*learning load {topic}` during activation (which loads the full skill), agents now directly read `.mlda/topics/{topic}/learning.yaml` for token efficiency.
 
 ---
 

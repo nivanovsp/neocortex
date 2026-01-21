@@ -243,16 +243,28 @@ Open questions from analyst: {count}
 ### Step 3: Topic Identification & Learning Load
 - [ ] Identify topic from handoff entry points (DOC-AUTH-xxx → authentication)
 - [ ] If multiple domains in entry points, identify primary topic
-- [ ] Execute: `*learning load {topic}`
-- [ ] Apply learned groupings for architecture understanding
+- [ ] If topic identified:
+  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, related_domains
+  - [ ] Report using MANDATORY format below
+  - [ ] Apply learned groupings for architecture understanding
 
-**Report format (when topic found):**
+**MANDATORY Learning Status Report:**
 ```
 Topic: {topic-name}
 Learning: v{version}, {n} sessions contributed
-Groupings: {grouping-name} ({n} docs), ...
-Cross-domain touchpoints: {domains from learning file}
-Decomposition strategy: {from learning if available}
+Groupings: {grouping-name} ({n} docs), ... | or "none yet"
+Cross-domain touchpoints: {domains} | or "none identified"
+Decomposition strategy: {from learning if available} | or "not yet learned"
+```
+
+**Example:**
+```
+Topic: authentication
+Learning: v2, 3 sessions contributed
+Groupings: token-management (2 docs), session-handling (2 docs)
+Cross-domain touchpoints: rbac, security
+Decomposition strategy: "Split by auth mechanism type"
 ```
 
 ### Step 4: Context Gathering

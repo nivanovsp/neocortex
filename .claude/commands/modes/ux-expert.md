@@ -174,16 +174,28 @@ Last registry update: {date from registry}
   - Component or feature area being worked on
   - Explicit user mention ("working on navigation design")
   - Context from conversation
-- [ ] If topic identified, execute: `*learning load {topic}`
-- [ ] If topic not identified, note "Topic: None identified - will determine from work"
+- [ ] If topic identified:
+  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, verification_notes
+  - [ ] Report using MANDATORY format below
+- [ ] If topic not identified, note "Topic: None identified - will determine from task"
 
-**Report format (when topic found):**
+**MANDATORY Learning Status Report:**
 ```
 Topic: {topic-name}
 Learning: v{version}, {n} sessions contributed
-Groupings: {grouping-name} ({n} docs), ...
-Activations: [{DOC-IDs}] (freq: {n})
-Verification note: "{any relevant notes}"
+Groupings: {grouping-name} ({n} docs), ... | or "none yet"
+Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
+Note: "{relevant verification note}" | or omit if none
+```
+
+**Example:**
+```
+Topic: navigation
+Learning: v1, 2 sessions contributed
+Groupings: header-components (3 docs), mobile-nav (2 docs)
+Activations: [DOC-UI-001, DOC-UX-003] (freq: 2)
+Note: "Ensure WCAG 2.1 AA compliance for all nav elements"
 ```
 
 ### Step 3: Context Gathering (if task provided)
