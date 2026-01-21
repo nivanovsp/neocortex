@@ -585,4 +585,81 @@ Save to .mlda/topics/user-flows/learning.yaml? [y/n]
 
 ---
 
+## MLDA Finalization (Automatic)
+
+When user flow output is generated, automatically perform these steps:
+
+### 1. DOC-ID Assignment
+
+- Read `.mlda/registry.yaml` for next available ID in UX domain
+- Assign: `DOC-UX-{NNN}` (e.g., DOC-UX-001, DOC-UX-002)
+- UX domain covers: user flows, journey maps, personas
+
+### 2. Sidecar Creation
+
+Create `{filename}.meta.yaml` alongside the user flow document:
+
+```yaml
+id: DOC-UX-{NNN}
+title: "{User Flow title}"
+status: draft
+domain: UX
+type: user-flow  # or: journey-map, persona
+created: "{date}"
+summary: "{One-line description of what flow this documents}"
+
+related:
+  - id: DOC-REQ-xxx
+    type: depends-on  # Strong signal - requirements drive flow
+    why: "Flow implements these requirements"
+  - id: DOC-PERSONA-xxx
+    type: depends-on  # Strong signal - persona context needed
+    why: "Flow designed for this user type"
+  - id: DOC-UI-xxx
+    type: extends  # Medium signal - wireframes follow flow
+    why: "Wireframes implement steps in this flow"
+  - id: DOC-UX-xxx
+    type: references  # Weak signal - related flows
+    why: "Alternative path or related journey"
+
+reference_frames:
+  layer: design
+  phase: ux-design
+
+predictions:
+  when_implementing:
+    - DOC-UI-xxx  # Wireframes for flow screens
+    - DOC-DS-xxx  # Design system for components
+    - DOC-API-xxx  # API contracts for system interactions
+```
+
+### 3. Registry Update
+
+After creating document and sidecar:
+- Run: `.mlda/scripts/mlda-registry.ps1`
+- Confirm: "Document registered as DOC-UX-{NNN} in MLDA"
+
+### 4. Report Entry Points
+
+List DOC-IDs that stories/developers should reference:
+
+```
+Entry Points for Stories:
+- DOC-UX-{NNN}: {Title} (user flow)
+- Screens needed: {list wireframe DOC-IDs if known}
+- API touchpoints: {list API DOC-IDs if known}
+
+Developers should run: *gather-context DOC-UX-{NNN}
+```
+
+### Relationship Type Standards
+
+| Old Type | Standard Type | Signal Strength |
+|----------|---------------|-----------------|
+| `uses` | `depends-on` | Strong - always follow |
+| `leads_to` | `extends` | Medium - follow if depth allows |
+| `alternative` | `references` | Weak - follow if relevant |
+
+---
+
 *user-flow v2.0 | Neocortex Methodology | UX Skill*

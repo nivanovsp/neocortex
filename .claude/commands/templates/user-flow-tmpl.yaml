@@ -1,0 +1,332 @@
+template:
+  id: user-flow-template-v1
+  name: MLDA User Flow Document
+  version: 1.0
+  description: "Creates MLDA-compliant user flow documentation with auto DOC-ID and sidecar"
+  output:
+    format: markdown
+    filename: .mlda/docs/ux/{{flow_name}}.md
+    title: "User Flow: {{flow_name}}"
+    doc_domain: UX
+    doc_type: user-flow
+    auto_sidecar: true
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+mlda_config:
+  domain: UX
+  doc_prefix: DOC-UX
+  output_dir: .mlda/docs/ux
+  sidecar_template: |
+    id: {{doc_id}}
+    title: "{{flow_name}} User Flow"
+    status: draft
+    domain: UX
+    type: user-flow
+    created: "{{created_date}}"
+    summary: "{{summary}}"
+
+    related:
+    {{#each related}}
+      - id: {{this.id}}
+        type: {{this.type}}
+        why: "{{this.why}}"
+    {{/each}}
+
+    reference_frames:
+      layer: design
+      phase: ux-design
+
+    predictions:
+      when_implementing:
+      {{#each predictions}}
+        - {{this}}
+      {{/each}}
+
+agent_config:
+  editable_sections:
+    - Overview
+    - Flow Diagram
+    - Entry Points
+    - Steps
+    - Alternative Paths
+    - Error Scenarios
+    - Exit Points
+
+sections:
+  - id: header
+    title: Document Header
+    type: template-text
+    template: |
+      # User Flow: {{flow_name}}
+
+      **DOC-ID:** {{doc_id}}
+      **Version:** 1.0
+      **Last Updated:** {{created_date}}
+      **Related Requirements:** {{related_requirements}}
+    auto_populate: true
+    owner: ux-expert
+
+  - id: overview
+    title: Overview
+    type: structured
+    instruction: Define the flow scope and context
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: goal
+        label: Goal
+        instruction: What the user achieves
+        required: true
+      - name: flow_type
+        label: Flow Type
+        instruction: "task_flow, user_journey, microflow, onboarding, error_recovery"
+        required: true
+        choices: [task_flow, user_journey, microflow, onboarding, error_recovery]
+      - name: primary_actor
+        label: Primary Actor
+        instruction: User type or persona
+        required: true
+      - name: estimated_duration
+        label: Estimated Duration
+        instruction: Time to complete flow
+        required: false
+
+  - id: flow-diagram
+    title: Flow Diagram
+    type: code
+    language: mermaid
+    instruction: |
+      Create a Mermaid flowchart showing the user flow.
+      Use flowchart TD for top-down layout.
+      Include decision points, error paths, and exit points.
+    elicit: true
+    owner: ux-expert
+    template: |
+      flowchart TD
+          START([Start]) --> S01[Step 1]
+          S01 --> D01{Decision?}
+          D01 -->|Yes| S02[Step 2]
+          D01 -->|No| S03[Step 3]
+          S02 --> END([End])
+          S03 --> END
+
+  - id: entry-points
+    title: Entry Points
+    type: repeatable
+    instruction: Document all ways users can enter this flow
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: ID
+        instruction: "EP-01, EP-02, etc."
+        required: true
+      - name: name
+        label: Name
+        required: true
+      - name: trigger
+        label: Trigger
+        instruction: What action starts this entry
+        required: true
+      - name: preconditions
+        label: Preconditions
+        instruction: What must be true before entry
+        type: bullet-list
+      - name: frequency
+        label: Frequency
+        instruction: "Primary (60%), Secondary (30%), etc."
+
+  - id: steps
+    title: Steps
+    type: repeatable
+    instruction: Document each step in the happy path
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: Step ID
+        instruction: "S01, S02, etc."
+        required: true
+      - name: name
+        label: Step Name
+        required: true
+      - name: type
+        label: Type
+        instruction: "user_action, system_action, decision, wait"
+        required: true
+        choices: [user_action, system_action, decision, wait]
+      - name: description
+        label: Description
+        required: true
+      - name: screen_ref
+        label: Screen Reference
+        instruction: "DOC-UI-xxx wireframe reference"
+      - name: input
+        label: Input Required
+        instruction: What user provides
+        type: bullet-list
+      - name: system_interaction
+        label: System Interaction
+        instruction: API calls, database operations
+      - name: success_criteria
+        label: Success Criteria
+        type: bullet-list
+      - name: next_success
+        label: Next (Success)
+        instruction: Step ID on success
+      - name: next_failure
+        label: Next (Failure)
+        instruction: Step ID on failure
+
+  - id: alternative-paths
+    title: Alternative Paths
+    type: repeatable
+    instruction: Document alternative paths through the flow
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: name
+        label: Path Name
+        required: true
+      - name: trigger
+        label: Trigger
+        instruction: When this path is taken
+        required: true
+      - name: steps
+        label: Steps
+        instruction: Modified step sequence
+        type: bullet-list
+
+  - id: error-scenarios
+    title: Error Scenarios
+    type: repeatable
+    instruction: Document error handling
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: Error ID
+        instruction: "ERR-01, ERR-02, etc."
+        required: true
+      - name: name
+        label: Error Name
+        required: true
+      - name: trigger
+        label: Trigger
+        instruction: What causes this error
+        required: true
+      - name: steps_affected
+        label: Steps Affected
+        type: bullet-list
+      - name: user_message
+        label: User Message
+        required: true
+      - name: recovery_options
+        label: Recovery Options
+        type: bullet-list
+
+  - id: edge-cases
+    title: Edge Cases
+    type: repeatable
+    instruction: Document edge cases and expected behavior
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: ID
+        instruction: "EDGE-01, EDGE-02, etc."
+        required: true
+      - name: scenario
+        label: Scenario
+        required: true
+      - name: expected_behavior
+        label: Expected Behavior
+        required: true
+      - name: notes
+        label: Notes
+
+  - id: exit-points
+    title: Exit Points
+    type: repeatable
+    instruction: Document all ways users exit this flow
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: Exit ID
+        instruction: "EXIT-SUCCESS, EXIT-ABANDON, etc."
+        required: true
+      - name: name
+        label: Name
+        required: true
+      - name: type
+        label: Type
+        choices: [success, redirect, abandon, error]
+        required: true
+      - name: conditions
+        label: Conditions
+        type: bullet-list
+      - name: post_state
+        label: Post-State
+        instruction: User and system state after exit
+      - name: next_flow
+        label: Next Flow
+        instruction: "DOC-UX-xxx if flow continues"
+
+  - id: requirements-traceability
+    title: Requirements Traceability
+    type: table
+    columns: [Step, Requirement, Coverage]
+    instruction: Map steps to requirements for traceability
+    elicit: true
+    owner: ux-expert
+
+  - id: metrics
+    title: Metrics
+    type: structured
+    instruction: Define success metrics for this flow
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: conversion_rate
+        label: Target Conversion Rate
+      - name: drop_off_points
+        label: Known Drop-off Points
+      - name: time_to_complete
+        label: Target Time to Complete
+
+  - id: open-questions
+    title: Open Questions
+    type: bullet-list
+    instruction: Unresolved decisions
+    elicit: true
+    owner: ux-expert
+
+  - id: mlda-relationships
+    title: MLDA Relationships
+    type: table
+    columns: [DOC-ID, Relationship, Why]
+    instruction: |
+      Define relationships:
+      - depends-on: Requirements, personas
+      - extends: Wireframes implementing this flow
+      - references: Related/alternative flows
+    elicit: true
+    owner: ux-expert
+
+post_creation:
+  - action: create_sidecar
+    file: "{{output_file}}.meta.yaml"
+  - action: update_registry
+    command: ".mlda/scripts/mlda-registry.ps1"
+  - action: report_entry_points
+    template: |
+      Entry Points for Stories:
+      - {{doc_id}}: {{flow_name}} User Flow
+      - Screens needed: (list wireframe DOC-IDs)
+      - API touchpoints: (list API DOC-IDs)
+
+      Developers should run: *gather-context {{doc_id}}

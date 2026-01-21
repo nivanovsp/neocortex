@@ -1,0 +1,330 @@
+template:
+  id: accessibility-report-template-v1
+  name: MLDA Accessibility Report Document
+  version: 1.0
+  description: "Creates MLDA-compliant accessibility audit documentation with auto DOC-ID and sidecar"
+  output:
+    format: markdown
+    filename: .mlda/docs/a11y/{{audit_name}}.md
+    title: "Accessibility Report: {{audit_name}}"
+    doc_domain: A11Y
+    doc_type: audit
+    auto_sidecar: true
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+mlda_config:
+  domain: A11Y
+  doc_prefix: DOC-A11Y
+  output_dir: .mlda/docs/a11y
+  sidecar_template: |
+    id: {{doc_id}}
+    title: "{{audit_name}} Accessibility Report"
+    status: draft
+    domain: A11Y
+    type: audit
+    created: "{{created_date}}"
+    summary: "{{summary}}"
+
+    related:
+    {{#each related}}
+      - id: {{this.id}}
+        type: {{this.type}}
+        why: "{{this.why}}"
+    {{/each}}
+
+    reference_frames:
+      layer: design
+      phase: ux-design
+
+    predictions:
+      when_implementing:
+      {{#each predictions}}
+        - {{this}}
+      {{/each}}
+
+agent_config:
+  editable_sections:
+    - Executive Summary
+    - Scope
+    - Findings
+    - Passed Criteria
+    - Remediation Priority
+    - Recommendations
+
+sections:
+  - id: header
+    title: Document Header
+    type: template-text
+    template: |
+      # Accessibility Review Report
+
+      **DOC-ID:** {{doc_id}}
+      **Reviewed:** {{audit_subject}}
+      **Date:** {{created_date}}
+      **Reviewer:** UX Expert (Uma)
+      **Target Level:** WCAG 2.1 Level {{conformance_level}}
+    auto_populate: true
+    owner: ux-expert
+
+  - id: executive-summary
+    title: Executive Summary
+    type: structured
+    instruction: High-level summary of audit results
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: overall_status
+        label: Overall Status
+        instruction: "Pass, Pass with Issues, or Fail"
+        required: true
+        choices: [Pass, "Pass with Issues", Fail]
+      - name: critical_count
+        label: Critical Issues
+        instruction: Number of critical issues found
+        required: true
+      - name: major_count
+        label: Major Issues
+        instruction: Number of major issues found
+        required: true
+      - name: minor_count
+        label: Minor Issues
+        instruction: Number of minor issues found
+        required: true
+
+  - id: conformance-summary
+    title: Conformance Summary
+    type: table
+    columns: [Principle, Level A, Level AA]
+    instruction: |
+      Fill in pass/fail counts per WCAG principle:
+      - Perceivable
+      - Operable
+      - Understandable
+      - Robust
+    elicit: true
+    owner: ux-expert
+
+  - id: scope
+    title: Scope
+    type: structured
+    instruction: Define what was reviewed and how
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: what_reviewed
+        label: What Was Reviewed
+        instruction: Description of screens, components, or application
+        required: true
+        type: textarea
+      - name: testing_methods
+        label: Testing Methods
+        instruction: "Manual inspection, automated tools, assistive tech"
+        required: true
+        type: bullet-list
+      - name: browsers_devices
+        label: Browsers/Devices
+        type: bullet-list
+      - name: assistive_tech
+        label: Assistive Technologies
+        instruction: "Screen readers, magnifiers, etc."
+        type: bullet-list
+
+  - id: findings-critical
+    title: Critical Findings
+    type: repeatable
+    instruction: Document critical accessibility issues (blocks access entirely)
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: Finding ID
+        instruction: "A11Y-001, A11Y-002, etc."
+        required: true
+      - name: wcag_criterion
+        label: WCAG Criterion
+        instruction: "e.g., 1.1.1 Non-text Content"
+        required: true
+      - name: conformance_level
+        label: Conformance Level
+        choices: [A, AA, AAA]
+        required: true
+      - name: location
+        label: Location
+        instruction: "Screen, component, element"
+        required: true
+      - name: issue
+        label: Issue
+        required: true
+      - name: impact
+        label: Impact
+        instruction: Who is affected and how
+        required: true
+      - name: affected_users
+        label: Affected Users
+        type: bullet-list
+      - name: recommendation
+        label: Recommendation
+        required: true
+        type: textarea
+      - name: design_system_ref
+        label: Design System Reference
+        instruction: "DOC-DS-xxx if applicable"
+      - name: effort
+        label: Effort
+        choices: [Low, Medium, High]
+        required: true
+
+  - id: findings-major
+    title: Major Findings
+    type: repeatable
+    instruction: Document major accessibility issues (significant barrier)
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: Finding ID
+        required: true
+      - name: wcag_criterion
+        label: WCAG Criterion
+        required: true
+      - name: conformance_level
+        label: Conformance Level
+        choices: [A, AA, AAA]
+        required: true
+      - name: location
+        label: Location
+        required: true
+      - name: issue
+        label: Issue
+        required: true
+      - name: impact
+        label: Impact
+        required: true
+      - name: recommendation
+        label: Recommendation
+        required: true
+        type: textarea
+      - name: effort
+        label: Effort
+        choices: [Low, Medium, High]
+        required: true
+
+  - id: findings-minor
+    title: Minor Findings
+    type: repeatable
+    instruction: Document minor accessibility issues (usability issue)
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: id
+        label: Finding ID
+        required: true
+      - name: wcag_criterion
+        label: WCAG Criterion
+        required: true
+      - name: location
+        label: Location
+        required: true
+      - name: issue
+        label: Issue
+        required: true
+      - name: recommendation
+        label: Recommendation
+        required: true
+      - name: effort
+        label: Effort
+        choices: [Low, Medium, High]
+        required: true
+
+  - id: passed-criteria
+    title: Passed Criteria
+    type: bullet-list
+    instruction: |
+      List WCAG criteria that passed for compliance documentation.
+      Include criterion number and brief verification note.
+    elicit: true
+    owner: ux-expert
+
+  - id: remediation-priority
+    title: Remediation Priority
+    type: table
+    columns: [Priority, Finding, Effort, Impact]
+    instruction: |
+      Prioritize findings for remediation:
+      1 = Highest priority (critical + low effort)
+    elicit: true
+    owner: ux-expert
+
+  - id: recommendations
+    title: Recommendations
+    type: structured
+    instruction: Actionable recommendations beyond individual findings
+    elicit: true
+    owner: ux-expert
+    subsections:
+      - id: quick-wins
+        title: Quick Wins (Low Effort, High Impact)
+        type: bullet-list
+        instruction: Easy fixes with significant accessibility improvement
+
+      - id: design-system-updates
+        title: Design System Updates
+        type: bullet-list
+        instruction: Components needing accessibility improvements at system level
+
+      - id: process-improvements
+        title: Process Improvements
+        type: bullet-list
+        instruction: Suggestions for preventing future accessibility issues
+
+  - id: testing-tools
+    title: Testing Tools Used
+    type: bullet-list
+    instruction: |
+      List tools used for this audit:
+      - axe DevTools
+      - WAVE
+      - Lighthouse
+      - Color contrast analyzer
+      - Screen reader (NVDA/VoiceOver)
+    elicit: true
+    owner: ux-expert
+
+  - id: references
+    title: References
+    type: bullet-list
+    instruction: |
+      Link to relevant resources:
+      - WCAG 2.1 Guidelines
+      - Design System DOC-ID
+      - Requirements DOC-ID
+    elicit: true
+    owner: ux-expert
+
+  - id: mlda-relationships
+    title: MLDA Relationships
+    type: table
+    columns: [DOC-ID, Relationship, Why]
+    instruction: |
+      Define relationships:
+      - depends-on: UI components audited, design system
+      - references: Requirements, related audits
+    elicit: true
+    owner: ux-expert
+
+post_creation:
+  - action: create_sidecar
+    file: "{{output_file}}.meta.yaml"
+  - action: update_registry
+    command: ".mlda/scripts/mlda-registry.ps1"
+  - action: report_entry_points
+    template: |
+      Entry Points for Stories:
+      - {{doc_id}}: {{audit_name}} Accessibility Audit
+      - Remediation needed for: (list affected DOC-UI-xxx)
+      - Design system updates: (list affected DOC-DS-xxx)
+
+      Developers should run: *gather-context {{doc_id}}

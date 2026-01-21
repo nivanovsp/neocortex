@@ -455,4 +455,78 @@ Save to .mlda/topics/accessibility/learning.yaml? [y/n]
 
 ---
 
+## MLDA Finalization (Automatic)
+
+When accessibility review output is generated, automatically perform these steps:
+
+### 1. DOC-ID Assignment
+
+- Read `.mlda/registry.yaml` for next available ID in A11Y domain
+- Assign: `DOC-A11Y-{NNN}` (e.g., DOC-A11Y-001, DOC-A11Y-002)
+- A11Y domain covers: audits, remediation plans, accessibility guidelines
+
+### 2. Sidecar Creation
+
+Create `{filename}.meta.yaml` alongside the accessibility report:
+
+```yaml
+id: DOC-A11Y-{NNN}
+title: "{Accessibility Report title}"
+status: draft
+domain: A11Y
+type: audit  # or: remediation, guidelines
+created: "{date}"
+summary: "{One-line description of audit scope and findings}"
+
+related:
+  - id: DOC-UI-xxx
+    type: depends-on  # Strong signal - audits UI components
+    why: "Accessibility review of this wireframe/component"
+  - id: DOC-DS-xxx
+    type: depends-on  # Strong signal - design system compliance
+    why: "Verifies design system accessibility"
+  - id: DOC-REQ-xxx
+    type: references  # Weak signal - requirement context
+    why: "Accessibility requirements from this document"
+
+reference_frames:
+  layer: design
+  phase: ux-design
+
+predictions:
+  when_implementing:
+    - DOC-UI-xxx  # Components being remediated
+    - DOC-DS-xxx  # Design system updates needed
+    - DOC-A11Y-xxx  # Related accessibility docs
+```
+
+### 3. Registry Update
+
+After creating document and sidecar:
+- Run: `.mlda/scripts/mlda-registry.ps1`
+- Confirm: "Document registered as DOC-A11Y-{NNN} in MLDA"
+
+### 4. Report Entry Points
+
+List DOC-IDs that stories/developers should reference:
+
+```
+Entry Points for Stories:
+- DOC-A11Y-{NNN}: {Title} (accessibility audit)
+- Remediation needed for: {list affected DOC-UI-xxx}
+- Design system updates: {list affected DOC-DS-xxx}
+
+Developers should run: *gather-context DOC-A11Y-{NNN}
+```
+
+### Relationship Type Standards
+
+| Old Type | Standard Type | Signal Strength |
+|----------|---------------|-----------------|
+| `uses` | `depends-on` | Strong - always follow |
+| `leads_to` | `extends` | Medium - follow if depth allows |
+| `alternative` | `references` | Weak - follow if relevant |
+
+---
+
 *review-accessibility v2.0 | Neocortex Methodology | UX Skill*

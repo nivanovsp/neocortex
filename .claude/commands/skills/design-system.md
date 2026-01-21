@@ -672,4 +672,77 @@ Save to .mlda/topics/design-system/learning.yaml? [y/n]
 
 ---
 
+## MLDA Finalization (Automatic)
+
+When design system output is generated, automatically perform these steps:
+
+### 1. DOC-ID Assignment
+
+- Read `.mlda/registry.yaml` for next available ID in DS domain
+- Assign: `DOC-DS-{NNN}` (e.g., DOC-DS-001, DOC-DS-002)
+- DS domain covers: tokens, patterns, components, governance
+
+### 2. Sidecar Creation
+
+Create `{filename}.meta.yaml` alongside the design system document:
+
+```yaml
+id: DOC-DS-{NNN}
+title: "{Design System title}"
+status: draft
+domain: DS
+type: design-system  # or: tokens, component, pattern
+created: "{date}"
+summary: "{One-line description of design system coverage}"
+
+related:
+  - id: DOC-BRAND-xxx
+    type: depends-on  # Strong signal - brand drives design
+    why: "Implements brand guidelines"
+  - id: DOC-A11Y-xxx
+    type: depends-on  # Strong signal - accessibility required
+    why: "Follows accessibility requirements"
+  - id: DOC-UI-xxx
+    type: extends  # Medium signal - UI uses this
+    why: "Provides patterns for UI components"
+
+reference_frames:
+  layer: design
+  phase: ux-design
+
+predictions:
+  when_implementing:
+    - DOC-DS-xxx  # Related design system docs
+    - DOC-UI-xxx  # Wireframes using this system
+    - DOC-A11Y-xxx  # Accessibility compliance
+```
+
+### 3. Registry Update
+
+After creating document and sidecar:
+- Run: `.mlda/scripts/mlda-registry.ps1`
+- Confirm: "Document registered as DOC-DS-{NNN} in MLDA"
+
+### 4. Report Entry Points
+
+List DOC-IDs that stories/developers should reference:
+
+```
+Entry Points for Stories:
+- DOC-DS-{NNN}: {Title} (design system)
+- Foundation for: All UI components using this system
+
+Developers should run: *gather-context DOC-DS-{NNN}
+```
+
+### Relationship Type Standards
+
+| Old Type | Standard Type | Signal Strength |
+|----------|---------------|-----------------|
+| `uses` | `depends-on` | Strong - always follow |
+| `leads_to` | `extends` | Medium - follow if depth allows |
+| `alternative` | `references` | Weak - follow if relevant |
+
+---
+
 *design-system v2.0 | Neocortex Methodology | UX Skill*

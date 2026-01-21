@@ -5,6 +5,35 @@ All notable changes to the Neocortex Methodology will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-01-21
+
+### Added
+- **UX MLDA Integration** - UX-Expert now fully participates in the Neocortex knowledge graph (DEC-006)
+- **UX Topic Learning** - New `.mlda/topics/ux/` with domain.yaml and learning.yaml for session-based learning
+- **4 New UX Document Commands**:
+  - `*create-wireframe-doc` - Creates MLDA wireframe with DOC-UI-xxx
+  - `*create-design-system-doc` - Creates MLDA design system with DOC-DS-xxx
+  - `*create-flow-doc` - Creates MLDA user flow with DOC-UX-xxx
+  - `*create-a11y-report` - Creates MLDA accessibility report with DOC-A11Y-xxx
+- **4 New MLDA Templates** in `.claude/commands/templates/`:
+  - `wireframe-tmpl.yaml`
+  - `design-system-tmpl.yaml`
+  - `user-flow-tmpl.yaml`
+  - `accessibility-report-tmpl.yaml`
+
+### Changed
+- **UX Skills Updated** - All 4 UX skills now include MLDA Finalization sections:
+  - Automatic DOC-ID assignment from registry
+  - Automatic sidecar `.meta.yaml` creation
+  - Registry update after document creation
+  - Entry point reporting for stories
+- **Standardized Relationship Types**: `uses` → `depends-on`, `leads_to` → `extends`, `alternative` → `references`
+
+### Documentation
+- Added `docs/decisions/DEC-006-ux-mlda-integration.md`
+
+---
+
 ## [1.6.0] - 2026-01-21
 
 ### Added

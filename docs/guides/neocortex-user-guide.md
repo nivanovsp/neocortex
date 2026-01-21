@@ -522,6 +522,54 @@ Proceed with synthesized context? [y/n/review DOC-AUTH-007]
    [y] → Agent loads RBAC docs within boundaries
 ```
 
+### UX Design with MLDA Integration
+
+UX-Expert (Uma) can create and consume MLDA documents:
+
+**Creating UX Documents:**
+```
+1. Activate UX mode
+   /modes:ux-expert
+
+2. Create MLDA-compliant wireframe
+   *create-wireframe-doc
+   → Interactive elicitation
+   → Auto-assigns DOC-UI-xxx
+   → Creates .meta.yaml sidecar
+   → Updates registry
+
+3. Or create other UX docs
+   *create-design-system-doc  # DOC-DS-xxx
+   *create-flow-doc           # DOC-UX-xxx
+   *create-a11y-report        # DOC-A11Y-xxx
+```
+
+**Developer Consuming UX Context:**
+```
+1. Story references UX docs
+   Documentation References:
+   - DOC-UI-005: Navigation wireframe
+   - DOC-DS-001: Design system
+
+2. Developer gathers context
+   /modes:dev
+   *gather-context
+
+3. Agent navigates UX knowledge
+   → Loads DOC-UI-005 (wireframe)
+   → Follows depends-on → DOC-DS-001
+   → Follows references → DOC-A11Y-002
+   → Full UI context available
+```
+
+**UX Domains:**
+| Domain | Code | Content |
+|--------|------|---------|
+| User Interface | UI | Wireframes, component specs |
+| Design System | DS | Tokens, patterns, components |
+| User Experience | UX | User flows, journey maps |
+| Accessibility | A11Y | Audits, remediation |
+
 ---
 
 ## Troubleshooting

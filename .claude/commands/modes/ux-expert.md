@@ -33,10 +33,14 @@ core_principles:
 |---------|-------------|-----------|
 | `*help` | Show available commands | Display this command table |
 | `*create-frontend-spec` | Create front-end specification document | Execute `create-doc` skill with `front-end-spec-tmpl.yaml` |
-| `*create-wireframe` | Generate wireframe descriptions | Execute `create-wireframe` skill |
-| `*review-accessibility` | Audit design for accessibility | Execute `review-accessibility` skill |
-| `*design-system` | Establish design system components | Execute `design-system` skill |
-| `*user-flow` | Map user journey and interactions | Execute `user-flow` skill |
+| `*create-wireframe` | Generate wireframe descriptions (quick) | Execute `create-wireframe` skill |
+| `*create-wireframe-doc` | Create MLDA wireframe with DOC-ID | Execute `create-doc` skill with `wireframe-tmpl.yaml` |
+| `*review-accessibility` | Audit design for accessibility (quick) | Execute `review-accessibility` skill |
+| `*create-a11y-report` | Create MLDA accessibility report with DOC-ID | Execute `create-doc` skill with `accessibility-report-tmpl.yaml` |
+| `*design-system` | Establish design system components (quick) | Execute `design-system` skill |
+| `*create-design-system-doc` | Create MLDA design system with DOC-ID | Execute `create-doc` skill with `design-system-tmpl.yaml` |
+| `*user-flow` | Map user journey and interactions (quick) | Execute `user-flow` skill |
+| `*create-flow-doc` | Create MLDA user flow with DOC-ID | Execute `create-doc` skill with `user-flow-tmpl.yaml` |
 | `*gather-context` | Full Neocortex context gathering workflow | Execute `gather-context` skill |
 | `*learning {cmd}` | Manage topic learnings (load/save/show) | Execute `manage-learning` skill |
 | `*explore` | Navigate MLDA knowledge graph | Execute `mlda-navigate` skill |
@@ -68,6 +72,17 @@ core_principles:
 5. Define responsive breakpoints and adaptations
 6. Output structured wireframe specification with accessibility notes
 
+### *create-wireframe-doc
+**Skill:** `create-doc`
+**Template:** `wireframe-tmpl.yaml`
+**Output:** `.mlda/docs/ui/{component}-wireframe.md` with DOC-UI-{NNN}
+**Process:** Creates full MLDA-compliant wireframe document:
+1. Interactive elicitation for all wireframe sections
+2. Auto-assigns DOC-UI-{NNN} from registry
+3. Creates `.meta.yaml` sidecar with relationships
+4. Updates MLDA registry
+5. Reports entry points for stories
+
 ### *review-accessibility
 **Skill:** `review-accessibility`
 **Process:** WCAG 2.1 compliance audit with Neocortex integration:
@@ -77,6 +92,17 @@ core_principles:
 - Understandable: Readable, predictable, input assistance
 - Robust: Valid HTML, ARIA, assistive technology compatibility
 - Output structured report with severity levels, remediation priorities, and traceability
+
+### *create-a11y-report
+**Skill:** `create-doc`
+**Template:** `accessibility-report-tmpl.yaml`
+**Output:** `.mlda/docs/a11y/{audit-name}.md` with DOC-A11Y-{NNN}
+**Process:** Creates full MLDA-compliant accessibility report:
+1. Interactive elicitation for audit scope and findings
+2. Auto-assigns DOC-A11Y-{NNN} from registry
+3. Creates `.meta.yaml` sidecar linking to audited components
+4. Updates MLDA registry
+5. Reports remediation entry points for stories
 
 ### *design-system
 **Skill:** `design-system`
@@ -88,6 +114,17 @@ core_principles:
 - Document component library (primitives, composites, patterns)
 - Output structured design system documentation with governance guidelines
 
+### *create-design-system-doc
+**Skill:** `create-doc`
+**Template:** `design-system-tmpl.yaml`
+**Output:** `.mlda/docs/ds/{system-name}.md` with DOC-DS-{NNN}
+**Process:** Creates full MLDA-compliant design system document:
+1. Interactive elicitation for tokens, components, governance
+2. Auto-assigns DOC-DS-{NNN} from registry
+3. Creates `.meta.yaml` sidecar with brand/accessibility relationships
+4. Updates MLDA registry
+5. Reports foundation entry points for all UI work
+
 ### *user-flow
 **Skill:** `user-flow`
 **Process:** Maps user journeys with Neocortex integration:
@@ -98,6 +135,17 @@ core_principles:
 5. Define alternative paths, error scenarios, and edge cases
 6. Specify exit points with success criteria
 7. Output flow diagram (Mermaid) and structured specification
+
+### *create-flow-doc
+**Skill:** `create-doc`
+**Template:** `user-flow-tmpl.yaml`
+**Output:** `.mlda/docs/ux/{flow-name}.md` with DOC-UX-{NNN}
+**Process:** Creates full MLDA-compliant user flow document:
+1. Interactive elicitation for flow steps, errors, edge cases
+2. Auto-assigns DOC-UX-{NNN} from registry
+3. Creates `.meta.yaml` sidecar with requirements/wireframe relationships
+4. Updates MLDA registry
+5. Reports flow entry points for story acceptance criteria
 
 ### *handoff
 **Skill:** `handoff`
@@ -162,6 +210,10 @@ skills:
   - user-flow
 templates:
   - front-end-spec-tmpl.yaml
+  - wireframe-tmpl.yaml
+  - design-system-tmpl.yaml
+  - user-flow-tmpl.yaml
+  - accessibility-report-tmpl.yaml
 ```
 
 ## Activation Protocol (MANDATORY)

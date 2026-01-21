@@ -700,6 +700,8 @@ Each command below shows exactly which skill and template it uses.
 
 #### UX-Expert Mode (Uma)
 
+**Quick Generation Commands** (no DOC-ID, rapid output):
+
 | Command | Skill | Template |
 |---------|-------|----------|
 | `*create-frontend-spec` | `create-doc` | `front-end-spec-tmpl.yaml` |
@@ -707,8 +709,23 @@ Each command below shows exactly which skill and template it uses.
 | `*review-accessibility` | `review-accessibility` | - |
 | `*design-system` | `design-system` | - |
 | `*user-flow` | `user-flow` | - |
-| `*gather-context` | `gather-context` | - |
-| `*explore` | `mlda-navigate` | - |
+
+**MLDA Document Commands** (full DOC-ID, sidecar, registry):
+
+| Command | Skill | Template | Output DOC-ID |
+|---------|-------|----------|---------------|
+| `*create-wireframe-doc` | `create-doc` | `wireframe-tmpl.yaml` | DOC-UI-xxx |
+| `*create-design-system-doc` | `create-doc` | `design-system-tmpl.yaml` | DOC-DS-xxx |
+| `*create-flow-doc` | `create-doc` | `user-flow-tmpl.yaml` | DOC-UX-xxx |
+| `*create-a11y-report` | `create-doc` | `accessibility-report-tmpl.yaml` | DOC-A11Y-xxx |
+
+**Navigation Commands**:
+
+| Command | Skill |
+|---------|-------|
+| `*gather-context` | `gather-context` |
+| `*explore` | `mlda-navigate` |
+| `*handoff` | `handoff` |
 
 #### BMAD-Master Mode (Brian)
 

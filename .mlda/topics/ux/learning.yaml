@@ -1,0 +1,64 @@
+# UX Topic Learning File
+# Schema: .mlda/schemas/topic-learning.schema.yaml
+#
+# Accumulates learnings over multiple UX design sessions.
+# Agents propose updates at session end; you approve/modify.
+
+topic: ux
+version: 1
+last_updated: "2026-01-21"
+sessions_contributed: 0
+
+# Learned sub-domain groupings
+# These emerge from usage patterns and agent suggestions
+groupings: []
+  # Example groupings that may emerge:
+  # - name: navigation-components
+  #   docs:
+  #     - DOC-UI-001
+  #     - DOC-DS-001
+  #     - DOC-A11Y-001
+  #   origin: agent
+  #   confidence: medium
+  #   notes: "Navigation components always need design system + accessibility"
+
+# Co-activation patterns
+# Documents frequently accessed together
+activations: []
+  # Example patterns that may emerge:
+  # - docs:
+  #     - DOC-UI-xxx
+  #     - DOC-A11Y-xxx
+  #   frequency: 3
+  #   typical_tasks:
+  #     - wireframing
+  #     - accessibility_review
+  #   last_session: "2026-01-21"
+
+# Verification notes
+# What verification caught in past sessions
+verification_notes: []
+  # Example:
+  # - session: "2026-01-21"
+  #   caught: "Missing focus state in button component"
+  #   doc: DOC-UI-001
+  #   section: "States"
+  #   lesson: "Always verify focus states for interactive components"
+
+# Cross-domain touchpoints learned
+# How this topic connects to other domains (learned from sessions)
+related_domains: []
+  # Example:
+  # - domain: requirements
+  #   relationship: "User goals drive flow decisions"
+  #   typical_overlap:
+  #     - DOC-UX-001
+  #     - DOC-REQ-001
+
+# Anti-patterns discovered
+# What didn't work well (learn from mistakes)
+anti_patterns: []
+  # Example:
+  # - pattern: "Designing without accessibility context"
+  #   reason: "Had to redo component specs after A11Y review"
+  #   session: "2026-01-21"

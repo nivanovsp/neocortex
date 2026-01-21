@@ -1,0 +1,122 @@
+# UX Topic Domain Configuration
+# Schema: .mlda/schemas/topic-domain.schema.yaml
+#
+# User Experience and Interface Design domain for UX-Expert (Uma)
+
+domain: ux
+version: 1
+last_updated: "2026-01-21"
+source: human
+
+# Sub-domain definitions
+# Break your domain into logical subdivisions
+sub_domains:
+  - name: user-interface
+    code: UI
+    docs: []
+    origin: human
+    description: "UI patterns, wireframes, component specifications, layouts"
+    doc_types:
+      - wireframe
+      - component-spec
+      - layout
+    entry_point: null
+
+  - name: design-system
+    code: DS
+    docs: []
+    origin: human
+    description: "Design tokens, patterns, component library, governance"
+    doc_types:
+      - tokens
+      - patterns
+      - components
+    entry_point: null
+
+  - name: user-experience
+    code: UX
+    docs: []
+    origin: human
+    description: "User flows, journey maps, personas, research"
+    doc_types:
+      - user-flow
+      - journey-map
+      - persona
+    entry_point: null
+
+  - name: accessibility
+    code: A11Y
+    docs: []
+    origin: human
+    description: "WCAG audits, remediation plans, accessibility guidelines"
+    doc_types:
+      - audit
+      - remediation
+      - guidelines
+    entry_point: null
+
+# Entry points by task type
+# Where to start navigating based on what you're doing
+entry_points:
+  default: null
+  by_task:
+    wireframing:
+      - DOC-DS-xxx  # Design system for component references
+      - DOC-REQ-xxx  # Requirements for context
+    design_system:
+      - DOC-BRAND-xxx  # Brand guidelines
+      - DOC-A11Y-xxx  # Accessibility requirements
+    user_flows:
+      - DOC-REQ-xxx  # Requirements for user goals
+      - DOC-PERSONA-xxx  # User personas
+    accessibility:
+      - DOC-UI-xxx  # UI components to audit
+      - DOC-DS-xxx  # Design system compliance
+
+# Multi-agent decomposition strategy
+decomposition:
+  strategy: by_sub_domain
+  max_docs_per_agent: 5
+  parallel_allowed: true
+
+# Override settings
+override_allowed: true
+override_requires_approval: false
+
+# Cross-domain touchpoints
+# How UX domain connects to other domains
+cross_domain_touchpoints:
+  - domain: REQ
+    relationship: "Requirements inform UX decisions"
+    typical_overlap: []
+    traversal_allowed: true
+
+  - domain: ARCH
+    relationship: "Architecture constrains UI patterns"
+    typical_overlap: []
+    traversal_allowed: true
+
+  - domain: STORY
+    relationship: "Stories consume UX specifications"
+    typical_overlap: []
+    traversal_allowed: true
+
+  - domain: BRAND
+    relationship: "Brand guidelines inform design system"
+    typical_overlap: []
+    traversal_allowed: true
+
+# Related domains
+related_domains:
+  - domain: requirements
+    relationship: "UX decisions are driven by requirements"
+    boundary_docs: []
+    traversal_allowed: true
+
+  - domain: architecture
+    relationship: "Technical constraints affect UI possibilities"
+    boundary_docs: []
+    traversal_allowed: true
+
+# Domains to never traverse into from here
+isolated_from: []

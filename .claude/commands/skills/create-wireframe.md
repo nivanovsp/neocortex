@@ -423,4 +423,77 @@ Save to .mlda/topics/ui-design/learning.yaml? [y/n]
 
 ---
 
+## MLDA Finalization (Automatic)
+
+When wireframe output is generated, automatically perform these steps:
+
+### 1. DOC-ID Assignment
+
+- Read `.mlda/registry.yaml` for next available ID in UI domain
+- Assign: `DOC-UI-{NNN}` (e.g., DOC-UI-001, DOC-UI-002)
+- UI domain covers: wireframes, component specs, layouts
+
+### 2. Sidecar Creation
+
+Create `{filename}.meta.yaml` alongside the wireframe document:
+
+```yaml
+id: DOC-UI-{NNN}
+title: "{Wireframe title}"
+status: draft
+domain: UI
+type: wireframe
+created: "{date}"
+summary: "{One-line description of what this wireframe covers}"
+
+related:
+  - id: DOC-DS-xxx
+    type: depends-on  # Strong signal - design system required
+    why: "Uses design system components and tokens"
+  - id: DOC-REQ-xxx
+    type: depends-on  # Strong signal - requirements drive design
+    why: "Implements requirements from this document"
+  - id: DOC-UX-xxx
+    type: references  # Weak signal - related user flow
+    why: "Part of user flow documented here"
+
+reference_frames:
+  layer: design
+  phase: ux-design
+
+predictions:
+  when_implementing:
+    - DOC-DS-xxx  # Developer needs design system
+    - DOC-UI-xxx  # Related wireframes
+    - DOC-A11Y-xxx  # Accessibility requirements
+```
+
+### 3. Registry Update
+
+After creating document and sidecar:
+- Run: `.mlda/scripts/mlda-registry.ps1`
+- Confirm: "Document registered as DOC-UI-{NNN} in MLDA"
+
+### 4. Report Entry Points
+
+List DOC-IDs that stories/developers should reference:
+
+```
+Entry Points for Stories:
+- DOC-UI-{NNN}: {Title} (wireframe)
+- Related: DOC-DS-xxx (design system), DOC-A11Y-xxx (accessibility)
+
+Developers should run: *gather-context DOC-UI-{NNN}
+```
+
+### Relationship Type Standards
+
+| Old Type | Standard Type | Signal Strength |
+|----------|---------------|-----------------|
+| `uses` | `depends-on` | Strong - always follow |
+| `leads_to` | `extends` | Medium - follow if depth allows |
+| `alternative` | `references` | Weak - follow if relevant |
+
+---
+
 *create-wireframe v2.0 | Neocortex Methodology | UX Skill*

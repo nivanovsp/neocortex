@@ -1,0 +1,248 @@
+template:
+  id: wireframe-template-v1
+  name: MLDA Wireframe Document
+  version: 1.0
+  description: "Creates MLDA-compliant wireframe documentation with auto DOC-ID and sidecar"
+  output:
+    format: markdown
+    filename: .mlda/docs/ui/{{component_name}}-wireframe.md
+    title: "Wireframe: {{component_name}}"
+    doc_domain: UI
+    doc_type: wireframe
+    auto_sidecar: true
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+mlda_config:
+  domain: UI
+  doc_prefix: DOC-UI
+  output_dir: .mlda/docs/ui
+  sidecar_template: |
+    id: {{doc_id}}
+    title: "{{component_name}} Wireframe"
+    status: draft
+    domain: UI
+    type: wireframe
+    created: "{{created_date}}"
+    summary: "{{summary}}"
+
+    related:
+    {{#each related}}
+      - id: {{this.id}}
+        type: {{this.type}}
+        why: "{{this.why}}"
+    {{/each}}
+
+    reference_frames:
+      layer: design
+      phase: ux-design
+
+    predictions:
+      when_implementing:
+      {{#each predictions}}
+        - {{this}}
+      {{/each}}
+
+agent_config:
+  editable_sections:
+    - Overview
+    - Layout Structure
+    - Components
+    - Interactions
+    - Responsive Behavior
+    - Accessibility Notes
+    - Implementation Notes
+
+sections:
+  - id: header
+    title: Document Header
+    type: template-text
+    template: |
+      # Wireframe: {{component_name}}
+
+      **DOC-ID:** {{doc_id}}
+      **Related:** {{related_doc_ids}}
+      **Version:** 1.0
+      **Last Updated:** {{created_date}}
+    auto_populate: true
+    owner: ux-expert
+
+  - id: overview
+    title: Overview
+    type: structured
+    instruction: Define the purpose and context of this wireframe
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: purpose
+        label: Purpose
+        instruction: What this screen/component achieves
+        required: true
+      - name: user_goal
+        label: User Goal
+        instruction: Primary user objective
+        required: true
+      - name: entry_points
+        label: Entry Points
+        instruction: How users arrive here
+        required: true
+      - name: exit_points
+        label: Exit Points
+        instruction: Where users go next
+        required: true
+
+  - id: layout-structure
+    title: Layout Structure
+    type: structured
+    instruction: Define the grid and visual hierarchy
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: grid_type
+        label: Grid Type
+        instruction: "12-column, 6-column, or flexible"
+        required: true
+      - name: max_width
+        label: Max Width
+        instruction: "e.g., 1200px"
+        required: true
+      - name: margins
+        label: Margins
+        instruction: "mobile, tablet, desktop margins"
+        required: true
+      - name: zones
+        label: Layout Zones
+        instruction: "ASCII or description of major zones (header, content, footer, etc.)"
+        required: true
+        type: textarea
+
+  - id: components
+    title: Components
+    type: repeatable
+    instruction: Document each component in the wireframe
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: component_name
+        label: Component Name
+        required: true
+      - name: design_system_ref
+        label: Design System Ref
+        instruction: "DOC-DS-xxx#component or 'Custom'"
+        required: false
+      - name: placement
+        label: Placement
+        instruction: "Zone, position, grid columns"
+        required: true
+      - name: states
+        label: States
+        instruction: "default, hover, active, disabled, loading, error"
+        required: true
+      - name: content
+        label: Content
+        instruction: "Text, icons, media"
+        required: true
+      - name: accessibility
+        label: Accessibility
+        instruction: "ARIA role, keyboard interaction, screen reader text"
+        required: true
+
+  - id: interactions
+    title: Interactions
+    type: repeatable
+    instruction: Document user interactions and system responses
+    elicit: true
+    owner: ux-expert
+    item_template:
+      - name: trigger
+        label: Trigger
+        instruction: "User action (click, hover, focus, etc.)"
+        required: true
+      - name: result
+        label: Result
+        instruction: "System response"
+        required: true
+      - name: feedback
+        label: Feedback
+        instruction: "Visual/audio feedback to user"
+        required: true
+
+  - id: responsive-behavior
+    title: Responsive Behavior
+    type: structured
+    instruction: Document layout changes per breakpoint
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: mobile
+        label: "Mobile (< 768px)"
+        instruction: "Layout and component changes"
+        required: true
+        type: textarea
+      - name: tablet
+        label: "Tablet (768px - 1023px)"
+        instruction: "Layout and component changes"
+        required: true
+        type: textarea
+      - name: desktop
+        label: "Desktop (1024px+)"
+        instruction: "Layout and component changes"
+        required: true
+        type: textarea
+
+  - id: accessibility-notes
+    title: Accessibility Notes
+    type: bullet-list
+    instruction: |
+      Document accessibility considerations:
+      - Keyboard navigation order
+      - Screen reader announcements
+      - Focus management
+      - Color contrast requirements
+    elicit: true
+    owner: ux-expert
+
+  - id: implementation-notes
+    title: Implementation Notes
+    type: bullet-list
+    instruction: |
+      Technical considerations for developers:
+      - Component library references
+      - API dependencies
+      - Performance considerations
+    elicit: true
+    owner: ux-expert
+
+  - id: open-questions
+    title: Open Questions
+    type: bullet-list
+    instruction: Unresolved design decisions
+    elicit: true
+    owner: ux-expert
+
+  - id: mlda-relationships
+    title: MLDA Relationships
+    type: table
+    columns: [DOC-ID, Relationship, Why]
+    instruction: |
+      Define relationships to other documents:
+      - depends-on: Strong signal - always follow
+      - extends: Medium signal - follow if depth allows
+      - references: Weak signal - follow if relevant
+    elicit: true
+    owner: ux-expert
+
+post_creation:
+  - action: create_sidecar
+    file: "{{output_file}}.meta.yaml"
+  - action: update_registry
+    command: ".mlda/scripts/mlda-registry.ps1"
+  - action: report_entry_points
+    template: |
+      Entry Points for Stories:
+      - {{doc_id}}: {{component_name}} Wireframe
+      - Related: {{related_doc_ids}}
+
+      Developers should run: *gather-context {{doc_id}}

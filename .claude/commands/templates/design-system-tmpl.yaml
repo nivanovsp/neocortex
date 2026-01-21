@@ -1,0 +1,298 @@
+template:
+  id: design-system-template-v1
+  name: MLDA Design System Document
+  version: 1.0
+  description: "Creates MLDA-compliant design system documentation with auto DOC-ID and sidecar"
+  output:
+    format: markdown
+    filename: .mlda/docs/ds/{{system_name}}.md
+    title: "Design System: {{system_name}}"
+    doc_domain: DS
+    doc_type: design-system
+    auto_sidecar: true
+
+workflow:
+  mode: interactive
+  elicitation: advanced-elicitation
+
+mlda_config:
+  domain: DS
+  doc_prefix: DOC-DS
+  output_dir: .mlda/docs/ds
+  sidecar_template: |
+    id: {{doc_id}}
+    title: "{{system_name}} Design System"
+    status: draft
+    domain: DS
+    type: design-system
+    created: "{{created_date}}"
+    summary: "{{summary}}"
+
+    related:
+    {{#each related}}
+      - id: {{this.id}}
+        type: {{this.type}}
+        why: "{{this.why}}"
+    {{/each}}
+
+    reference_frames:
+      layer: design
+      phase: ux-design
+
+    predictions:
+      when_implementing:
+      {{#each predictions}}
+        - {{this}}
+      {{/each}}
+
+agent_config:
+  editable_sections:
+    - Overview
+    - Design Principles
+    - Foundations
+    - Components
+    - Patterns
+    - Governance
+
+sections:
+  - id: header
+    title: Document Header
+    type: template-text
+    template: |
+      # {{system_name}} Design System
+
+      **DOC-ID:** {{doc_id}}
+      **Version:** {{version}}
+      **Last Updated:** {{created_date}}
+    auto_populate: true
+    owner: ux-expert
+
+  - id: overview
+    title: Overview
+    type: textarea
+    instruction: Brief description of the design system purpose and scope
+    elicit: true
+    owner: ux-expert
+
+  - id: design-principles
+    title: Design Principles
+    type: numbered-list
+    instruction: |
+      List 3-5 core design principles that guide all decisions.
+      Format: **Principle Name** - Description
+    elicit: true
+    owner: ux-expert
+
+  - id: foundations
+    title: Foundations
+    type: structured
+    instruction: Define the foundational design tokens
+    elicit: true
+    owner: ux-expert
+    subsections:
+      - id: colors
+        title: Colors
+        type: structured
+        instruction: Define color tokens (primary, secondary, semantic, neutral)
+        fields:
+          - name: primary
+            label: Primary Colors
+            instruction: "Primary brand colors with shade scale (50-900)"
+            type: code
+            language: yaml
+          - name: secondary
+            label: Secondary Colors
+            instruction: "Secondary colors with shade scale"
+            type: code
+            language: yaml
+          - name: semantic
+            label: Semantic Colors
+            instruction: "success, warning, error, info"
+            type: code
+            language: yaml
+          - name: neutral
+            label: Neutral Colors
+            instruction: "Gray scale from white to black"
+            type: code
+            language: yaml
+
+      - id: typography
+        title: Typography
+        type: structured
+        fields:
+          - name: font_families
+            label: Font Families
+            instruction: "heading, body, mono"
+            type: code
+            language: yaml
+          - name: font_sizes
+            label: Font Sizes
+            instruction: "xs through 5xl"
+            type: code
+            language: yaml
+          - name: text_styles
+            label: Text Styles
+            instruction: "h1-h6, body, caption, etc."
+            type: code
+            language: yaml
+
+      - id: spacing
+        title: Spacing
+        type: structured
+        fields:
+          - name: scale
+            label: Spacing Scale
+            instruction: "Base unit and scale (0-24)"
+            type: code
+            language: yaml
+          - name: semantic
+            label: Semantic Spacing
+            instruction: "component padding, layout gaps"
+            type: code
+            language: yaml
+
+      - id: grid
+        title: Grid System
+        type: structured
+        fields:
+          - name: columns
+            label: Columns
+            instruction: "Number of columns (typically 12)"
+            required: true
+          - name: gutter
+            label: Gutter
+            instruction: "Gutter width"
+            required: true
+          - name: breakpoints
+            label: Breakpoints
+            instruction: "sm, md, lg, xl, 2xl"
+            type: code
+            language: yaml
+
+      - id: motion
+        title: Motion/Animation
+        type: structured
+        fields:
+          - name: duration
+            label: Duration Tokens
+            instruction: "instant, fast, normal, slow"
+            type: code
+            language: yaml
+          - name: easing
+            label: Easing Functions
+            instruction: "default, in, out, in-out"
+            type: code
+            language: yaml
+
+  - id: components
+    title: Components
+    type: grouped
+    instruction: Document component specifications by category
+    elicit: true
+    owner: ux-expert
+    groups:
+      - name: primitives
+        title: Primitives
+        instruction: "Basic building blocks (Button, Input, Icon, Badge)"
+        type: repeatable
+        item_template:
+          - name: name
+            label: Component Name
+            required: true
+          - name: doc_id
+            label: Component DOC-ID
+            instruction: "DOC-DS-{system}-{component}-NNN"
+          - name: description
+            label: Description
+            required: true
+          - name: variants
+            label: Variants
+            instruction: "List variants (primary, secondary, etc.)"
+          - name: sizes
+            label: Sizes
+            instruction: "sm, md, lg"
+          - name: states
+            label: States
+            instruction: "default, hover, active, focus, disabled, loading"
+          - name: accessibility
+            label: Accessibility
+            instruction: "ARIA, keyboard, focus requirements"
+
+      - name: composites
+        title: Composites
+        instruction: "Combined primitives (Card, Form Field, Alert)"
+        type: repeatable
+        item_template:
+          - name: name
+            label: Component Name
+            required: true
+          - name: doc_id
+            label: Component DOC-ID
+          - name: description
+            label: Description
+            required: true
+          - name: composition
+            label: Composition
+            instruction: "What primitives it uses"
+
+      - name: patterns
+        title: Patterns
+        instruction: "Complex UI patterns (Navigation, Modal, Data Table)"
+        type: repeatable
+        item_template:
+          - name: name
+            label: Pattern Name
+            required: true
+          - name: doc_id
+            label: Pattern DOC-ID
+          - name: description
+            label: Description
+            required: true
+          - name: use_when
+            label: Use When
+            instruction: "When to use this pattern"
+
+  - id: governance
+    title: Governance
+    type: structured
+    instruction: Define design system governance rules
+    elicit: true
+    owner: ux-expert
+    fields:
+      - name: versioning
+        label: Version Management
+        instruction: "How versions are managed (semver recommended)"
+        type: textarea
+      - name: contribution
+        label: Contribution Process
+        instruction: "How to propose changes"
+        type: textarea
+      - name: deprecation
+        label: Deprecation Policy
+        instruction: "How components are deprecated"
+        type: textarea
+
+  - id: mlda-relationships
+    title: MLDA Relationships
+    type: table
+    columns: [DOC-ID, Relationship, Why]
+    instruction: |
+      Define relationships to other documents:
+      - depends-on: Brand guidelines, accessibility requirements
+      - extends: UI patterns using this system
+      - references: Related design systems
+    elicit: true
+    owner: ux-expert
+
+post_creation:
+  - action: create_sidecar
+    file: "{{output_file}}.meta.yaml"
+  - action: update_registry
+    command: ".mlda/scripts/mlda-registry.ps1"
+  - action: report_entry_points
+    template: |
+      Entry Points for Stories:
+      - {{doc_id}}: {{system_name}} Design System
+      - Foundation for: All UI components using this system
+
+      Developers should run: *gather-context {{doc_id}}

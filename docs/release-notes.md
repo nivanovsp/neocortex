@@ -4,6 +4,72 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [1.7.0] - 2026-01-21
+
+### Added: Full MLDA Integration for UX-Expert
+
+Implemented **complete Neocortex knowledge graph integration** for UX-Expert (Uma). UX work now participates in the knowledge graph, allowing developers and other agents to navigate to and from UX documentation.
+
+#### Key Features
+
+- **UX Topic Learning**: New `.mlda/topics/ux/` with domain configuration and learning accumulation
+- **4 New UX Domains**:
+  - `UI` - User Interface (wireframes, component specs, layouts)
+  - `DS` - Design System (tokens, patterns, components)
+  - `UX` - User Experience (user flows, journey maps, personas)
+  - `A11Y` - Accessibility (audits, remediation, guidelines)
+- **4 New MLDA Document Commands** in UX-Expert mode:
+  - `*create-wireframe-doc` → `.mlda/docs/ui/` with DOC-UI-xxx
+  - `*create-design-system-doc` → `.mlda/docs/ds/` with DOC-DS-xxx
+  - `*create-flow-doc` → `.mlda/docs/ux/` with DOC-UX-xxx
+  - `*create-a11y-report` → `.mlda/docs/a11y/` with DOC-A11Y-xxx
+- **MLDA Finalization** added to all UX skills (automatic DOC-ID, sidecar, registry update)
+
+#### New Templates
+
+| Template | Output | DOC-ID |
+|----------|--------|--------|
+| `wireframe-tmpl.yaml` | MLDA wireframe document | DOC-UI-xxx |
+| `design-system-tmpl.yaml` | MLDA design system document | DOC-DS-xxx |
+| `user-flow-tmpl.yaml` | MLDA user flow document | DOC-UX-xxx |
+| `accessibility-report-tmpl.yaml` | MLDA accessibility report | DOC-A11Y-xxx |
+
+#### Cross-Agent Benefits
+
+Developers can now gather UX context automatically:
+```
+Story references: DOC-UI-005 (wireframe)
+Developer runs: *gather-context
+  → Loads wireframe
+  → Follows depends-on → DOC-DS-001 (design system)
+  → Follows references → DOC-A11Y-002 (accessibility)
+  → Full UI context available
+```
+
+#### Standardized Relationship Types
+
+| Old | Standard | Signal |
+|-----|----------|--------|
+| `uses` | `depends-on` | Strong |
+| `leads_to` | `extends` | Medium |
+| `alternative` | `references` | Weak |
+
+#### Documentation
+
+| Document | Purpose |
+|----------|---------|
+| `docs/decisions/DEC-006-ux-mlda-integration.md` | Full specification |
+
+---
+
+## [1.6.0] - 2026-01-21
+
+### Added: Extended Workflow with UX Phase and Question Protocol
+
+See DEC-005 for full specification.
+
+---
+
 ## [1.5.0] - 2026-01-20
 
 ### Added: Automatic Learning Integration
