@@ -16,20 +16,24 @@ This configuration follows the **RMS (Rules - Modes - Skills)** methodology:
 | **Modes** | `.claude/commands/modes/` | Expert personas, activated via `/modes:{name}` |
 | **Skills** | `.claude/commands/skills/` | Discrete workflows, invoked via `/skills:{name}` |
 
-### Core Workflow (3 Roles)
+### Core Workflow (5 Phases)
 
-The RMS-BMAD methodology uses three core roles:
+The RMS-BMAD methodology uses a 5-phase workflow with specialized roles:
 
 ```
-Analyst → Architect → Developer+QA
-(Maya)    (Winston)   (Devon)
+┌──────────┐     ┌───────────┐     ┌───────────┐     ┌──────────┐     ┌───────────┐
+│ Analyst  │ ──► │ Architect │ ──► │ UX-Expert │ ──► │ Analyst  │ ──► │ Developer │
+│ (Maya)   │     │ (Winston) │     │ (Uma)     │     │ (stories)│     │ (Devon)   │
+└──────────┘     └───────────┘     └───────────┘     └──────────┘     └───────────┘
 ```
 
 | Phase | Role | Mode | Purpose |
 |-------|------|------|---------|
-| 1 | **Analyst** | `/modes:analyst` | Requirements, PRDs, epics, stories, user documentation |
+| 1 | **Analyst** | `/modes:analyst` | Requirements, PRDs, epics |
 | 2 | **Architect** | `/modes:architect` | Critical review, technical refinement, architecture docs |
-| 3 | **Developer+QA** | `/modes:dev` | Implementation, test-first development, quality gates |
+| 3 | **UX-Expert** | `/modes:ux-expert` | UI/UX design, wireframes, design system |
+| 4 | **Analyst** | `/modes:analyst` | Stories from UX specs |
+| 5 | **Developer+QA** | `/modes:dev` | Implementation, test-first development, quality gates |
 
 Each role hands off to the next using the **handoff document** (`docs/handoff.md`).
 
@@ -76,6 +80,18 @@ Each role hands off to the next using the **handoff document** (`docs/handoff.md
 - Present options as numbered lists for easy selection
 - Ask for clarification when requirements are ambiguous
 - Summarize understanding before major actions
+
+### Question Protocol
+
+When gathering information or clarifying requirements:
+
+- **Ask ONE question at a time** and wait for the user's response
+- Do not batch multiple questions in a single message
+- **Exception:** Tightly coupled questions (max 2-3) may be grouped
+  - Example OK: "What's the component name and where should it be created?"
+  - Example NOT OK: 5 separate questions about different aspects
+
+**Why:** Batched questions overwhelm users and often result in incomplete answers.
 
 ### Safety
 - Never commit secrets, API keys, or credentials
@@ -348,9 +364,11 @@ The **handoff document** (`docs/handoff.md`) maintains context across phase tran
 
 | Phase | Required Section |
 |-------|------------------|
-| Analyst → Architect | "Open Questions for Architect" |
-| Architect → Developer | "Open Questions for Developer" |
-| Developer (completion) | "Implementation Notes" |
+| Phase 1: Analyst → Architect | "Open Questions for Architect" |
+| Phase 2: Architect → UX-Expert | "Open Questions for UX-Expert" |
+| Phase 3: UX-Expert → Analyst (stories) | "Open Questions for Analyst" |
+| Phase 4: Analyst → Developer | "Open Questions for Developer" |
+| Phase 5: Developer (completion) | "Implementation Notes" |
 
 ### Generation
 
@@ -367,9 +385,11 @@ The **handoff document** (`docs/handoff.md`) maintains context across phase tran
 
 ### Workflow
 
-1. **Analyst completes work** → Runs `*handoff` → Populates open questions
-2. **Architect reviews** → Reads handoff first → Resolves questions → Runs `*handoff`
-3. **Developer implements** → Reads handoff for context → Updates with implementation notes
+1. **Phase 1: Analyst** → Runs `*handoff` → Populates open questions for Architect
+2. **Phase 2: Architect** → Reads handoff → Resolves questions → Runs `*handoff` for UX-Expert
+3. **Phase 3: UX-Expert** → Reads handoff → Creates UI/UX specs → Runs `*handoff` for Analyst (stories)
+4. **Phase 4: Analyst** → Creates stories from UX specs → Runs `*handoff` for Developer
+5. **Phase 5: Developer** → Reads handoff for context → Updates with implementation notes
 
 ---
 
@@ -430,4 +450,4 @@ These roles have been consolidated into the 3-role workflow to reduce handoffs a
 
 ---
 
-*RMS-BMAD Methodology v1.5 | Rules Layer*
+*RMS-BMAD Methodology v1.6 | Rules Layer*

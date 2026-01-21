@@ -5,7 +5,7 @@ All notable changes to the Neocortex Methodology will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.0] - 2026-01-21 (Planned)
+## [1.6.0] - 2026-01-21
 
 ### Added
 - **UX-Expert Handoff** - UX-Expert now has `*handoff` command to hand off to Analyst for story creation (DEC-005)
@@ -15,17 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Extended Workflow**: `Analyst → Architect → UX-Expert → Analyst (stories) → Developer`
 - Handoff skill updated to support 5-phase workflow with explicit sections
+- CLAUDE.md Core Workflow updated from 3-role to 5-phase
+- Handoff Document Protocol updated with all 5 phases
 
 ### Documentation
 - Added `docs/decisions/DEC-005-handoff-workflow-extension.md`
 
 ### Implementation Status
-- [ ] Update CLAUDE.md with Question Protocol
-- [ ] Add `*handoff` to UX-Expert mode
-- [ ] Update handoff skill with phase markers
-- [ ] Apply to global .claude
-- [ ] Apply to Tasks app project
-- [ ] Push to GitHub
+- [x] Update CLAUDE.md with Question Protocol
+- [x] Add `*handoff` to UX-Expert mode
+- [x] Update handoff skill with phase markers
+- [x] Update README with 5-phase workflow
+- [x] Apply to global .claude
+- [x] Apply to Tasks app project
+- [ ] Push to GitHub (pending)
 
 ---
 

@@ -42,18 +42,22 @@ To make Neocortex available in all projects:
 1. Copy `CLAUDE.md` to `~/.claude/CLAUDE.md`
 2. Copy `.claude/commands/` to `~/.claude/commands/`
 
-## Core Workflow (3 Roles)
+## Core Workflow (5 Phases)
 
 ```
-Analyst → Architect → Developer
-(Requirements)  (Design)    (Implementation)
+┌──────────┐     ┌───────────┐     ┌───────────┐     ┌──────────┐     ┌───────────┐
+│ Analyst  │ ──► │ Architect │ ──► │ UX-Expert │ ──► │ Analyst  │ ──► │ Developer │
+│ (Maya)   │     │ (Winston) │     │ (Uma)     │     │ (stories)│     │ (Devon)   │
+└──────────┘     └───────────┘     └───────────┘     └──────────┘     └───────────┘
 ```
 
-| Role | Mode | Purpose |
-|------|------|---------|
-| **Analyst** | `/modes:analyst` | Requirements, PRDs, epics, stories, user documentation |
-| **Architect** | `/modes:architect` | Critical review, technical refinement, architecture docs |
-| **Developer** | `/modes:dev` | Implementation, test-first development, quality gates |
+| Phase | Role | Mode | Purpose |
+|-------|------|------|---------|
+| 1 | **Analyst** | `/modes:analyst` | Requirements, PRDs, epics |
+| 2 | **Architect** | `/modes:architect` | Critical review, technical refinement, architecture docs |
+| 3 | **UX-Expert** | `/modes:ux-expert` | UI/UX design, wireframes, design system |
+| 4 | **Analyst** | `/modes:analyst` | Stories from UX specs |
+| 5 | **Developer** | `/modes:dev` | Implementation, test-first development, quality gates |
 
 Each role hands off via `docs/handoff.md`.
 
@@ -241,4 +245,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-*Neocortex Methodology v2.0 | Built on the RMS Framework*
+*Neocortex Methodology v2.1 | Built on the RMS Framework*

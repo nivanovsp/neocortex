@@ -42,6 +42,7 @@ core_principles:
 | `*explore` | Navigate MLDA knowledge graph | Execute `mlda-navigate` skill |
 | `*related` | Show documents related to current context | MLDA navigation |
 | `*context` | Display gathered context summary | MLDA navigation |
+| `*handoff` | Generate/update handoff document for Analyst (stories) | Execute `handoff` skill |
 | `*exit` | Leave UX mode | Return to default Claude behavior |
 
 ## Command Execution Details
@@ -98,6 +99,16 @@ core_principles:
 6. Specify exit points with success criteria
 7. Output flow diagram (Mermaid) and structured specification
 
+### *handoff
+**Skill:** `handoff`
+**Output:** `docs/handoff.md`
+**Process:**
+1. Update Phase 3 section of handoff document
+2. Document UX work completed (wireframes, flows, design decisions)
+3. List resolved questions from architect phase
+4. Define entry points for story creation
+5. Add open questions for analyst (story breakdown, acceptance criteria)
+
 ### *gather-context (Neocortex)
 **Skill:** `gather-context`
 **Process:**
@@ -144,6 +155,7 @@ skills:
   - create-wireframe
   - design-system
   - gather-context
+  - handoff
   - manage-learning
   - mlda-navigate
   - review-accessibility
@@ -269,7 +281,8 @@ When user invokes a command:
 4. For `*review-accessibility`: Load `review-accessibility` skill
 5. For `*design-system`: Load `design-system` skill
 6. For `*user-flow`: Load `user-flow` skill
-7. For `*gather-context`: Load `gather-context` skill with UI/UX domain focus
-8. For MLDA commands (`*explore`, `*related`, `*context`): Navigate knowledge graph
-9. All skills support Neocortex integration - gather context automatically when DOC-IDs available
-10. Engage user throughout for feedback and iteration
+7. For `*handoff`: Load `handoff` skill for Phase 3 (UX-Expert → Analyst)
+8. For `*gather-context`: Load `gather-context` skill with UI/UX domain focus
+9. For MLDA commands (`*explore`, `*related`, `*context`): Navigate knowledge graph
+10. All skills support Neocortex integration - gather context automatically when DOC-IDs available
+11. Engage user throughout for feedback and iteration
