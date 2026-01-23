@@ -5,6 +5,20 @@ All notable changes to the Neocortex Methodology will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] - 2026-01-23
+
+### Changed
+- **Auto-Regenerate Learning Index** - Learning index (`learning-index.yaml`) now automatically regenerates when learnings are saved (DEC-008)
+  - Single user action ("update the learning") now updates both `learning.yaml` and `learning-index.yaml`
+  - No manual `*learning-index` required after saving learnings
+  - Graceful fallback if regeneration fails (learning save still succeeds)
+- **manage-learning skill** - Added Step 5 (auto-regenerate index) to save workflow (v2.2)
+
+### Documentation
+- Added `docs/decisions/DEC-008-auto-regenerate-learning-index.md`
+
+---
+
 ## [1.8.0] - 2026-01-23
 
 ### Added

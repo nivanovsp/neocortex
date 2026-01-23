@@ -223,9 +223,13 @@ empty_topics:
   - INFRA
 ```
 
-### Regenerating the Index
+### Index Auto-Regeneration (DEC-008)
 
-After significant learning accumulation or creating new topics:
+The learning index is **automatically regenerated** whenever you save learnings via `*learning save`. No separate command needed - "update the learning" updates both files.
+
+### Manual Regeneration (if needed)
+
+For manual regeneration after creating new topics:
 
 ```powershell
 .\.mlda\scripts\mlda-generate-index.ps1
@@ -244,7 +248,7 @@ Or via the manage-learning skill:
 | Working on specific topic | Full load upfront | Deferred until needed | Context preserved |
 | Simple conversation | All learning loaded | Index only | Significant |
 
-See [DEC-007](../docs/decisions/DEC-007-two-tier-learning.md) for full specification.
+See [DEC-007](../docs/decisions/DEC-007-two-tier-learning.md) for two-tier architecture and [DEC-008](../docs/decisions/DEC-008-auto-regenerate-learning-index.md) for auto-regeneration.
 
 ---
 
@@ -406,4 +410,4 @@ The `-Migrate` flag:
 
 ---
 
-*MLDA v2.0 | Neocortex Methodology*
+*MLDA v2.1 | Neocortex Methodology*

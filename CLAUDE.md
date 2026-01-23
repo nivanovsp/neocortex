@@ -371,13 +371,16 @@ As projects grow, topic learning files can become large. The two-tier system opt
 5. Work proceeds with full topic context
 ```
 
-**Regenerating the Index:**
+**Index Auto-Regeneration (DEC-008):**
+When you save learnings (via `*learning save`), the learning index is automatically regenerated. No separate command needed - "update the learning" updates both files.
+
+**Manual Regeneration (if needed):**
 ```powershell
 .\.mlda\scripts\mlda-generate-index.ps1
 # Or via skill: *learning-index
 ```
 
-**Reference:** [DEC-007](docs/decisions/DEC-007-two-tier-learning.md)
+**Reference:** [DEC-007](docs/decisions/DEC-007-two-tier-learning.md), [DEC-008](docs/decisions/DEC-008-auto-regenerate-learning-index.md)
 
 ---
 
@@ -481,4 +484,4 @@ These roles have been consolidated into the 3-role workflow to reduce handoffs a
 
 ---
 
-*RMS-BMAD Methodology v1.8 | Rules Layer*
+*RMS-BMAD Methodology v1.8.1 | Rules Layer*

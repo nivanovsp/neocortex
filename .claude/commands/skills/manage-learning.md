@@ -229,15 +229,39 @@ For approved items:
 .\.mlda\scripts\mlda-learning.ps1 -Topic authentication -AddGrouping -Name "refresh-token-handling" -Docs "DOC-AUTH-002,DOC-AUTH-007,DOC-AUTH-009" -Origin agent
 ```
 
-### Step 4: Confirm
+### Step 4: Confirm Save
 
 ```
 Learnings saved to: .mlda/topics/authentication/learning.yaml
 Version: 3 → 4
 Sessions contributed: 12 → 13
-
-Next session will load these learnings automatically when working on authentication tasks.
 ```
+
+### Step 5: Auto-Regenerate Learning Index
+
+**Automatic** - After saving to learning.yaml, regenerate the learning index:
+
+```powershell
+.\.mlda\scripts\mlda-generate-index.ps1
+```
+
+**Agent reports (on success):**
+```
+Learning index updated: .mlda/learning-index.yaml
+  Topics: 16 | Sessions: 48
+
+Next session will load these learnings automatically.
+```
+
+**Agent reports (on failure):**
+```
+⚠ Learning index regeneration failed: [error message]
+Run `*learning-index` manually to update the index.
+
+Learnings were saved successfully - only the index needs manual refresh.
+```
+
+**Why automatic?** (DEC-008) When users say "update the learning", they expect all learning files to be updated. Separating index regeneration creates friction and leads to stale indexes.
 
 ---
 
@@ -560,4 +584,4 @@ This skill can be invoked via:
 
 ---
 
-*manage-learning v2.1 | Neocortex Methodology | DEC-002, DEC-007 (Two-Tier Loading)*
+*manage-learning v2.2 | Neocortex Methodology | DEC-002, DEC-007 (Two-Tier Loading), DEC-008 (Auto-Regenerate Index)*
