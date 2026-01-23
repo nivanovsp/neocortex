@@ -1,0 +1,200 @@
+# Neocortex Learning Index Schema
+# JSON Schema for the lightweight learning index file
+# Version: 1.0
+# Related: DEC-007-two-tier-learning.md
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "neocortex/learning-index"
+title: "Learning Index File"
+description: "Lightweight index of all topic learnings for Tier 1 loading"
+
+type: object
+
+required:
+  - version
+  - generated_at
+  - topics
+
+properties:
+  # ============================================
+  # METADATA
+  # ============================================
+
+  version:
+    type: integer
+    minimum: 1
+    description: "Index schema version"
+
+  generated_at:
+    type: string
+    format: date-time
+    description: "When this index was generated (ISO 8601)"
+
+  generated_from:
+    type: integer
+    minimum: 0
+    description: "Number of topic learning files processed"
+
+  total_sessions:
+    type: integer
+    minimum: 0
+    description: "Sum of all sessions across all topics"
+
+  generator_script:
+    type: string
+    description: "Script used to generate this index"
+    default: "mlda-generate-index.ps1"
+
+  # ============================================
+  # TOPICS
+  # ============================================
+
+  topics:
+    type: object
+    description: "Map of topic name to topic summary"
+    additionalProperties:
+      type: object
+      required:
+        - summary
+        - sessions
+        - learning_path
+      properties:
+        summary:
+          type: string
+          maxLength: 200
+          description: "Brief description of topic (from domain.yaml or first grouping)"
+
+        sessions:
+          type: integer
+          minimum: 0
+          description: "Number of sessions that contributed to this topic"
+
+        size:
+          type: string
+          pattern: "^[0-9.]+ [KMG]?B$"
+          description: "Human-readable file size (e.g., '61 KB', '2.3 MB')"
+
+        key_insights:
+          type: array
+          maxItems: 5
+          items:
+            type: string
+            maxLength: 150
+          description: "Top 3-5 actionable insights from verification notes"
+
+        primary_docs:
+          type: array
+          maxItems: 5
+          items:
+            type: string
+            pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+          description: "Primary documents for this topic (from first grouping)"
+
+        learning_path:
+          type: string
+          description: "Relative path to full learning.yaml file"
+
+        last_updated:
+          type: string
+          format: date
+          description: "When the source learning file was last updated"
+
+        has_groupings:
+          type: boolean
+          description: "Whether topic has learned groupings"
+
+        has_activations:
+          type: boolean
+          description: "Whether topic has co-activation patterns"
+
+  # ============================================
+  # EMPTY TOPICS
+  # ============================================
+
+  empty_topics:
+    type: array
+    items:
+      type: string
+    description: "Topics with learning files but no accumulated learnings yet"
+
+  # ============================================
+  # CROSS-DOMAIN PATTERNS
+  # ============================================
+
+  cross_domain_hints:
+    type: array
+    description: "Frequently combined topics (optional, for multi-topic detection)"
+    items:
+      type: object
+      properties:
+        topics:
+          type: array
+          minItems: 2
+          maxItems: 3
+          items:
+            type: string
+          description: "Topics that frequently work together"
+        typical_tasks:
+          type: array
+          items:
+            type: string
+          description: "Task types where this combination occurs"
+        combined_size:
+          type: string
+          description: "Estimated combined size if both loaded"
+
+additionalProperties: false
+
+# ============================================
+# EXAMPLES
+# ============================================
+
+examples:
+  - version: 1
+    generated_at: "2026-01-23T14:30:00Z"
+    generated_from: 16
+    total_sessions: 47
+    generator_script: "mlda-generate-index.ps1"
+    topics:
+      UI:
+        summary: "Component patterns, accessibility, mobile-first design, 4 breakpoints"
+        sessions: 15
+        size: "61 KB"
+        key_insights:
+          - "Bottom sheets require specific touch targets (48px min)"
+          - "Always use semantic HTML before ARIA attributes"
+          - "Mobile-first: design 320px first, scale up"
+        primary_docs:
+          - "DOC-UI-001"
+          - "DOC-UI-002"
+          - "DOC-DS-001"
+        learning_path: ".mlda/topics/UI/learning.yaml"
+        last_updated: "2026-01-23"
+        has_groupings: true
+        has_activations: true
+      AUTH:
+        summary: "Session management, OAuth flow, token refresh patterns"
+        sessions: 3
+        size: "16 KB"
+        key_insights:
+          - "Refresh tokens in httpOnly cookies only"
+          - "Access tokens: 15 min expiry, refresh: 7 days"
+        primary_docs:
+          - "DOC-AUTH-001"
+          - "DOC-AUTH-002"
+        learning_path: ".mlda/topics/AUTH/learning.yaml"
+        last_updated: "2026-01-20"
+        has_groupings: true
+        has_activations: false
+    empty_topics:
+      - "API"
+      - "DATA"
+      - "INFRA"
+    cross_domain_hints:
+      - topics:
+          - "UI"
+          - "A11Y"
+        typical_tasks:
+          - "implementing"
+          - "reviewing"
+        combined_size: "85 KB"

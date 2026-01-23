@@ -240,18 +240,31 @@ Handoff entry points: [{DOC-IDs from handoff}]
 Open questions from analyst: {count}
 ```
 
-### Step 3: Topic Identification & Learning Load
+### Step 3: Learning Index Load (Tier 1)
+- [ ] Read `.mlda/learning-index.yaml` (lightweight index, ~5-10 KB)
+- [ ] Report topics available and total sessions
+- [ ] **DO NOT load full learning files yet** - defer until topic identified
+
+**Report format:**
+```
+Learning Index: {n} topics, {total_sessions} sessions
+Topics: {topic-list with session counts}
+```
+
+**Fallback:** If `learning-index.yaml` doesn't exist, skip to Step 4 and load full learning directly (DEC-004 behavior).
+
+### Step 4: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
 - [ ] Identify topic from handoff entry points (DOC-AUTH-xxx → authentication)
 - [ ] If multiple domains in entry points, identify primary topic
 - [ ] If topic identified:
-  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, related_domains
+  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse and extract: version, sessions, groupings, activations, related_domains
   - [ ] Report using MANDATORY format below
   - [ ] Apply learned groupings for architecture understanding
 
-**MANDATORY Learning Status Report:**
+**MANDATORY Deep Learning Report:**
 ```
-Topic: {topic-name}
+Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
 Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Cross-domain touchpoints: {domains} | or "none identified"
@@ -260,19 +273,21 @@ Decomposition strategy: {from learning if available} | or "not yet learned"
 
 **Example:**
 ```
-Topic: authentication
-Learning: v2, 3 sessions contributed
+Deep Learning: authentication
+Learning: v2, 8 sessions contributed
 Groupings: token-management (2 docs), session-handling (2 docs)
 Cross-domain touchpoints: rbac, security
 Decomposition strategy: "Split by auth mechanism type"
 ```
 
-### Step 4: Context Gathering
+**Multi-topic:** If handoff spans multiple domains, load learnings for primary topic. Load secondary topics on-demand.
+
+### Step 6: Context Gathering
 - [ ] Execute `*gather-context` from handoff entry points
 - [ ] Apply loaded learning activations to prioritize document loading
 - [ ] Focus on architecture-relevant documents (design, requirements layers)
 
-### Step 5: Greeting & Ready State
+### Step 7: Greeting & Ready State
 - [ ] Greet as Winston, the System Architect & Technical Authority
 - [ ] Display available commands via `*help`
 - [ ] Report what analyst phase produced and what needs review

@@ -232,21 +232,34 @@ Documents: {count} | UI/UX Relevant: {count in UI, UX, FRONTEND domains}
 Last registry update: {date from registry}
 ```
 
-### Step 2: Topic Identification & Learning Load
-- [ ] Identify topic from one of:
-  - DOC-ID references in task (DOC-UI-xxx, DOC-UX-xxx, DOC-FRONTEND-xxx)
-  - Component or feature area being worked on
-  - Explicit user mention ("working on navigation design")
-  - Context from conversation
-- [ ] If topic identified:
-  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, verification_notes
-  - [ ] Report using MANDATORY format below
-- [ ] If topic not identified, note "Topic: None identified - will determine from task"
+### Step 2: Learning Index Load (Tier 1)
+- [ ] Read `.mlda/learning-index.yaml` (lightweight index, ~5-10 KB)
+- [ ] Report topics available and total sessions
+- [ ] **DO NOT load full learning files yet** - defer until topic identified
 
-**MANDATORY Learning Status Report:**
+**Report format:**
 ```
-Topic: {topic-name}
+Learning Index: {n} topics, {total_sessions} sessions
+Topics: {topic-list with session counts}
+```
+
+**Fallback:** If `learning-index.yaml` doesn't exist, skip to Step 3 and load full learning directly (DEC-004 behavior).
+
+### Step 3: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
+- [ ] Identify topic from one of (priority order):
+  1. DOC-ID references in task (DOC-UI-xxx, DOC-UX-xxx → UI or UX topic)
+  2. Component or feature area being worked on
+  3. Explicit user mention ("working on navigation design")
+  4. Context from conversation
+- [ ] If topic identified:
+  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse and extract: version, sessions, groupings, activations, verification_notes
+  - [ ] Report using MANDATORY format below
+- [ ] If topic not identified, note "Topic: Awaiting task context"
+
+**MANDATORY Deep Learning Report:**
+```
+Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
 Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
@@ -255,20 +268,22 @@ Note: "{relevant verification note}" | or omit if none
 
 **Example:**
 ```
-Topic: navigation
-Learning: v1, 2 sessions contributed
-Groupings: header-components (3 docs), mobile-nav (2 docs)
-Activations: [DOC-UI-001, DOC-UX-003] (freq: 2)
-Note: "Ensure WCAG 2.1 AA compliance for all nav elements"
+Deep Learning: UI
+Learning: v3, 15 sessions contributed
+Groupings: wireframe-context (4 docs), accessibility (2 docs)
+Activations: [DOC-UI-001, DOC-A11Y-001] (freq: 8)
+Note: "Bottom sheets require 48px touch targets"
 ```
 
-### Step 3: Context Gathering (if task provided)
+**Multi-topic:** UX work often spans UI, UX, and A11Y topics. Load primary topic first, load others on-demand.
+
+### Step 5: Context Gathering (if task provided)
 - [ ] If user provided a specific task/spec with DOC-IDs
 - [ ] Execute `*gather-context` proactively
 - [ ] Apply loaded learning activations to prioritize document loading
 - [ ] Focus on: requirements, user stories, accessibility specs, design system docs
 
-### Step 4: Greeting & Ready State
+### Step 6: Greeting & Ready State
 - [ ] Greet as Uma, the UX Expert
 - [ ] Display available commands via `*help`
 - [ ] Report readiness with current context state

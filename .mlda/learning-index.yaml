@@ -1,0 +1,33 @@
+﻿# MLDA Learning Index
+# Auto-generated summary of all topic learnings
+# Generated: 2026-01-23T15:27:27Z
+# Generator: mlda-generate-index.ps1
+#
+# This file provides Tier 1 loading for two-tier learning system (DEC-007).
+# DO NOT EDIT MANUALLY - regenerate with: .\mlda-generate-index.ps1
+
+version: 1
+generated_at: "2026-01-23T15:27:27Z"
+generated_from: 1
+total_sessions: 0
+generator_script: "mlda-generate-index.ps1"
+
+topics:
+  authentication:
+    summary: "Topic learnings"
+    sessions: 0
+    size: "374 B"
+    primary_docs:
+      - DOC-AUTH-001
+      - DOC-AUTH-002
+    learning_path: .mlda/topics/authentication/learning.yaml
+    last_updated: "2026-01-20"
+    has_groupings: true
+    has_activations: false
+
+empty_topics:
+  - ux
+
+# Cross-domain hints (optional - add manually if needed)
+cross_domain_hints: []
+

@@ -201,21 +201,42 @@ Documents: {count} | Domains: {domain-list}
 Last registry update: {date from registry}
 ```
 
-### Step 2: Topic Identification & Learning Load
-- [ ] Identify topic from one of:
-  - DOC-ID references in task/request (DOC-AUTH-xxx → authentication)
-  - Beads task labels (if working from beads)
-  - Explicit user mention ("working on authentication")
-  - Context from conversation
-- [ ] If topic identified:
-  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, verification_notes
-  - [ ] Report using MANDATORY format below
-- [ ] If topic not identified, note "Topic: None identified - will determine from task"
+### Step 2: Learning Index Load (Tier 1)
+- [ ] Read `.mlda/learning-index.yaml` (lightweight index, ~5-10 KB)
+- [ ] Report topics available and total sessions
+- [ ] **DO NOT load full learning files yet** - defer until topic identified
 
-**MANDATORY Learning Status Report:**
+**Report format:**
 ```
-Topic: {topic-name}
+Learning Index: {n} topics, {total_sessions} sessions
+Topics: {topic-list with session counts}
+```
+
+**Example:**
+```
+Learning Index: 11 topics, 41 sessions
+Topics: UI (15), AUTH (8), GAMIF (3), A11Y (2), TASK (2), ...
+```
+
+**Fallback:** If `learning-index.yaml` doesn't exist, skip to Step 3 and load full learning directly (DEC-004 behavior).
+
+### Step 3: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
+
+When topic is identified from task, DOC-ID, conversation, or beads:
+- [ ] Identify topic from one of (priority order):
+  1. DOC-ID prefix in task/story (strongest signal)
+  2. Beads task labels
+  3. Explicit user mention ("working on authentication")
+  4. Keyword inference (confirm with user if uncertain)
+- [ ] If topic identified:
+  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse and extract: version, sessions, groupings, activations, verification_notes
+  - [ ] Report using MANDATORY format below
+- [ ] If topic not identified, note "Topic: Awaiting task context"
+
+**MANDATORY Deep Learning Report:**
+```
+Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
 Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
@@ -224,19 +245,21 @@ Note: "{relevant verification note}" | or omit if none
 
 **Example:**
 ```
-Topic: authentication
-Learning: v2, 3 sessions contributed
-Groupings: token-management (2 docs)
-Activations: [DOC-AUTH-001, DOC-AUTH-002] (freq: 3)
-Note: "Check compliance markers in token docs"
+Deep Learning: authentication
+Learning: v2, 8 sessions contributed
+Groupings: token-management (2 docs), oauth-flow (3 docs)
+Activations: [DOC-AUTH-001, DOC-AUTH-002] (freq: 5)
+Note: "Always confirm scopes are minimal - email only"
 ```
 
-### Step 3: Context Gathering (if task provided)
+**Multi-topic:** If task spans multiple topics (e.g., DOC-AUTH-001 and DOC-UI-002), load both learnings. Warn if combined size exceeds 50 KB.
+
+### Step 5: Context Gathering (if task provided)
 - [ ] If user provided a specific task/story with DOC-IDs
 - [ ] Execute `*gather-context` proactively
 - [ ] Apply loaded learning activations to prioritize document loading
 
-### Step 4: Greeting & Ready State
+### Step 6: Greeting & Ready State
 - [ ] Greet as Maya, the Business Analyst & Documentation Owner
 - [ ] Display available commands via `*help`
 - [ ] Report readiness with current context state

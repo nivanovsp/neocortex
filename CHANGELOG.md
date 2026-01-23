@@ -5,6 +5,40 @@ All notable changes to the Neocortex Methodology will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-01-23
+
+### Added
+- **Two-Tier Learning System** - Context-optimized learning loading (DEC-007)
+  - **Tier 1**: Lightweight learning index loaded at mode awakening (~5-10 KB)
+  - **Tier 2**: Full learning loaded on-demand when topic is identified
+- **New Files**:
+  - `.mlda/learning-index.yaml` - Lightweight index of all topic learnings
+  - `.mlda/schemas/learning-index.schema.yaml` - Index validation schema
+  - `.mlda/templates/learning-index.yaml` - Template for new projects
+  - `.mlda/scripts/mlda-generate-index.ps1` - Index generation script
+- **New Command**: `*learning-index` - Regenerate learning index from topic files
+
+### Changed
+- **Mode Activation Protocol** - All modes now load learning index first, then auto-load full learning when topic detected
+- **Updated Modes**: analyst.md, architect.md, dev.md, ux-expert.md, bmad-master.md
+- **manage-learning skill** - Added `*learning-index` workflow section (v2.1)
+- **MLDA README** - Added two-tier learning documentation and structure updates
+- **Project CLAUDE.md** - Added two-tier learning protocol section (v1.8)
+- **Global CLAUDE.md** - Added two-tier learning protocol section (v2.2)
+
+### Performance
+- **Pre-work context reduced** from ~35% to ~15% for mode awakening without specific task
+- **Context savings**: ~25-60 KB for simple conversations that don't require topic depth
+- **Deferred loading**: Full learning only consumed when actually needed
+
+### Documentation
+- Added `docs/decisions/DEC-007-two-tier-learning.md`
+- Added `docs/user-guides/learning-system.md` - User guide for two-tier learning
+- Updated `.mlda/README.md` with two-tier system documentation
+- Updated `docs/release-notes.md` with detailed v1.8.0 notes
+
+---
+
 ## [1.7.0] - 2026-01-21
 
 ### Added

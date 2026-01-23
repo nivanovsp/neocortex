@@ -4,6 +4,112 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [1.8.0] - 2026-01-23
+
+### Added: Two-Tier Learning System
+
+Implemented **context-optimized learning loading** to reduce pre-work context consumption. As projects mature, learning files grow large (60+ KB per topic). This release introduces a two-tier architecture that mirrors human cognition: know what exists (index), retrieve details when needed (full learning).
+
+#### The Problem
+
+Mid-sized projects were consuming ~35% of context before any work began:
+- 16 topic learning files totaling ~165 KB
+- UI learning alone: 61 KB (15 sessions)
+- Significant context spent just to "wake up"
+
+#### The Solution
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  TIER 1: Learning Index (loaded at mode awakening)              │
+│  - Lightweight (~5-10 KB total)                                 │
+│  - Contains topic summaries and top 3-5 insights per topic      │
+│  - Agent "knows what exists" without full context load          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (auto-triggered on topic detection)
+┌─────────────────────────────────────────────────────────────────┐
+│  TIER 2: Full Learning (loaded when topic identified)           │
+│  - Complete learning.yaml for active topic only                 │
+│  - Auto-triggered by DOC-ID, beads labels, or conversation      │
+│  - Full depth available for current work                        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### New Files
+
+| File | Purpose |
+|------|---------|
+| `.mlda/learning-index.yaml` | Lightweight index of all topic learnings |
+| `.mlda/schemas/learning-index.schema.yaml` | Index validation schema |
+| `.mlda/templates/learning-index.yaml` | Template for new projects |
+| `.mlda/scripts/mlda-generate-index.ps1` | Index generation script |
+
+#### New Command
+
+| Command | Description |
+|---------|-------------|
+| `*learning-index` | Regenerate learning index from all topic files |
+
+#### Updated Mode Activation Protocol
+
+All modes now follow this two-tier flow:
+
+```markdown
+### Step 2: Learning Index Load
+- [ ] Read `.mlda/learning-index.yaml`
+- [ ] Report: "Learning index: {n} topics, {total_sessions} sessions"
+- [ ] **DO NOT load full learning files yet**
+
+### Step 3: Topic Detection & Deep Learning (AUTOMATIC)
+When topic is identified (from task, DOC-ID, conversation, or beads):
+- [ ] Read `.mlda/topics/{topic}/learning.yaml`
+- [ ] Report: "Deep learning: {topic} (v{n}, {sessions} sessions)"
+```
+
+#### Performance Improvements
+
+| Scenario | Before | After | Savings |
+|----------|--------|-------|---------|
+| Mode awakening (no task) | 35-71 KB | 5-10 KB | ~25-60 KB |
+| Simple conversation | All learning loaded | Index only | Significant |
+| Topic-specific work | Upfront load | Deferred | Context preserved |
+
+#### Updated Files
+
+| File | Changes |
+|------|---------|
+| `analyst.md` | Two-tier activation protocol |
+| `architect.md` | Two-tier activation protocol |
+| `dev.md` | Two-tier activation protocol |
+| `ux-expert.md` | Two-tier activation protocol |
+| `bmad-master.md` | Two-tier activation protocol |
+| `manage-learning.md` | Added `*learning-index` command (v2.1) |
+| `.mlda/README.md` | Two-tier learning documentation |
+| `CLAUDE.md` (project) | Two-tier protocol section (v1.8) |
+| `CLAUDE.md` (global) | Two-tier protocol section (v2.2) |
+
+#### Documentation
+
+| Document | Purpose |
+|----------|---------|
+| `docs/decisions/DEC-007-two-tier-learning.md` | Full specification |
+| `docs/user-guides/learning-system.md` | User guide for learning system |
+| `CHANGELOG.md` | Release notes |
+
+#### Backward Compatibility
+
+If `learning-index.yaml` doesn't exist, modes fall back to DEC-004 behavior (load full learning file directly) with a warning.
+
+#### Beads Tracking
+
+- Phase 1 (Documentation): TT-001, TT-002
+- Phase 2 (Implementation): TT-010 through TT-014
+- Phase 3 (Mode Updates): TT-020 through TT-024
+- Phase 4 (Skills/Docs): TT-030 through TT-034
+
+---
+
 ## [1.7.0] - 2026-01-21
 
 ### Added: Full MLDA Integration for UX-Expert

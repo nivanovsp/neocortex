@@ -237,18 +237,31 @@ Documents: {count} | Domains: {domain-list}
 Ready for implementation: {stories/tasks from handoff}
 ```
 
-### Step 3: Topic Identification & Learning Load
+### Step 3: Learning Index Load (Tier 1)
+- [ ] Read `.mlda/learning-index.yaml` (lightweight index, ~5-10 KB)
+- [ ] Report topics available and total sessions
+- [ ] **DO NOT load full learning files yet** - defer until topic identified from story
+
+**Report format:**
+```
+Learning Index: {n} topics, {total_sessions} sessions
+Topics: {topic-list with session counts}
+```
+
+**Fallback:** If `learning-index.yaml` doesn't exist, skip to Step 4 and load full learning directly (DEC-004 behavior).
+
+### Step 4: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
 - [ ] If story provided, extract topic from story DOC-ID references (DOC-AUTH-xxx → authentication)
 - [ ] If no story yet, identify topic from handoff entry points
 - [ ] If topic identified:
-  - [ ] Read file directly: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse YAML and extract: version, sessions_contributed, groupings, activations, verification_notes
+  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
+  - [ ] Parse and extract: version, sessions, groupings, activations, verification_notes
   - [ ] Report using MANDATORY format below
   - [ ] Apply learned co-activation patterns for efficient context gathering
 
-**MANDATORY Learning Status Report:**
+**MANDATORY Deep Learning Report:**
 ```
-Topic: {topic-name}
+Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
 Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
@@ -257,20 +270,22 @@ Note: "{relevant verification note for implementation}" | or omit if none
 
 **Example:**
 ```
-Topic: authentication
-Learning: v2, 3 sessions contributed
+Deep Learning: authentication
+Learning: v2, 8 sessions contributed
 Groupings: token-management (2 docs)
 Activations: [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001] (freq: 5)
 Note: "Token refresh requires checking DOC-SEC-001 for compliance"
 ```
 
-### Step 4: Context Gathering (if story provided)
+**Multi-topic:** If story references multiple domains (e.g., DOC-AUTH-001 and DOC-UI-002), load both learnings. Warn if combined size exceeds 50 KB.
+
+### Step 6: Context Gathering (if story provided)
 - [ ] If story has DOC-ID references
 - [ ] Execute `*gather-context` proactively
 - [ ] Apply loaded learning activations to prioritize document loading
 - [ ] Focus on implementation-relevant documents (API contracts, data models, constraints)
 
-### Step 5: Greeting & Ready State
+### Step 7: Greeting & Ready State
 - [ ] Greet as Devon, the Implementation Owner (Dev + QA)
 - [ ] Display available commands via `*help`
 - [ ] Report what architect phase produced and what's ready for implementation

@@ -36,6 +36,7 @@ This skill manages the topic-based learning system that allows agents to accumul
 | `*learning grouping` | Add a document grouping | Interactive + script |
 | `*learning activation` | Add co-activation pattern | Interactive + script |
 | `*learning note` | Add verification note | Interactive workflow |
+| `*learning-index` | Regenerate learning index | `mlda-generate-index.ps1` |
 
 ---
 
@@ -317,6 +318,112 @@ Save? [y/n]
 
 ---
 
+## Workflow: Regenerate Learning Index
+
+**When:** After significant learning accumulation, after creating new topics, or if index seems stale
+
+The learning index (`learning-index.yaml`) provides a lightweight summary of all topic learnings for the two-tier loading system (DEC-007). Modes load this index at awakening instead of full learning files.
+
+### Purpose
+
+The index enables:
+- **Fast mode awakening** - only ~5-10 KB loaded initially
+- **Topic awareness** - agent knows what topics exist without loading full content
+- **On-demand loading** - full learning loaded only when topic is identified
+
+### When to Regenerate
+
+Regenerate the index when:
+- You've added significant learnings to a topic (5+ sessions)
+- You've created new topics
+- The `generated_at` timestamp in the index is more than a week old
+- The index reports fewer topics than exist in `.mlda/topics/`
+
+### Command
+
+```
+*learning-index
+```
+
+**Or via PowerShell:**
+
+```powershell
+.\.mlda\scripts\mlda-generate-index.ps1
+```
+
+**Options:**
+- `-MaxInsightsPerTopic 5` - Number of key insights to extract per topic (default: 5)
+- `-DryRun` - Preview changes without writing
+
+### Output
+
+```
+=== Learning Index Regeneration ===
+
+Scanning: .mlda/topics/
+Found: 16 topic directories
+
+Processing topics:
+  ✓ AUTH (61 KB, 15 sessions) -> 5 insights extracted
+  ✓ UI (23 KB, 8 sessions) -> 4 insights extracted
+  ✓ DATA (12 KB, 3 sessions) -> 3 insights extracted
+  - API (empty - no learnings yet)
+  ...
+
+Generated: .mlda/learning-index.yaml
+  Topics with learnings: 12
+  Empty topics: 4
+  Total sessions: 47
+  Index size: 4.2 KB
+
+Previous index: 3.8 KB (2026-01-15)
+```
+
+### Index Structure
+
+```yaml
+# MLDA Learning Index
+# Auto-generated summary of all topic learnings
+
+version: 1
+generated_at: "2026-01-23"
+generated_from: 16 topic learning files
+total_sessions: 47
+
+topics:
+  AUTH:
+    summary: "Session management, OAuth flow, token refresh patterns"
+    sessions: 15
+    size: "61 KB"
+    key_insights:
+      - "Refresh tokens in httpOnly cookies only"
+      - "Access tokens: 15 min expiry, refresh: 7 days"
+      - "Always validate token scope before operations"
+    primary_docs: [DOC-AUTH-001, DOC-AUTH-002]
+    learning_path: .mlda/topics/AUTH/learning.yaml
+
+  UI:
+    summary: "Component patterns, accessibility, mobile-first design"
+    sessions: 8
+    # ... similar structure
+
+# Topics without learnings yet
+empty_topics:
+  - API
+  - INFRA
+```
+
+### Integration with Mode Awakening
+
+After regeneration, modes will:
+1. Load `learning-index.yaml` at awakening (~5 KB)
+2. Report: "Learning index: 16 topics, 47 sessions"
+3. Wait for topic identification before loading full learning
+
+See DEC-007 for the two-tier loading architecture.
+
+---
+
 ## Learning File Schema
 
 ```yaml
@@ -453,4 +560,4 @@ This skill can be invoked via:
 
 ---
 
-*manage-learning v2.0 | Neocortex Methodology | DEC-002 Section 5 Implementation*
+*manage-learning v2.1 | Neocortex Methodology | DEC-002, DEC-007 (Two-Tier Loading)*

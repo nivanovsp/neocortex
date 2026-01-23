@@ -103,6 +103,7 @@ Once MLDA is initialized, document-creating commands **automatically**:
 +-- scripts/                   # MLDA tooling
 +-- templates/                 # Document and config templates
 +-- registry.yaml              # Index of all documents
++-- learning-index.yaml        # Two-tier learning index (DEC-007)
 +-- config.yaml                # Neocortex configuration (optional)
 +-- README.md                  # You are here
 ```
@@ -118,6 +119,7 @@ Once MLDA is initialized, document-creating commands **automatically**:
 | `mlda-registry.ps1` | Rebuild document registry | No args, or `-Graph` for connectivity |
 | `mlda-validate.ps1` | Check link integrity | No args |
 | `mlda-learning.ps1` | Manage topic learning | `-Topic X [-Save\|-Load]` |
+| `mlda-generate-index.ps1` | Generate learning index | No args, or `-MaxInsightsPerTopic 5` |
 | `mlda-handoff.ps1` | Generate handoff document | `-Phase analyst -Status completed` |
 | `mlda-graph.ps1` | Visualize relationships | No args |
 | `mlda-brief.ps1` | Regenerate project brief | No args |
@@ -133,6 +135,7 @@ Once MLDA is initialized, document-creating commands **automatically**:
 | `topic-meta-v2.yaml` | Full sidecar with predictions/boundaries |
 | `topic-domain.yaml` | Topic domain structure |
 | `topic-learning.yaml` | Topic learning file |
+| `learning-index.yaml` | Learning index for two-tier system |
 | `neocortex-config.yaml` | Project configuration |
 | `project-claude-md.md` | Project CLAUDE.md template |
 
@@ -159,6 +162,89 @@ Learning persists in project files, loaded lazily per topic.
 - Cross-domain relationships
 
 See [docs/NEOCORTEX.md](../docs/NEOCORTEX.md) for full schema and workflow.
+
+---
+
+## Two-Tier Learning System (DEC-007)
+
+As projects grow, topic learning files can become large (60+ KB per topic). The two-tier system optimizes context usage by deferring full learning loads.
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  TIER 1: Learning Index (loaded on mode awakening)              │
+│  - Lightweight (~5-10 KB total)                                 │
+│  - Lists all topics with summaries                              │
+│  - Contains top 3-5 key insights per topic                      │
+│  - Agent "knows what exists"                                    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (auto-triggered on topic detection)
+┌─────────────────────────────────────────────────────────────────┐
+│  TIER 2: Full Learning (loaded when topic identified)           │
+│  - Complete learning.yaml for active topic only                 │
+│  - Loaded automatically (no manual command needed)              │
+│  - Agent has full depth for current work                        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Learning Index (`learning-index.yaml`)
+
+A lightweight summary of all topic learnings, auto-generated from individual learning files.
+
+**Location:** `.mlda/learning-index.yaml`
+
+**Structure:**
+```yaml
+version: 1
+generated_at: "2026-01-23"
+generated_from: 16 topic learning files
+total_sessions: 47
+
+topics:
+  AUTH:
+    summary: "Session management, OAuth flow, token refresh patterns"
+    sessions: 15
+    size: "61 KB"
+    key_insights:
+      - "Refresh tokens in httpOnly cookies only"
+      - "Access tokens: 15 min expiry, refresh: 7 days"
+    primary_docs: [DOC-AUTH-001, DOC-AUTH-002]
+    learning_path: .mlda/topics/AUTH/learning.yaml
+
+  UI:
+    summary: "Component patterns, accessibility, mobile-first design"
+    sessions: 8
+    # ... similar structure
+
+empty_topics:
+  - API
+  - INFRA
+```
+
+### Regenerating the Index
+
+After significant learning accumulation or creating new topics:
+
+```powershell
+.\.mlda\scripts\mlda-generate-index.ps1
+```
+
+Or via the manage-learning skill:
+```
+*learning-index
+```
+
+### Context Savings
+
+| Scenario | Without Two-Tier | With Two-Tier | Savings |
+|----------|------------------|---------------|---------|
+| Mode awakening (no task) | 35-71 KB | 5-10 KB | ~25-60 KB |
+| Working on specific topic | Full load upfront | Deferred until needed | Context preserved |
+| Simple conversation | All learning loaded | Index only | Significant |
+
+See [DEC-007](../docs/decisions/DEC-007-two-tier-learning.md) for full specification.
 
 ---
 

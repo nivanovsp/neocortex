@@ -348,6 +348,37 @@ Stories reference DOC-IDs in their "Documentation References" section. When a de
 
 This replaces the old model where stories had to contain all necessary information.
 
+### Two-Tier Learning System (DEC-007)
+
+As projects grow, topic learning files can become large. The two-tier system optimizes context:
+
+**Tier 1: Learning Index** (loaded at mode awakening)
+- Lightweight file (`.mlda/learning-index.yaml`, ~5-10 KB)
+- Contains topic summaries and top insights
+- Agent "knows what exists" without full context load
+
+**Tier 2: Full Learning** (loaded when topic identified)
+- Complete learning.yaml for the active topic only
+- Auto-triggered by DOC-ID references, beads labels, or user mention
+- Full depth available for current work
+
+**Mode Activation Flow:**
+```
+1. Mode awakens → Load learning-index.yaml (Tier 1)
+2. User selects task or mentions topic
+3. Agent identifies topic from DOC-IDs/labels/conversation
+4. Agent loads .mlda/topics/{topic}/learning.yaml (Tier 2)
+5. Work proceeds with full topic context
+```
+
+**Regenerating the Index:**
+```powershell
+.\.mlda\scripts\mlda-generate-index.ps1
+# Or via skill: *learning-index
+```
+
+**Reference:** [DEC-007](docs/decisions/DEC-007-two-tier-learning.md)
+
 ---
 
 ## Handoff Document Protocol
@@ -450,4 +481,4 @@ These roles have been consolidated into the 3-role workflow to reduce handoffs a
 
 ---
 
-*RMS-BMAD Methodology v1.6 | Rules Layer*
+*RMS-BMAD Methodology v1.8 | Rules Layer*
