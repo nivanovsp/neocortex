@@ -39,8 +39,10 @@ Following relationships → Signal propagation
 
 To make Neocortex available in all projects:
 
-1. Copy `CLAUDE.md` to `~/.claude/CLAUDE.md`
+1. Copy `global/CLAUDE.md` to `~/.claude/CLAUDE.md`
 2. Copy `.claude/commands/` to `~/.claude/commands/`
+
+**Note:** `global/CLAUDE.md` contains universal rules for all projects. The root `CLAUDE.md` is project-specific with the 5-phase workflow.
 
 ## Core Workflow (5 Phases)
 
