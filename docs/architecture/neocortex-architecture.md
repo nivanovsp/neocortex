@@ -360,13 +360,191 @@ Visual representation of the Neocortex methodology's knowledge graph architectur
 
 ---
 
-## 7. Complete System Flow
+## 7. Two-Tier Learning System (DEC-007)
 
 ```
     ╔═════════════════════════════════════════════════════════════════════════════════╗
-    ║                         COMPLETE NEOCORTEX FLOW                                 ║
+    ║                         TWO-TIER LEARNING SYSTEM                                ║
+    ║              "Load lightweight index first, full learning on-demand"            ║
     ╚═════════════════════════════════════════════════════════════════════════════════╝
 
+    MODE AWAKENING (Tier 1 - Always loaded)
+    ────────────────────────────────────────
+
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  .mlda/learning-index.yaml  (~5-10 KB)                                          │
+    │                                                                                 │
+    │  ┌─────────────────────────────────────────────────────────────────────────┐   │
+    │  │  topics:                                                                 │   │
+    │  │    authentication:                                                       │   │
+    │  │      sessions: 12                                                        │   │
+    │  │      last_updated: 2026-01-20                                            │   │
+    │  │      top_insights:                                                       │   │
+    │  │        - "Token docs require compliance marker check"                    │   │
+    │  │        - "AUTH-001 + AUTH-002 always load together"                      │   │
+    │  │    api-design:                                                           │   │
+    │  │      sessions: 8                                                         │   │
+    │  │      top_insights:                                                       │   │
+    │  │        - "REST patterns in API-001 are canonical"                        │   │
+    │  └─────────────────────────────────────────────────────────────────────────┘   │
+    │                                                                                 │
+    │  Agent "knows what exists" without loading 60+ KB per topic                     │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                           │  Topic detected from task/DOC-ID
+                                           ▼
+    TOPIC DETECTION (Tier 2 - On-demand)
+    ────────────────────────────────────
+
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  .mlda/topics/authentication/learning.yaml  (full file)                         │
+    │                                                                                 │
+    │  ┌─────────────────────────────────────────────────────────────────────────┐   │
+    │  │  topic: authentication                                                   │   │
+    │  │  version: 3                                                              │   │
+    │  │  sessions_contributed: 12                                                │   │
+    │  │                                                                          │   │
+    │  │  groupings:                                                              │   │
+    │  │    - name: token-management                                              │   │
+    │  │      docs: [DOC-AUTH-002, DOC-AUTH-003, DOC-AUTH-007]                   │   │
+    │  │    - name: session-handling                                              │   │
+    │  │      docs: [DOC-AUTH-004, DOC-AUTH-005]                                 │   │
+    │  │                                                                          │   │
+    │  │  activations:                                                            │   │
+    │  │    - docs: [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001]                    │   │
+    │  │      frequency: 7                                                        │   │
+    │  │                                                                          │   │
+    │  │  verification_notes:                                                     │   │
+    │  │    - caught: "PCI-DSS requirement"                                       │   │
+    │  │      lesson: "Check compliance markers in token docs"                    │   │
+    │  └─────────────────────────────────────────────────────────────────────────┘   │
+    │                                                                                 │
+    │  Full depth available for current work                                          │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+
+    AUTO-REGENERATION (DEC-008):
+    ────────────────────────────
+    When *learning save executes → learning-index.yaml auto-regenerates
+```
+
+---
+
+## 8. Activation Protocol (DEC-009)
+
+```
+    ╔═════════════════════════════════════════════════════════════════════════════════╗
+    ║                         ACTIVATION CONTEXT OPTIMIZATION                         ║
+    ║              "Single pre-computed file for mode awakening"                      ║
+    ╚═════════════════════════════════════════════════════════════════════════════════╝
+
+    BEFORE DEC-009 (~2100 lines loaded on mode awakening)
+    ──────────────────────────────────────────────────────
+
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  Mode awakens → Read 4+ files sequentially:                                     │
+    │                                                                                 │
+    │     ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐         │
+    │     │ docs/handoff.md  │   │ .mlda/registry   │   │ learning-index   │         │
+    │     │   (~800 lines)   │   │  (~500 lines)    │   │  (~300 lines)    │         │
+    │     └────────┬─────────┘   └────────┬─────────┘   └────────┬─────────┘         │
+    │              │                      │                      │                    │
+    │              └──────────────────────┼──────────────────────┘                    │
+    │                                     │                                           │
+    │                                     ▼                                           │
+    │                            36% context consumed                                 │
+    │                            before any real work!                                │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+
+
+    AFTER DEC-009 (~50-80 lines loaded on mode awakening)
+    ──────────────────────────────────────────────────────
+
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  Mode awakens → Read 1 pre-computed file:                                       │
+    │                                                                                 │
+    │     ┌───────────────────────────────────────────────────────────────────────┐  │
+    │     │  .mlda/activation-context.yaml  (~50-80 lines)                        │  │
+    │     │                                                                       │  │
+    │     │  mlda:                                                                │  │
+    │     │    status: initialized                                                │  │
+    │     │    doc_count: 47                                                      │  │
+    │     │    domains: [API, AUTH, SEC, DATA]                                    │  │
+    │     │                                                                       │  │
+    │     │  handoff:                                                             │  │
+    │     │    current_phase: development                                         │  │
+    │     │    ready_items: [STORY-AUTH-001, STORY-UI-003]                        │  │
+    │     │    open_questions: 2                                                  │  │
+    │     │                                                                       │  │
+    │     │  learning:                                                            │  │
+    │     │    topics_total: 11                                                   │  │
+    │     │    sessions_total: 41                                                 │  │
+    │     │    highlights:                                                        │  │
+    │     │      - "Token compliance markers critical"                            │  │
+    │     └───────────────────────────────────────────────────────────────────────┘  │
+    │                                                                                 │
+    │                            ~97% context reduction!                              │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                           │  Deep context ON-DEMAND only
+                                           ▼
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  DEEP CONTEXT (loaded when actively needed)                                     │
+    │                                                                                 │
+    │     Full handoff.md      Full registry.yaml      Full topic/learning.yaml      │
+    │     (for phase details)  (for DOC-ID lookup)     (for topic work)              │
+    │                                                                                 │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+
+
+    AUTO-REGENERATION TRIGGERS:
+    ───────────────────────────
+
+    ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+    │ *learning save  │────►│ learning-index  │────►│ activation-     │
+    │                 │     │ regenerates     │     │ context         │
+    └─────────────────┘     │ (DEC-008)       │     │ regenerates     │
+                            └─────────────────┘     │ (DEC-009)       │
+    ┌─────────────────┐                             │                 │
+    │ *handoff        │────────────────────────────►│                 │
+    └─────────────────┘                             └─────────────────┘
+    ┌─────────────────┐                                      ▲
+    │ Registry update │──────────────────────────────────────┘
+    └─────────────────┘
+```
+
+---
+
+## 9. Complete System Flow
+
+```
+    ╔═════════════════════════════════════════════════════════════════════════════════╗
+    ║                    COMPLETE NEOCORTEX FLOW (with DEC-009)                       ║
+    ╚═════════════════════════════════════════════════════════════════════════════════╝
+
+                                    ┌───────────────┐
+                                    │  /modes:dev   │
+                                    │  (or any mode)│
+                                    └───────┬───────┘
+                                            │
+                                            ▼
+                                    ┌───────────────────────────┐
+                                    │ STEP 1: Load Activation   │
+                                    │ Context (DEC-009)         │
+                                    │                           │
+                                    │ .mlda/activation-context  │
+                                    │ (~50-80 lines)            │
+                                    └───────────┬───────────────┘
+                                                │
+                                                ▼
+                                    ┌───────────────────────────┐
+                                    │ Agent now knows:          │
+                                    │ • MLDA status (47 docs)   │
+                                    │ • Current phase (dev)     │
+                                    │ • Ready items (3 stories) │
+                                    │ • Learning highlights     │
+                                    └───────────┬───────────────┘
+                                                │
+                                                ▼
                                     ┌───────────────┐
                                     │  bd ready     │
                                     │  (User picks  │
@@ -380,18 +558,16 @@ Visual representation of the Neocortex methodology's knowledge graph architectur
                                     │ DOC-ID/domain │
                                     └───────┬───────┘
                                             │
-                        ┌───────────────────┼───────────────────┐
-                        │                   │                   │
-                        ▼                   ▼                   ▼
-                ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
-                │ Load Topic    │   │ Load Topic    │   │ Parse Task    │
-                │ domain.yaml   │   │ learning.yaml │   │ DOC-ID refs   │
-                │ (structure)   │   │ (history)     │   │ (entry point) │
-                └───────┬───────┘   └───────┬───────┘   └───────┬───────┘
-                        │                   │                   │
-                        └───────────────────┼───────────────────┘
-                                            │
                                             ▼
+                                    ┌───────────────────────────┐
+                                    │ STEP 2: Load Full Topic   │
+                                    │ Learning (Tier 2)         │
+                                    │                           │
+                                    │ .mlda/topics/{topic}/     │
+                                    │ learning.yaml             │
+                                    └───────────┬───────────────┘
+                                                │
+                                                ▼
                                     ┌───────────────────────────┐
                                     │  GATHER CONTEXT           │
                                     │  /skills:gather-context   │
@@ -464,9 +640,11 @@ Visual representation of the Neocortex methodology's knowledge graph architectur
 | **Signal = Agent reading** | Context gathering via `/skills:gather-context` |
 | **Propagation = Following links** | Traversal rules based on relationship type |
 | **Learning = Topic files** | `.mlda/topics/{topic}/learning.yaml` |
+| **Two-Tier Learning** | Index first (Tier 1), full topic on-demand (Tier 2) |
+| **Activation Context** | Pre-computed `.mlda/activation-context.yaml` for mode awakening |
 | **Scaling = Sub-agents** | Decompose when context exceeds thresholds |
 | **Safety = Verification stack** | 6 layers ensure critical info preserved |
 
 ---
 
-*Neocortex Architecture Diagrams v2.0*
+*Neocortex Architecture Diagrams v2.1*
