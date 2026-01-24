@@ -2,7 +2,7 @@
 
 > "The Neocortex methodology, built on the RMS framework"
 
-**Version:** 2.0
+**Version:** 2.1
 **Decision Record:** [DEC-002](decisions/DEC-002-neocortex-methodology.md)
 
 ---
@@ -33,22 +33,33 @@ Neocortex is a methodology for AI-assisted software development where documentat
 | **Modes** | `commands/modes/` | Expert personas (`/modes:analyst`, `/modes:architect`, `/modes:dev`) |
 | **Skills** | `commands/skills/` | Discrete workflows (`/skills:gather-context`, `/skills:create-doc`) |
 
-### Core Workflow (3 Roles)
+### Core Workflow (5 Phases)
 
 ```
-Analyst → Architect → Developer
-(Requirements)  (Design)    (Implementation)
+┌──────────┐     ┌───────────┐     ┌───────────┐     ┌──────────┐     ┌───────────┐
+│ Analyst  │ ──► │ Architect │ ──► │ UX-Expert │ ──► │ Analyst  │ ──► │ Developer │
+│ (Maya)   │     │ (Winston) │     │ (Uma)     │     │ (stories)│     │ (Devon)   │
+└──────────┘     └───────────┘     └───────────┘     └──────────┘     └───────────┘
 ```
 
-Each role hands off via `docs/handoff.md`.
+| Phase | Role | Mode | Purpose |
+|-------|------|------|---------|
+| 1 | Analyst | `/modes:analyst` | Requirements, PRDs, epics |
+| 2 | Architect | `/modes:architect` | Critical review, architecture docs |
+| 3 | UX-Expert | `/modes:ux-expert` | UI/UX design, wireframes, design system |
+| 4 | Analyst | `/modes:analyst` | Stories from UX specs |
+| 5 | Developer | `/modes:dev` | Implementation, test-first, quality gates |
+
+Each phase hands off via `docs/handoff.md` with **open questions** for the next role.
 
 ### Essential Commands
 
 ```bash
 # Modes
-/modes:analyst          # Requirements, documentation
+/modes:analyst          # Requirements, PRDs, stories
 /modes:architect        # Design, technical review
-/modes:dev              # Implementation, testing
+/modes:ux-expert        # UI/UX design, wireframes
+/modes:dev              # Implementation, testing (Dev+QA combined)
 
 # Skills
 /skills:gather-context  # Navigate knowledge graph
@@ -220,6 +231,85 @@ related_domains:
 6. Work proceeds with topic context
 7. Session ends: Agent proposes saving new learnings
 ```
+
+### Two-Tier Learning System (DEC-007)
+
+As projects grow, topic learning files can become large (60+ KB per topic). The two-tier system optimizes context:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  TIER 1: Learning Index (loaded on mode awakening)              │
+│  File: .mlda/learning-index.yaml (~5-10 KB)                     │
+│  - Contains topic summaries and top insights                    │
+│  - Agent "knows what exists" without full load                  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (auto-triggered on topic detection)
+┌─────────────────────────────────────────────────────────────────┐
+│  TIER 2: Full Learning (loaded when topic identified)           │
+│  File: .mlda/topics/{topic}/learning.yaml                       │
+│  - Complete learning for active topic only                      │
+│  - Full depth available for current work                        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Reference:** [DEC-007](decisions/DEC-007-two-tier-learning.md)
+
+### Auto-Regeneration (DEC-008)
+
+When learnings are saved via `*learning save`, the learning index is automatically regenerated. No separate command needed.
+
+**Manual regeneration:**
+```powershell
+.\.mlda\scripts\mlda-generate-index.ps1
+```
+
+**Reference:** [DEC-008](decisions/DEC-008-auto-regenerate-learning-index.md)
+
+---
+
+## Activation Protocol (DEC-009)
+
+Mode activation is optimized through a pre-computed activation context file.
+
+### Unified Activation Flow
+
+```
+1. Mode awakens → Load activation-context.yaml (single file, ~50-80 lines)
+2. Agent has: MLDA status, handoff summary, learning highlights, config
+3. Deep context (full handoff, registry, learning) loaded ON-DEMAND only
+```
+
+### Activation Context File
+
+**Location:** `.mlda/activation-context.yaml`
+
+Pre-computed from registry, handoff, learning-index, and config. Contains:
+- MLDA status (doc count, domains, health)
+- Handoff summary (current phase, ready items, open questions)
+- Learning highlights (topic counts, top insights)
+- Config essentials (context limits)
+
+### Context Savings
+
+| Scenario | Without DEC-009 | With DEC-009 | Reduction |
+|----------|-----------------|--------------|-----------|
+| Mode awakening | ~2100 lines | ~50-80 lines | ~97% |
+
+### Auto-Regeneration Triggers
+
+- Learning saves (`*learning save`) - chained from DEC-008
+- Handoff updates (`*handoff`)
+- Registry updates (document creation)
+
+**Manual regeneration:**
+```powershell
+.\.mlda\scripts\mlda-generate-activation-context.ps1
+```
+
+**Fallback:** If `activation-context.yaml` doesn't exist, modes fall back to individual file reads (DEC-007 behavior).
+
+**Reference:** [DEC-009](decisions/DEC-009-activation-context-optimization.md)
 
 ---
 
@@ -500,10 +590,12 @@ verification:
 |--------|---------|-------|
 | `mlda-init-project.ps1` | Initialize MLDA | `-Domains X,Y [-Migrate]` |
 | `mlda-create.ps1` | Create topic document | `-Domain X -Title "Y"` |
-| `mlda-registry.ps1` | Rebuild registry | No args |
+| `mlda-registry.ps1` | Rebuild registry | No args, or `-Graph` |
 | `mlda-validate.ps1` | Check link integrity | No args |
 | `mlda-learning.ps1` | Manage topic learning | `-Topic X [-Save\|-Load]` |
 | `mlda-graph.ps1` | Visualize relationships | No args |
+| `mlda-generate-index.ps1` | Generate learning index | No args |
+| `mlda-generate-activation-context.ps1` | Generate activation context | No args |
 
 ---
 
@@ -539,12 +631,15 @@ DOC-SEC-012   (Security #12)
 
 | Document | Purpose |
 |----------|---------|
-| [User Guide](guides/neocortex-user-guide.md) | Practical guide to Neocortex features |
+| [User Guide](USER-GUIDE.md) | Practical guide to Neocortex features |
 | [Example Project](examples/neocortex-project-structure.md) | Complete example with sample files |
 | [DEC-001](decisions/DEC-001-critical-thinking-protocol.md) | Critical Thinking Protocol |
 | [DEC-002](decisions/DEC-002-neocortex-methodology.md) | Full decision record with rationale |
+| [DEC-007](decisions/DEC-007-two-tier-learning.md) | Two-tier learning system |
+| [DEC-008](decisions/DEC-008-auto-regenerate-learning-index.md) | Auto-regenerate index |
+| [DEC-009](decisions/DEC-009-activation-context-optimization.md) | Activation context optimization |
 | [.mlda/README.md](../.mlda/README.md) | MLDA quick start |
 
 ---
 
-*Neocortex Methodology v2.0 | Built on the RMS Framework*
+*Neocortex Methodology v2.1 | Built on the RMS Framework*
