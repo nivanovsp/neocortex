@@ -109,17 +109,28 @@ Documents connect via relationships in `.meta.yaml` sidecars:
 | `references` | **Weak** | If relevant to current task |
 | `supersedes` | **Redirect** | Follow this instead of target |
 
-### Topic-Based Learning (Automatic)
+### Activation Context Optimization (DEC-009)
 
-Learning **automatically** loads during mode activation and persists across sessions:
+Mode awakening is optimized through a single pre-computed file:
 
 ```
-1. Mode activated → Agent checks MLDA status
-2. Topic identified from DOC-IDs, beads labels, or user mention
-3. Agent reads: .mlda/topics/{topic}/learning.yaml (direct file read)
-4. Learning status displayed in greeting (MANDATORY visible confirmation)
-5. Work proceeds with topic context + session tracking
-6. Session ends: Agent proposes saving new learnings
+1. Mode activated → Load .mlda/activation-context.yaml (~50-80 lines)
+2. Agent has: MLDA status, current phase, ready items, learning highlights
+3. Deep context loaded ON-DEMAND only (full handoff, registry, topic learning)
+```
+
+**Context savings:** ~97% reduction in awakening-time context (2100 lines → 50-80 lines).
+
+### Topic-Based Learning (Two-Tier System)
+
+Learning uses a two-tier system for efficiency:
+
+```
+Tier 1: .mlda/learning-index.yaml (loaded on awakening)
+        → Topic summaries, session counts, top insights (~5-10 KB)
+
+Tier 2: .mlda/topics/{topic}/learning.yaml (loaded on-demand)
+        → Full topic learning when topic is identified
 ```
 
 **Session Tracking**: Agents track documents accessed, co-activation patterns, and verification catches throughout the session.
@@ -163,6 +174,8 @@ neocortex-methodology/
 │       ├── templates/             # Document templates (YAML-driven)
 │       └── data/                  # Reference knowledge bases
 ├── .mlda/                         # MLDA knowledge graph
+│   ├── activation-context.yaml    # Pre-computed mode awakening context (DEC-009)
+│   ├── learning-index.yaml        # Topic learning summaries (DEC-007)
 │   ├── topics/                    # Topic-based learning
 │   │   └── {topic}/
 │   │       ├── domain.yaml        # Sub-domain structure
@@ -247,4 +260,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-*Neocortex Methodology v2.1 | Built on the RMS Framework*
+*Neocortex Methodology v2.2 | Built on the RMS Framework*
