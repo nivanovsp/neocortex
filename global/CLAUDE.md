@@ -305,6 +305,42 @@ When you save learnings (via `*learning save`), the learning index is automatica
 # Or via skill: *learning-index
 ```
 
+### Activation Context Optimization (DEC-009)
+
+Despite two-tier learning, modes still read multiple files on activation (~36% context). DEC-009 consolidates all awakening-time information into a single pre-computed file.
+
+**Unified Activation Protocol:**
+```
+1. Mode awakens → Load activation-context.yaml (single file, ~50-80 lines)
+2. Agent has: MLDA status, handoff summary, learning highlights, config
+3. Deep context (full handoff, registry, learning) loaded ON-DEMAND only
+```
+
+**Activation Context File:** `.mlda/activation-context.yaml`
+
+Pre-computed from registry, handoff, learning-index, and config. Contains:
+- MLDA status (doc count, domains, health)
+- Handoff summary (current phase, ready items, open questions, entry points)
+- Learning highlights (topic counts, top insights)
+- Config essentials (context limits)
+
+**Auto-Regeneration Triggers:**
+- Learning saves (`*learning save`) - chained from DEC-008
+- Handoff updates (`*handoff`)
+- Registry updates (document creation)
+
+**Context Savings:**
+| Scenario | Without DEC-009 | With DEC-009 | Reduction |
+|----------|-----------------|--------------|-----------|
+| Mode awakening | ~2100 lines | ~50-80 lines | ~97% |
+
+**Manual Regeneration:**
+```powershell
+.\.mlda\scripts\mlda-generate-activation-context.ps1
+```
+
+**Fallback:** If `activation-context.yaml` doesn't exist, modes fall back to individual file reads (DEC-007 behavior).
+
 ### Context Limits
 
 Monitor context size and decompose before degradation.
@@ -394,4 +430,4 @@ All modes support these commands:
 
 ---
 
-*Neocortex Methodology v2.3 | Rules Layer*
+*Neocortex Methodology v2.4 | Rules Layer*
