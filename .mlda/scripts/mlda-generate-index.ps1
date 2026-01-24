@@ -423,4 +423,17 @@ if ($DryRun) {
     Write-Host "    Total sessions:    $($indexData.total_sessions)"
     Write-Host "    Index file size:   $(Format-FileSize (Get-Item $IndexFile).Length)"
     Write-Host "    Output:            $IndexFile`n"
+
+    # Chain: Regenerate activation context (DEC-009)
+    $activationScript = Join-Path $ScriptDir "mlda-generate-activation-context.ps1"
+    if (Test-Path $activationScript) {
+        Write-Host "  Chaining activation context regeneration (DEC-009)..." -ForegroundColor Cyan
+        & $activationScript -Quiet
+        if ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) {
+            Write-Host "  Activation context updated.`n" -ForegroundColor Green
+        } else {
+            Write-Host "  Warning: Activation context regeneration failed." -ForegroundColor Yellow
+            Write-Host "  Run manually: .\mlda-generate-activation-context.ps1`n" -ForegroundColor Yellow
+        }
+    }
 }

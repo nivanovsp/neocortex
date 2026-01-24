@@ -382,6 +382,34 @@ When you save learnings (via `*learning save`), the learning index is automatica
 
 **Reference:** [DEC-007](docs/decisions/DEC-007-two-tier-learning.md), [DEC-008](docs/decisions/DEC-008-auto-regenerate-learning-index.md)
 
+### Activation Context Optimization (DEC-009)
+
+Despite two-tier learning, modes still read multiple files on activation (~36% context). DEC-009 consolidates all awakening-time information into a single pre-computed file.
+
+**Unified Activation Protocol:**
+```
+1. Mode awakens → Load activation-context.yaml (single file, ~50-80 lines)
+2. Agent has: MLDA status, handoff summary, learning highlights, config
+3. Deep context (full handoff, registry, learning) loaded ON-DEMAND only
+```
+
+**Activation Context File:** `.mlda/activation-context.yaml`
+- Pre-computed from registry, handoff, learning-index, config
+- Auto-regenerated on: learning saves, handoff updates, registry updates
+- Contains: MLDA status, current phase, ready items, open questions, learning highlights
+
+**Context Savings:**
+| Scenario | Without DEC-009 | With DEC-009 | Reduction |
+|----------|-----------------|--------------|-----------|
+| Mode awakening | ~2100 lines | ~50-80 lines | ~97% |
+
+**Manual Regeneration:**
+```powershell
+.\.mlda\scripts\mlda-generate-activation-context.ps1
+```
+
+**Reference:** [DEC-009](docs/decisions/DEC-009-activation-context-optimization.md)
+
 ---
 
 ## Handoff Document Protocol
@@ -484,4 +512,4 @@ These roles have been consolidated into the 3-role workflow to reduce handoffs a
 
 ---
 
-*RMS-BMAD Methodology v1.8.1 | Rules Layer*
+*RMS-BMAD Methodology v1.9.0 | Rules Layer*

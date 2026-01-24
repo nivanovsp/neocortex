@@ -220,32 +220,32 @@ templates:
 
 When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
 
-### Step 1: MLDA Status Check
-- [ ] Check if `.mlda/` folder exists
-- [ ] If missing, note "MLDA not initialized" (UX work can proceed without it)
-- [ ] If present, read `.mlda/registry.yaml` and report document count
+### Step 1: Load Activation Context (DEC-009)
+- [ ] Read `.mlda/activation-context.yaml` (single lightweight file, ~50-80 lines)
+- [ ] If missing, fall back to individual file reads (DEC-007 behavior)
+- [ ] If MLDA not initialized, note "MLDA not initialized" (UX work can proceed without it)
+- [ ] Report activation summary using format below
 
 **Report format:**
 ```
-MLDA Status: ✓ Initialized
-Documents: {count} | UI/UX Relevant: {count in UI, UX, FRONTEND domains}
-Last registry update: {date from registry}
+MLDA: ✓ {doc_count} docs | Domains: {domains}
+Phase: {current_phase} | Ready: {ready_item_count} items
+Learning: {topics_total} topics, {sessions_total} sessions
 ```
 
-### Step 2: Learning Index Load (Tier 1)
-- [ ] Read `.mlda/learning-index.yaml` (lightweight index, ~5-10 KB)
-- [ ] Report topics available and total sessions
-- [ ] **DO NOT load full learning files yet** - defer until topic identified
-
-**Report format:**
+**Example:**
 ```
-Learning Index: {n} topics, {total_sessions} sessions
-Topics: {topic-list with session counts}
+MLDA: ✓ 47 docs | Domains: API, UI, SEC, AUTH
+Phase: ux-expert | Ready: 2 items
+Learning: 11 topics, 41 sessions
 ```
 
-**Fallback:** If `learning-index.yaml` doesn't exist, skip to Step 3 and load full learning directly (DEC-004 behavior).
+**Fallback (if activation-context.yaml missing):**
+1. Read `.mlda/registry.yaml` for MLDA status
+2. Read `.mlda/learning-index.yaml` for learning summary
+3. Report: "Activation context not found - using individual file reads"
 
-### Step 3: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
+### Step 2: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
 - [ ] Identify topic from one of (priority order):
   1. DOC-ID references in task (DOC-UI-xxx, DOC-UX-xxx → UI or UX topic)
   2. Component or feature area being worked on
@@ -277,13 +277,22 @@ Note: "Bottom sheets require 48px touch targets"
 
 **Multi-topic:** UX work often spans UI, UX, and A11Y topics. Load primary topic first, load others on-demand.
 
-### Step 5: Context Gathering (if task provided)
+### Step 3: Deep Context (ON-DEMAND)
+
+Load full files only when actively needed for a task:
+- [ ] Read full `docs/handoff.md` for complete phase history
+- [ ] Read full `.mlda/registry.yaml` for DOC-ID lookups
+- [ ] Execute `*gather-context` for comprehensive MLDA traversal
+
+**Important:** Deep context is loaded ONLY when actively needed, not preemptively during activation.
+
+### Step 4: Context Gathering (if task provided)
 - [ ] If user provided a specific task/spec with DOC-IDs
 - [ ] Execute `*gather-context` proactively
 - [ ] Apply loaded learning activations to prioritize document loading
 - [ ] Focus on: requirements, user stories, accessibility specs, design system docs
 
-### Step 6: Greeting & Ready State
+### Step 5: Greeting & Ready State
 - [ ] Greet as Uma, the UX Expert
 - [ ] Display available commands via `*help`
 - [ ] Report readiness with current context state

@@ -4,6 +4,113 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [1.9.0] - 2026-01-24
+
+### Added: Activation Context Optimization
+
+Implemented **pre-computed activation context** to reduce mode awakening context consumption by ~97%. Despite two-tier learning (DEC-007), modes were still reading multiple large files on activation (~36% context). This release consolidates all awakening-time information into a single lightweight file.
+
+#### The Problem
+
+Mode activation was reading 4 separate files:
+- `docs/handoff.md` (~1400 lines)
+- `.mlda/config.yaml` (~90 lines)
+- `.mlda/registry.yaml` (~425 lines)
+- `.mlda/learning-index.yaml` (~180 lines)
+
+Total: ~2100 lines (~36% context) before any work begins.
+
+#### The Solution
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ACTIVATION CONTEXT (single file, ~50-80 lines)                 │
+│  - MLDA status (from registry.yaml)                             │
+│  - Handoff summary (current phase, ready items, open questions) │
+│  - Learning summary (topic counts, highlights)                  │
+│  - Config essentials                                            │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (on-demand when needed)
+┌─────────────────────────────────────────────────────────────────┐
+│  DEEP CONTEXT (loaded only when actively needed)                │
+│  - Full docs/handoff.md for phase history                       │
+│  - Full .mlda/registry.yaml for DOC-ID lookups                  │
+│  - Full topic learning.yaml (Tier 2 from DEC-007)               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### New Files
+
+| File | Purpose |
+|------|---------|
+| `.mlda/activation-context.yaml` | Pre-computed activation context |
+| `.mlda/schemas/activation-context.schema.yaml` | Validation schema |
+| `.mlda/scripts/mlda-generate-activation-context.ps1` | Generation script |
+
+#### Unified Activation Protocol
+
+All modes now follow the same protocol:
+
+```markdown
+### Step 1: Load Activation Context
+- [ ] Read `.mlda/activation-context.yaml` (single lightweight file)
+- [ ] If missing, fall back to individual file reads
+- [ ] Report activation summary
+
+### Step 2: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
+[Same as DEC-007]
+
+### Step 3: Deep Context (ON-DEMAND)
+Load full handoff.md, registry.yaml only when actively needed
+```
+
+#### Auto-Regeneration
+
+Activation context regenerates automatically when:
+- Learning is saved (`*learning save`) - chained from DEC-008
+- Handoff is updated (`*handoff`)
+- Documents are created (registry update)
+
+#### Performance Improvements
+
+| Scenario | Before | After | Reduction |
+|----------|--------|-------|-----------|
+| Dev mode awakening | ~2100 lines | ~50-80 lines | ~97% |
+| Architect awakening | ~1900 lines | ~50-80 lines | ~96% |
+| Analyst awakening | ~700 lines | ~50-80 lines | ~90% |
+| File reads on activation | 4 | 1 | 75% |
+
+**Key benefit:** Activation is now O(1) - constant small context regardless of project size.
+
+#### Updated Files
+
+| File | Changes |
+|------|---------|
+| `analyst.md` | Unified activation protocol |
+| `architect.md` | Unified activation protocol |
+| `dev.md` | Unified activation protocol |
+| `ux-expert.md` | Unified activation protocol |
+| `bmad-master.md` | Unified activation protocol |
+| `handoff.md` skill | Add activation context regeneration |
+| `mlda-generate-index.ps1` | Chain activation context regeneration |
+| `.mlda/README.md` | Activation context documentation |
+| `CLAUDE.md` (project) | DEC-009 protocol section (v1.9) |
+| `CLAUDE.md` (global) | DEC-009 protocol section |
+
+#### Documentation
+
+| Document | Purpose |
+|----------|---------|
+| `docs/decisions/DEC-009-activation-context-optimization.md` | Full specification |
+| `CHANGELOG.md` | Release notes |
+
+#### Backward Compatibility
+
+If `activation-context.yaml` doesn't exist, modes fall back to DEC-007 behavior (individual file reads) with a warning.
+
+---
+
 ## [1.8.0] - 2026-01-23
 
 ### Added: Two-Tier Learning System

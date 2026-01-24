@@ -5,6 +5,34 @@ All notable changes to the Neocortex Methodology will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-01-24
+
+### Added
+- **Activation Context Optimization** - Pre-computed lightweight activation file reduces mode awakening context by ~97% (DEC-009)
+  - **New File**: `.mlda/activation-context.yaml` - Single file (~50-80 lines) consolidating all awakening-time information
+  - **New Script**: `.mlda/scripts/mlda-generate-activation-context.ps1` - Generates activation context from registry, handoff, and learning-index
+  - **New Schema**: `.mlda/schemas/activation-context.schema.yaml` - Validation schema
+
+### Changed
+- **Unified Activation Protocol** - All modes now load single `activation-context.yaml` on awakening instead of 4 separate files
+- **Auto-Regeneration Extended** - Activation context now regenerates on:
+  - Learning saves (chained from DEC-008)
+  - Handoff updates
+  - Registry updates (document creation)
+- **Deep Context On-Demand** - Full handoff.md, registry.yaml only loaded when actively needed for a task
+
+### Performance
+- **Pre-work context reduced** from ~36% (~2100 lines) to ~5% (~50-80 lines) for mode awakening
+- **File reads reduced** from 4 to 1 on activation
+- **Activation is now O(1)** - constant small context regardless of project size
+
+### Documentation
+- Added `docs/decisions/DEC-009-activation-context-optimization.md`
+- Updated `.mlda/README.md` with activation context documentation
+- Updated `CLAUDE.md` with activation context protocol
+
+---
+
 ## [1.8.1] - 2026-01-23
 
 ### Changed

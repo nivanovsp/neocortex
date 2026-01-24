@@ -300,6 +300,18 @@ Write-Host "Created: docs/$domainLower/$slug.meta.yaml" -ForegroundColor Green
 Add-ToRegistry -DocId $docId -Title $Title -RelPath "docs/$domainLower/$slug.md"
 Write-Host "Updated: registry.yaml" -ForegroundColor Green
 
+# Regenerate activation context (DEC-009)
+$activationScript = Join-Path $ScriptDir "mlda-generate-activation-context.ps1"
+if (Test-Path $activationScript) {
+    Write-Host "Regenerating activation context..." -ForegroundColor Yellow
+    try {
+        & $activationScript -Quiet
+        Write-Host "Updated: activation-context.yaml" -ForegroundColor Green
+    } catch {
+        Write-Host "Warning: Could not regenerate activation context" -ForegroundColor Yellow
+    }
+}
+
 # Summary
 Write-Host "`n=== Done ===" -ForegroundColor Cyan
 Write-Host "Document: $mdFile"

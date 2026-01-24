@@ -219,40 +219,37 @@ checklists:
 
 When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
 
-### Step 1: Handoff Document Check
-- [ ] Read `docs/handoff.md` to understand project context
-- [ ] Note what architect phase produced
-- [ ] Identify what's ready for implementation
-- [ ] Note any open questions or concerns from architect
-
-### Step 2: MLDA Status Check
-- [ ] Load `.mlda/config.yaml` for Neocortex settings
-- [ ] Read `.mlda/registry.yaml` and report document count
-- [ ] Report MLDA health status
+### Step 1: Load Activation Context (DEC-009)
+- [ ] Read `.mlda/activation-context.yaml` (single lightweight file, ~50-80 lines)
+- [ ] If missing, fall back to individual file reads (DEC-007 behavior)
+- [ ] Report activation summary using format below
+- [ ] Identify ready items from handoff summary
 
 **Report format:**
 ```
-MLDA Status: ✓ Initialized
-Documents: {count} | Domains: {domain-list}
-Ready for implementation: {stories/tasks from handoff}
+MLDA: ✓ {doc_count} docs | Domains: {domains}
+Phase: {current_phase} | Ready: {ready_item_count} items
+Learning: {topics_total} topics, {sessions_total} sessions
+Ready for implementation: [{ready_items}]
 ```
 
-### Step 3: Learning Index Load (Tier 1)
-- [ ] Read `.mlda/learning-index.yaml` (lightweight index, ~5-10 KB)
-- [ ] Report topics available and total sessions
-- [ ] **DO NOT load full learning files yet** - defer until topic identified from story
-
-**Report format:**
+**Example:**
 ```
-Learning Index: {n} topics, {total_sessions} sessions
-Topics: {topic-list with session counts}
+MLDA: ✓ 47 docs | Domains: API, UI, SEC, AUTH
+Phase: development | Ready: 3 items
+Learning: 11 topics, 41 sessions
+Ready for implementation: [STORY-AUTH-001, STORY-UI-003]
 ```
 
-**Fallback:** If `learning-index.yaml` doesn't exist, skip to Step 4 and load full learning directly (DEC-004 behavior).
+**Fallback (if activation-context.yaml missing):**
+1. Read `docs/handoff.md` for ready items and open questions
+2. Read `.mlda/registry.yaml` for MLDA status
+3. Read `.mlda/learning-index.yaml` for learning summary
+4. Report: "Activation context not found - using individual file reads"
 
-### Step 4: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
+### Step 2: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
 - [ ] If story provided, extract topic from story DOC-ID references (DOC-AUTH-xxx → authentication)
-- [ ] If no story yet, identify topic from handoff entry points
+- [ ] If no story yet, identify topic from activation context entry points
 - [ ] If topic identified:
   - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
   - [ ] Parse and extract: version, sessions, groupings, activations, verification_notes
@@ -279,13 +276,22 @@ Note: "Token refresh requires checking DOC-SEC-001 for compliance"
 
 **Multi-topic:** If story references multiple domains (e.g., DOC-AUTH-001 and DOC-UI-002), load both learnings. Warn if combined size exceeds 50 KB.
 
-### Step 6: Context Gathering (if story provided)
+### Step 3: Deep Context (ON-DEMAND)
+
+Load full files only when actively needed for a task:
+- [ ] Read full `docs/handoff.md` for complete phase history and architect decisions
+- [ ] Read full `.mlda/registry.yaml` for DOC-ID lookups
+- [ ] Execute `*gather-context` for comprehensive MLDA traversal
+
+**Important:** Deep context is loaded ONLY when actively needed, not preemptively during activation.
+
+### Step 4: Context Gathering (if story provided)
 - [ ] If story has DOC-ID references
 - [ ] Execute `*gather-context` proactively
 - [ ] Apply loaded learning activations to prioritize document loading
 - [ ] Focus on implementation-relevant documents (API contracts, data models, constraints)
 
-### Step 7: Greeting & Ready State
+### Step 5: Greeting & Ready State
 - [ ] Greet as Devon, the Implementation Owner (Dev + QA)
 - [ ] Display available commands via `*help`
 - [ ] Report what architect phase produced and what's ready for implementation

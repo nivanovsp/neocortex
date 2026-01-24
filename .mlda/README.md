@@ -104,6 +104,7 @@ Once MLDA is initialized, document-creating commands **automatically**:
 +-- templates/                 # Document and config templates
 +-- registry.yaml              # Index of all documents
 +-- learning-index.yaml        # Two-tier learning index (DEC-007)
++-- activation-context.yaml    # Pre-computed activation context (DEC-009)
 +-- config.yaml                # Neocortex configuration (optional)
 +-- README.md                  # You are here
 ```
@@ -120,6 +121,7 @@ Once MLDA is initialized, document-creating commands **automatically**:
 | `mlda-validate.ps1` | Check link integrity | No args |
 | `mlda-learning.ps1` | Manage topic learning | `-Topic X [-Save\|-Load]` |
 | `mlda-generate-index.ps1` | Generate learning index | No args, or `-MaxInsightsPerTopic 5` |
+| `mlda-generate-activation-context.ps1` | Generate activation context | No args, or `-DryRun` |
 | `mlda-handoff.ps1` | Generate handoff document | `-Phase analyst -Status completed` |
 | `mlda-graph.ps1` | Visualize relationships | No args |
 | `mlda-brief.ps1` | Regenerate project brief | No args |
@@ -249,6 +251,93 @@ Or via the manage-learning skill:
 | Simple conversation | All learning loaded | Index only | Significant |
 
 See [DEC-007](../docs/decisions/DEC-007-two-tier-learning.md) for two-tier architecture and [DEC-008](../docs/decisions/DEC-008-auto-regenerate-learning-index.md) for auto-regeneration.
+
+---
+
+## Activation Context Optimization (DEC-009)
+
+Despite two-tier learning, modes still read multiple files on activation (handoff.md, registry.yaml, config.yaml, learning-index.yaml). DEC-009 consolidates these into a single pre-computed file.
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ACTIVATION CONTEXT (single file, ~50-80 lines)                 │
+│  - MLDA status (from registry.yaml)                             │
+│  - Handoff summary (current phase, ready items, open questions) │
+│  - Learning summary (topic counts, highlights)                  │
+│  - Config essentials                                            │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (on-demand when needed)
+┌─────────────────────────────────────────────────────────────────┐
+│  DEEP CONTEXT (loaded only when actively needed)                │
+│  - Full docs/handoff.md for phase history                       │
+│  - Full .mlda/registry.yaml for DOC-ID lookups                  │
+│  - Full topic learning.yaml (Tier 2 from DEC-007)               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Activation Context File (`activation-context.yaml`)
+
+**Location:** `.mlda/activation-context.yaml`
+
+**Structure:**
+```yaml
+generated: 2026-01-24T10:30:00Z
+generator_version: 1
+
+mlda:
+  status: initialized
+  doc_count: 47
+  domains: [API, UI, SEC, AUTH]
+  health: healthy
+
+handoff:
+  current_phase: development
+  ready_items:
+    - id: STORY-AUTH-001
+      title: "Implement token refresh"
+  open_questions:
+    - "Token refresh strategy?"
+  entry_points: [DOC-AUTH-001, DOC-UI-005]
+
+learning:
+  topics_total: 11
+  sessions_total: 41
+  highlights:
+    - topic: UI
+      insight: "Bottom sheets require 48px touch targets"
+
+config:
+  context_soft_limit: 35000
+  context_hard_limit: 50000
+```
+
+### Auto-Regeneration
+
+Activation context regenerates automatically when:
+- Learning is saved (`*learning save`) - chained from DEC-008
+- Handoff is updated (`*handoff`)
+- Documents are created (registry update)
+
+### Manual Regeneration
+
+```powershell
+.\.mlda\scripts\mlda-generate-activation-context.ps1
+```
+
+### Context Savings
+
+| Scenario | Without DEC-009 | With DEC-009 | Reduction |
+|----------|-----------------|--------------|-----------|
+| Dev mode awakening | ~2100 lines | ~50-80 lines | ~97% |
+| Architect awakening | ~1900 lines | ~50-80 lines | ~96% |
+| Any mode + topic work | +topic learning | Same | No change |
+
+**Key benefit:** Activation is now O(1) - constant small context regardless of project size.
+
+See [DEC-009](../docs/decisions/DEC-009-activation-context-optimization.md) for full decision record.
 
 ---
 
@@ -410,4 +499,4 @@ The `-Migrate` flag:
 
 ---
 
-*MLDA v2.1 | Neocortex Methodology*
+*MLDA v2.2 | Neocortex Methodology*

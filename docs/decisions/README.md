@@ -13,6 +13,8 @@ This directory contains Architecture Decision Records (ADRs) for the RMS-BMAD/Ne
 | DEC-005 | [Handoff Workflow Extension](DEC-005-handoff-workflow-extension.md) | Approved | 2026-01-21 | 5-phase workflow with UX handoff and question protocol |
 | DEC-006 | [UX MLDA Integration](DEC-006-ux-mlda-integration.md) | Approved | 2026-01-22 | Full MLDA integration for UX-Expert mode |
 | DEC-007 | [Two-Tier Learning](DEC-007-two-tier-learning.md) | Approved | 2026-01-23 | Lightweight index + on-demand full learning load |
+| DEC-008 | [Auto-Regenerate Learning Index](DEC-008-auto-regenerate-learning-index.md) | Approved | 2026-01-23 | Learning save auto-regenerates index |
+| DEC-009 | [Activation Context Optimization](DEC-009-activation-context-optimization.md) | Proposed | 2026-01-24 | Pre-computed activation context reduces awakening from ~36% to ~5% |
 
 ## Decision Relationships
 
@@ -22,7 +24,7 @@ DEC-001 (Critical Thinking)
     ▼
 DEC-002 (Neocortex/MLDA)
     │
-    ├──► DEC-003 (Auto Learning) ──► DEC-004 (Load Optimization) ──► DEC-007 (Two-Tier)
+    ├──► DEC-003 (Auto Learning) ──► DEC-004 (Load Optimization) ──► DEC-007 (Two-Tier) ──► DEC-008 (Auto-Regen) ──► DEC-009 (Activation Context)
     │
     ├──► DEC-005 (Handoff Workflow)
     │
@@ -40,6 +42,8 @@ DEC-002 (Neocortex/MLDA)
 | v1.6 | 2026-01-21 | DEC-005: Handoff Workflow |
 | v1.7 | 2026-01-22 | DEC-006: UX Integration |
 | v1.8 | 2026-01-23 | DEC-007: Two-Tier Learning |
+| v1.8.1 | 2026-01-23 | DEC-008: Auto-Regenerate Index |
+| v1.9 | 2026-01-24 | DEC-009: Activation Context Optimization |
 
 ## Creating New Decisions
 
@@ -51,4 +55,4 @@ DEC-002 (Neocortex/MLDA)
 
 ---
 
-*Last updated: 2026-01-23*
+*Last updated: 2026-01-24*

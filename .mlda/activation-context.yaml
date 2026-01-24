@@ -1,0 +1,53 @@
+﻿# MLDA Activation Context
+# Pre-computed lightweight context for mode awakening
+# Generated: 2026-01-24T06:36:25Z
+# Generator: mlda-generate-activation-context.ps1
+#
+# This file consolidates registry, handoff, learning-index, and config
+# for single-file mode activation (DEC-009).
+# DO NOT EDIT MANUALLY - regenerate with: .\mlda-generate-activation-context.ps1
+
+generated: "2026-01-24T06:36:25Z"
+generator_version: 1
+generator_script: "mlda-generate-activation-context.ps1"
+
+# ============================================
+# MLDA STATUS (from registry.yaml)
+# ============================================
+mlda:
+  status: initialized
+  doc_count: 0
+  domains: []
+  orphan_count: 0
+  health: healthy
+  last_registry_update: "2026-01-24"
+# ============================================
+# HANDOFF SUMMARY (from docs/handoff.md)
+# ============================================
+handoff:
+  current_phase: analyst
+  current_phase_owner: analyst
+  ready_items: []
+  open_questions:
+    - "Context: [Why this is a question]"
+    - "Options considered: [What analyst thought about]"
+    - "Recommendation: [If any]"
+  entry_points: []
+  phases_completed: [architect]
+# ============================================
+# LEARNING SUMMARY (from learning-index.yaml)
+# ============================================
+learning:
+  topics_total: 2
+  topics_with_data: 1
+  sessions_total: 0
+  recent_topics: [authentication]
+  highlights: []
+# ============================================
+# CONFIG ESSENTIALS (from .mlda/config.yaml)
+# ============================================
+config:
+  context_soft_limit: 35000
+  context_hard_limit: 50000
+  auto_gather_context: true
+

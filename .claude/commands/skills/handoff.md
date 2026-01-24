@@ -3,7 +3,7 @@ description: 'Generate or update the handoff document for phase transitions'
 ---
 # Handoff Skill
 
-**RMS Skill v2.1** | Discrete workflow for phase handoff document management with Neocortex awareness
+**RMS Skill v2.2** | Discrete workflow for phase handoff document management with Neocortex awareness
 
 Generate or update the handoff document (`docs/handoff.md`) to pass context between workflow phases.
 
@@ -282,7 +282,12 @@ When running this skill, prompt the user for:
 2. Run `mlda-validate` to check MLDA integrity
 3. Report any orphan documents as warnings
 4. Report sidecar v2 coverage (predictions, boundaries, critical markers)
-5. Confirm handoff is complete
+5. **Regenerate activation context (DEC-009):**
+   ```powershell
+   .\.mlda\scripts\mlda-generate-activation-context.ps1
+   ```
+   This ensures the next mode activation has current handoff context.
+6. Confirm handoff is complete
 
 ## Neocortex v2 Considerations
 

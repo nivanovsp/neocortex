@@ -1,0 +1,269 @@
+# Neocortex Activation Context Schema
+# JSON Schema for the pre-computed activation context file
+# Version: 1.0
+# Related: DEC-009-activation-context-optimization.md
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "neocortex/activation-context"
+title: "Activation Context File"
+description: "Pre-computed lightweight context for mode awakening"
+
+type: object
+
+required:
+  - generated
+  - generator_version
+  - mlda
+  - learning
+
+properties:
+  # ============================================
+  # METADATA
+  # ============================================
+
+  generated:
+    type: string
+    format: date-time
+    description: "When this context was generated (ISO 8601)"
+
+  generator_version:
+    type: integer
+    minimum: 1
+    description: "Generator schema version"
+
+  generator_script:
+    type: string
+    description: "Script used to generate this context"
+    default: "mlda-generate-activation-context.ps1"
+
+  # ============================================
+  # MLDA STATUS (from registry.yaml)
+  # ============================================
+
+  mlda:
+    type: object
+    required:
+      - status
+      - doc_count
+    properties:
+      status:
+        type: string
+        enum:
+          - initialized
+          - not_initialized
+          - error
+        description: "MLDA initialization status"
+
+      doc_count:
+        type: integer
+        minimum: 0
+        description: "Total number of documents in registry"
+
+      domains:
+        type: array
+        items:
+          type: string
+        description: "List of domain codes present"
+
+      orphan_count:
+        type: integer
+        minimum: 0
+        description: "Documents without relationships"
+
+      health:
+        type: string
+        enum:
+          - healthy
+          - warning
+          - error
+        description: "Overall MLDA health status"
+
+      last_registry_update:
+        type: string
+        format: date
+        description: "Date of last registry update"
+
+  # ============================================
+  # HANDOFF SUMMARY (from docs/handoff.md)
+  # ============================================
+
+  handoff:
+    type: object
+    description: "Current handoff state (optional if no handoff exists)"
+    properties:
+      current_phase:
+        type: string
+        enum:
+          - analyst
+          - architect
+          - ux-expert
+          - stories
+          - development
+          - completed
+        description: "Current workflow phase"
+
+      current_phase_owner:
+        type: string
+        description: "Mode responsible for current phase"
+
+      ready_items:
+        type: array
+        maxItems: 10
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: "Story or task ID"
+            title:
+              type: string
+              maxLength: 100
+              description: "Brief title"
+        description: "Items ready for next phase"
+
+      open_questions:
+        type: array
+        maxItems: 5
+        items:
+          type: string
+          maxLength: 200
+        description: "Open questions for current phase"
+
+      entry_points:
+        type: array
+        items:
+          type: string
+          pattern: "^DOC-[A-Z]+-[0-9]{3}$"
+        description: "DOC-IDs to start from"
+
+      phases_completed:
+        type: array
+        items:
+          type: string
+        description: "Phases already completed"
+
+  # ============================================
+  # LEARNING SUMMARY (from learning-index.yaml)
+  # ============================================
+
+  learning:
+    type: object
+    required:
+      - topics_total
+      - sessions_total
+    properties:
+      topics_total:
+        type: integer
+        minimum: 0
+        description: "Total number of topics"
+
+      topics_with_data:
+        type: integer
+        minimum: 0
+        description: "Topics with actual learnings"
+
+      sessions_total:
+        type: integer
+        minimum: 0
+        description: "Total sessions across all topics"
+
+      recent_topics:
+        type: array
+        maxItems: 5
+        items:
+          type: string
+        description: "Recently active topics"
+
+      highlights:
+        type: array
+        maxItems: 5
+        items:
+          type: object
+          properties:
+            topic:
+              type: string
+              description: "Topic name"
+            insight:
+              type: string
+              maxLength: 150
+              description: "Key insight from this topic"
+        description: "Top insights from most active topics"
+
+  # ============================================
+  # CONFIG ESSENTIALS (from .mlda/config.yaml)
+  # ============================================
+
+  config:
+    type: object
+    description: "Key configuration values (optional if no config exists)"
+    properties:
+      context_soft_limit:
+        type: integer
+        default: 35000
+        description: "Soft context limit in tokens"
+
+      context_hard_limit:
+        type: integer
+        default: 50000
+        description: "Hard context limit in tokens"
+
+      auto_gather_context:
+        type: boolean
+        default: true
+        description: "Whether to auto-gather context on task"
+
+additionalProperties: false
+
+# ============================================
+# EXAMPLES
+# ============================================
+
+examples:
+  - generated: "2026-01-24T10:30:00Z"
+    generator_version: 1
+    generator_script: "mlda-generate-activation-context.ps1"
+    mlda:
+      status: initialized
+      doc_count: 47
+      domains:
+        - API
+        - UI
+        - SEC
+        - AUTH
+      orphan_count: 0
+      health: healthy
+      last_registry_update: "2026-01-23"
+    handoff:
+      current_phase: development
+      current_phase_owner: dev
+      ready_items:
+        - id: STORY-AUTH-001
+          title: "Implement token refresh"
+        - id: STORY-UI-003
+          title: "Add mobile navigation"
+      open_questions:
+        - "Token refresh strategy - long-lived vs short-lived?"
+      entry_points:
+        - DOC-AUTH-001
+        - DOC-UI-005
+      phases_completed:
+        - analyst
+        - architect
+        - ux-expert
+    learning:
+      topics_total: 11
+      topics_with_data: 7
+      sessions_total: 41
+      recent_topics:
+        - AUTH
+        - UI
+        - TASK
+      highlights:
+        - topic: UI
+          insight: "Bottom sheets require 48px touch targets"
+        - topic: AUTH
+          insight: "Refresh tokens in httpOnly cookies only"
+    config:
+      context_soft_limit: 35000
+      context_hard_limit: 50000
+      auto_gather_context: true

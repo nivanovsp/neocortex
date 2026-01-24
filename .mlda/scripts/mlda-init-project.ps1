@@ -120,7 +120,17 @@ foreach ($domain in $Domains) {
 Write-Host "`nCopying scripts..." -ForegroundColor Yellow
 $sourceScripts = Join-Path $SourcePath "scripts"
 if (Test-Path $sourceScripts) {
-    $scriptFiles = @("mlda-create.ps1", "mlda-registry.ps1", "mlda-validate.ps1", "mlda-brief.ps1", "mlda-learning.ps1")
+    $scriptFiles = @(
+        "mlda-create.ps1",
+        "mlda-registry.ps1",
+        "mlda-validate.ps1",
+        "mlda-brief.ps1",
+        "mlda-learning.ps1",
+        "mlda-generate-index.ps1",              # DEC-007: Two-tier learning
+        "mlda-generate-activation-context.ps1", # DEC-009: Activation context
+        "mlda-handoff.ps1",
+        "mlda-graph.ps1"
+    )
     foreach ($script in $scriptFiles) {
         $srcFile = Join-Path $sourceScripts $script
         if (Test-Path $srcFile) {
@@ -291,7 +301,11 @@ $domainList
     - mlda-registry.ps1
     - mlda-validate.ps1
     - mlda-brief.ps1
-    - mlda-learning.ps1  # v2: Topic learning
+    - mlda-learning.ps1                   # Topic learning
+    - mlda-generate-index.ps1             # DEC-007: Learning index
+    - mlda-generate-activation-context.ps1 # DEC-009: Activation context
+    - mlda-handoff.ps1
+    - mlda-graph.ps1
   templates/           # Document templates
   topics/              # v2: Topic-based learning
 $topicList
@@ -438,6 +452,70 @@ related: []
     }
 }
 
+# Generate initial activation context (DEC-009)
+Write-Host "`nGenerating activation context..." -ForegroundColor Yellow
+$activationScript = Join-Path $TargetScripts "mlda-generate-activation-context.ps1"
+$sourceActivationScript = Join-Path $sourceScripts "mlda-generate-activation-context.ps1"
+
+# Copy the activation context generator script if not already copied
+if ((Test-Path $sourceActivationScript) -and -not (Test-Path $activationScript)) {
+    Copy-Item -Path $sourceActivationScript -Destination $TargetScripts
+    Write-Host "  Copied: scripts/mlda-generate-activation-context.ps1" -ForegroundColor Green
+}
+
+# Also copy the learning index generator (DEC-007)
+$sourceIndexScript = Join-Path $sourceScripts "mlda-generate-index.ps1"
+$targetIndexScript = Join-Path $TargetScripts "mlda-generate-index.ps1"
+if ((Test-Path $sourceIndexScript) -and -not (Test-Path $targetIndexScript)) {
+    Copy-Item -Path $sourceIndexScript -Destination $TargetScripts
+    Write-Host "  Copied: scripts/mlda-generate-index.ps1" -ForegroundColor Green
+}
+
+# Generate initial activation context
+if (Test-Path $activationScript) {
+    try {
+        & $activationScript -Quiet
+        Write-Host "  Generated: activation-context.yaml" -ForegroundColor Green
+    } catch {
+        Write-Host "  Warning: Could not generate activation context. Run manually later." -ForegroundColor Yellow
+    }
+} else {
+    # Create minimal activation context inline
+    $activationContent = @"
+# MLDA Activation Context
+# Pre-computed lightweight context for mode awakening (DEC-009)
+# Generated: $Date
+# Generator: mlda-init-project.ps1 (initial)
+
+generated: "$Date"
+generator_version: 1
+generator_script: "mlda-init-project.ps1"
+
+mlda:
+  status: initialized
+  doc_count: 0
+  domains: [$domainsYaml]
+  orphan_count: 0
+  health: healthy
+
+handoff: null
+
+learning:
+  topics_total: $($Domains.Count)
+  topics_with_data: 0
+  sessions_total: 0
+  recent_topics: []
+  highlights: []
+
+config:
+  context_soft_limit: 35000
+  context_hard_limit: 50000
+  auto_gather_context: true
+"@
+    Set-Content -Path (Join-Path $TargetMlda "activation-context.yaml") -Value $activationContent
+    Write-Host "  Created: activation-context.yaml (minimal)" -ForegroundColor Green
+}
+
 # Summary
 Write-Host "`n=== Initialization Complete (Neocortex v2) ===" -ForegroundColor Cyan
 Write-Host @"
@@ -447,11 +525,12 @@ MLDA has been initialized at: $TargetMlda
 Created:
 - docs/           Domain folders for documents
 - schemas/        Validation schemas
-- scripts/        MLDA utilities (5 scripts)
+- scripts/        MLDA utilities
 - templates/      Document templates
 - topics/         Topic-based learning folders
 - config.yaml     Neocortex configuration
 - registry.yaml   Document index
+- activation-context.yaml  Pre-computed activation context (DEC-009)
 
 Next steps:
 1. Create new documents:
