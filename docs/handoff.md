@@ -1,18 +1,28 @@
 # Project Handoff Document
 
 **Project:** Ways of Development
-**Last Updated:** 2026-01-16
-**Current Phase:** Analyst Discovery
-**Last Handoff By:** Maya (Analyst)
+**Last Updated:** 2026-01-24
+**Current Phase:** Phase 1 - Analyst (Requirements)
+**Last Handoff By:** [Agent Name]
+
+---
+
+## Workflow Overview
+
+```
+Phase 1        Phase 2        Phase 3        Phase 4        Phase 5
+Analyst  ───►  Architect ───► UX-Expert ───► Analyst  ───►  Developer
+(Maya)         (Winston)      (Uma)          (stories)      (Devon)
+```
 
 ---
 
 ## Phase History
 
-### Phase 1: Analyst Discovery
+### Phase 1: Analyst - Requirements
 **Status:** in-progress
 **Agent:** Maya (Analyst)
-**Dates:** 2026-01-16 - [End]
+**Dates:** [Start] - [End]
 
 #### Work Summary
 [Brief description of what was accomplished]
@@ -22,14 +32,14 @@
 |--------|-------|--------|-------------|
 | | | | |
 
-**Total Documents:** 5
-**Domains Covered:** [List domains]
+**Total Documents:** [count]
+**Domains Covered:** [list]
 
 #### Key Decisions Made
 1. [Decision with rationale]
 
 #### Open Questions for Architect (REQUIRED)
-> These are questions the analyst could not resolve alone and require architectural input.
+> Questions requiring architectural expertise
 
 1. **[Question Title]**
    - Context: [Why this is a question]
@@ -43,27 +53,32 @@
 
 ---
 
-### Phase 2: Architecture Refinement
+### Phase 2: Architect - Design
 **Status:** Not Started
 **Agent:** Winston (Architect)
 **Dates:** [Start] - [End]
 
 #### Review Summary
-[What was reviewed and key findings]
+[Critical review of analyst work, key findings]
 
 #### Documents Modified
 | DOC-ID | Title | Changes Made | Rationale |
 |--------|-------|--------------|-----------|
+| | | | |
 
 #### Documents Created
 | DOC-ID | Title | Domain | Description |
 |--------|-------|--------|-------------|
+| | | | |
 
 #### Questions Resolved
 | From Phase | Question | Resolution |
 |------------|----------|------------|
+| 1 | | |
 
-#### Open Questions for Developer (REQUIRED)
+#### Open Questions for UX-Expert (REQUIRED)
+> Questions requiring UX/UI expertise
+
 1. **[Question Title]**
    - Context: [Why this is a question]
    - Technical constraints: [What architect identified]
@@ -72,10 +87,83 @@
 #### Entry Points for Next Phase
 | Priority | DOC-ID | Title | Why Start Here |
 |----------|--------|-------|----------------|
+| 1 | | | |
 
 ---
 
-### Phase 3: Implementation
+### Phase 3: UX-Expert - Design
+**Status:** Not Started
+**Agent:** Uma (UX-Expert)
+**Dates:** [Start] - [End]
+
+#### Design Summary
+[Overview of UI/UX design work completed]
+
+#### Documents Created
+| DOC-ID | Title | Domain | Description |
+|--------|-------|--------|-------------|
+| DOC-UI-xxx | | UI | Wireframes |
+| DOC-DS-xxx | | DS | Design system |
+| DOC-UX-xxx | | UX | User flows |
+| DOC-A11Y-xxx | | A11Y | Accessibility |
+
+#### Design Decisions Made
+1. [Design decision with rationale]
+
+#### Questions Resolved
+| From Phase | Question | Resolution |
+|------------|----------|------------|
+| 2 | | |
+
+#### Open Questions for Analyst (REQUIRED)
+> Questions requiring clarification before story creation
+
+1. **[Question Title]**
+   - Context: [Why this is a question]
+   - Design constraints: [What UX identified]
+   - Recommendation: [If any]
+
+#### Entry Points for Next Phase
+| Priority | DOC-ID | Title | Why Start Here |
+|----------|--------|-------|----------------|
+| 1 | | | |
+
+---
+
+### Phase 4: Analyst - Stories
+**Status:** Not Started
+**Agent:** Maya (Analyst)
+**Dates:** [Start] - [End]
+
+#### Work Summary
+[Stories created from UX specs]
+
+#### Stories Created
+| Story ID | Title | DOC-ID References | Priority |
+|----------|-------|-------------------|----------|
+| | | | |
+
+#### Questions Resolved
+| From Phase | Question | Resolution |
+|------------|----------|------------|
+| 3 | | |
+
+#### Open Questions for Developer (REQUIRED)
+> Questions requiring implementation expertise
+
+1. **[Question Title]**
+   - Context: [Why this is a question]
+   - Story context: [Relevant story IDs]
+   - Recommendation: [If any]
+
+#### Ready for Implementation
+| Priority | Story ID | Title | DOC-ID References |
+|----------|----------|-------|-------------------|
+| 1 | | | |
+
+---
+
+### Phase 5: Developer - Implementation
 **Status:** Not Started
 **Agent:** Devon (Developer+QA)
 **Dates:** [Start] - [End]
@@ -86,27 +174,40 @@
 #### Stories Completed
 | Story ID | Title | Status | Notes |
 |----------|-------|--------|-------|
+| | | | |
 
 #### Test Coverage
 | Component | Unit | Integration | Functional |
 |-----------|------|-------------|------------|
+| | | | |
 
 #### Issues Discovered
 1. [Issue with resolution]
+
+#### Questions Resolved
+| From Phase | Question | Resolution |
+|------------|----------|------------|
+| 4 | | |
 
 ---
 
 ## Document Statistics
 
-**Total Documents:** 5
+**Total Documents:** [count]
 **By Domain:**
 - API: [count]
 - AUTH: [count]
-- CORE: [count]
-- DATA: [count]
 - UI: [count]
-- UM: [count]
+- DS: [count]
+- UX: [count]
+- A11Y: [count]
+- DATA: [count]
+- SEC: [count]
 
 **Relationship Health:**
-- Orphan documents: 0
+- Orphan documents: [count]
 - Broken links: [Run mlda-validate to check]
+
+---
+
+*Handoff Document Template v1.1 | 5-Phase Workflow*
