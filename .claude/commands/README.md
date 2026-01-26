@@ -25,16 +25,14 @@ Modes are expert personas you can activate for specialized work:
 
 | Command | Mode | Expert |
 |---------|------|--------|
+| `/modes:analyst` | Business Analyst | Maya |
 | `/modes:architect` | System Architect | Winston |
-| `/modes:analyst` | Business Analyst | Mary |
-| `/modes:pm` | Product Manager | John |
-| `/modes:po` | Product Owner | Oliver |
-| `/modes:dev` | Full Stack Developer | James |
-| `/modes:qa` | Test Architect | Quinn |
-| `/modes:sm` | Scrum Master | Scott |
+| `/modes:dev` | Developer + QA | Devon |
 | `/modes:ux-expert` | UX/UI Expert | Uma |
 | `/modes:bmad-master` | BMAD Master | Brian |
 | `/modes:bmad-orchestrator` | Workflow Orchestrator | Oscar |
+
+**Deprecated (Jan 2026):** `/modes:pm`, `/modes:po`, `/modes:sm`, `/modes:qa` - use `/modes:analyst` or `/modes:dev` instead.
 
 Once in a mode, use `*help` to see available commands and `*exit` to leave.
 
@@ -114,13 +112,13 @@ Discrete, reusable workflows:
 - Can be invoked by anyone or any mode
 - Produce specific outputs
 
-## Backward Compatibility
+## Single Source of Truth (v2.4.0)
 
-The legacy BMAD commands are still available:
-- `/bmad-agents:*` - Original agent files
-- `/bmad-tasks:*` - Original task files
+All mode definitions are in `commands/modes/`. The duplicate `bmad-agents/` folder has been removed.
 
-These will continue to work but the RMS structure is recommended for new work.
+Use `/modes:*` for all mode invocations (e.g., `/modes:dev`, `/modes:analyst`).
+
+Legacy `/bmad-tasks:*` commands remain available for task workflows.
 
 ## Adding New Components
 

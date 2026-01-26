@@ -109,17 +109,20 @@ Documents connect via relationships in `.meta.yaml` sidecars:
 | `references` | **Weak** | If relevant to current task |
 | `supersedes` | **Redirect** | Follow this instead of target |
 
-### Activation Context Optimization (DEC-009)
+### Simplified Activation Protocol (DEC-JAN-26)
 
-Mode awakening is optimized through a single pre-computed file:
+Mode activation uses a simple 4-step flow:
 
 ```
-1. Mode activated → Load .mlda/activation-context.yaml (~50-80 lines)
-2. Agent has: MLDA status, current phase, ready items, learning highlights
-3. Deep context loaded ON-DEMAND only (full handoff, registry, topic learning)
+1. Mode activated → Load .mlda/learning-index.yaml (~30 lines)
+2. Check beads → bd ready --json (show pending tasks)
+3. Greet as persona → Report status, await instructions
+4. Deep context → ON-DEMAND only when task selected
 ```
 
-**Context savings:** ~97% reduction in awakening-time context (2100 lines → 50-80 lines).
+**Context savings:** ~98% reduction in awakening-time context (~1900 lines → ~40 lines).
+
+**Note:** DEC-009 (activation-context.yaml) was deprecated in favor of this simpler approach.
 
 ### Topic-Based Learning (Two-Tier System)
 
@@ -174,7 +177,6 @@ neocortex-methodology/
 │       ├── templates/             # Document templates (YAML-driven)
 │       └── data/                  # Reference knowledge bases
 ├── .mlda/                         # MLDA knowledge graph
-│   ├── activation-context.yaml    # Pre-computed mode awakening context (DEC-009)
 │   ├── learning-index.yaml        # Topic learning summaries (DEC-007)
 │   ├── topics/                    # Topic-based learning
 │   │   └── {topic}/
@@ -250,6 +252,8 @@ The following modes are deprecated (January 2026) and will be removed in Februar
 
 These roles were consolidated into the 3-role workflow to reduce handoffs.
 
+**Note (v2.4.0):** The `bmad-agents/` folder has been removed. All modes now live in a single location: `.claude/commands/modes/`.
+
 ## Contributing
 
 Contributions welcome! Please follow the conventions in `CLAUDE.md`.
@@ -260,4 +264,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-*Neocortex Methodology v2.3 | Built on the RMS Framework*
+*Neocortex Methodology v2.4 | Built on the RMS Framework*

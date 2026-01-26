@@ -4,6 +4,79 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [2.4.0] - 2026-01-26
+
+### Changed: Agent Consolidation - Single Source of Truth
+
+**Removed `bmad-agents/` folder** - consolidated all agent definitions to `modes/` as the single source of truth.
+
+#### Why This Change
+
+During v2.3.0 deployment, some agents loaded full context at activation despite the simplified activation protocol. Investigation revealed:
+
+1. **Two folders defining the same agents** - `modes/` and `bmad-agents/`
+2. **Sync issues** - `modes/` was updated with DEC-JAN-26, but `bmad-agents/` still had old activation instructions
+3. **Duplicate maintenance burden** - Changes had to be made in two places
+
+#### The Solution
+
+```
+BEFORE:
+.claude/commands/
+├── modes/           # Updated with DEC-JAN-26 protocol ✓
+│   └── dev.md
+└── bmad-agents/     # NOT updated - old protocol ✗
+    └── dev.md
+
+AFTER:
+.claude/commands/
+└── modes/           # Single source of truth
+    └── dev.md
+```
+
+#### Migration
+
+| Old Path | New Path |
+|----------|----------|
+| `/bmad-agents:analyst` | `/modes:analyst` |
+| `/bmad-agents:architect` | `/modes:architect` |
+| `/bmad-agents:dev` | `/modes:dev` |
+| `/bmad-agents:ux-expert` | `/modes:ux-expert` |
+| `/bmad-agents:bmad-master` | `/modes:bmad-master` |
+
+#### Files Deleted
+
+| File | Reason |
+|------|--------|
+| `.claude/commands/bmad-agents/analyst.md` | Duplicate of modes/analyst.md |
+| `.claude/commands/bmad-agents/architect.md` | Duplicate of modes/architect.md |
+| `.claude/commands/bmad-agents/dev.md` | Duplicate of modes/dev.md |
+| `.claude/commands/bmad-agents/ux-expert.md` | Duplicate of modes/ux-expert.md |
+| `.claude/commands/bmad-agents/bmad-master.md` | Duplicate of modes/bmad-master.md |
+| `.claude/commands/bmad-agents/bmad-orchestrator.md` | Duplicate of modes/bmad-orchestrator.md |
+| `.claude/commands/bmad-agents/pm.md` | Deprecated mode |
+| `.claude/commands/bmad-agents/po.md` | Deprecated mode |
+| `.claude/commands/bmad-agents/qa.md` | Deprecated mode |
+| `.claude/commands/bmad-agents/sm.md` | Deprecated mode |
+| `.claude/commands/bmad-agents/infra-devops-platform.md` | Deprecated |
+
+#### Documentation Updated
+
+| File | Change |
+|------|--------|
+| `DEC-JAN-26-simplified-activation-protocol.md` | Added Section 8: Agent Consolidation |
+| `USER-GUIDE.md` | Updated to v2.4.0, added consolidation note |
+| `README.md` | Updated to v2.4, added consolidation note |
+| `release-notes.md` | Added v2.4.0 entry |
+| `summary-2026-01-26.md` | Added consolidation summary |
+
+#### Reference
+
+- Decision: `docs/decisions/DEC-JAN-26-simplified-activation-protocol.md` (Section 8)
+- Beads: Ways of Development-173
+
+---
+
 ## [2.3.0] - 2026-01-26
 
 ### Changed: Simplified Activation Protocol (DEC-JAN-26)

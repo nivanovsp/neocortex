@@ -2,7 +2,7 @@
 
 A comprehensive guide to the Neocortex methodology for AI-assisted software development.
 
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Date:** 2026-01-26
 
 ---
@@ -112,6 +112,8 @@ This creates a topic document with DOC-ID and metadata sidecar.
 | `/modes:bmad-orchestrator` | Oscar | Workflow guidance, mode selection |
 
 **Deprecated Modes (January 2026):** PM, PO, SM, QA - functionality consolidated into analyst and dev modes.
+
+**Note (v2.4.0):** All modes are now in a single location: `.claude/commands/modes/`. The duplicate `bmad-agents/` folder has been removed.
 
 ### Skills (Discrete Workflows)
 
@@ -266,7 +268,8 @@ related:
 | `mlda-registry.ps1` | Rebuild document registry |
 | `mlda-validate.ps1` | Check link integrity |
 | `mlda-generate-index.ps1` | Generate learning index |
-| `mlda-generate-activation-context.ps1` | Generate activation context |
+
+**Deprecated:** `mlda-generate-activation-context.ps1` - no longer used (see DEC-JAN-26).
 
 ---
 
@@ -533,7 +536,6 @@ Token expiry must never exceed 15 minutes per PCI-DSS 8.1.8.
 | `mlda-registry.ps1` | No args, or `-Graph` |
 | `mlda-validate.ps1` | No args |
 | `mlda-generate-index.ps1` | No args |
-| `mlda-generate-activation-context.ps1` | No args |
 
 ### Beads Commands
 
@@ -636,4 +638,4 @@ verification:
 
 ---
 
-*Neocortex User Guide v2.3.0 | 2026-01-26*
+*Neocortex User Guide v2.4.0 | 2026-01-26*

@@ -1,1 +1,0 @@
-/Users/imu/.claude/commands/bmad-infrastructure-devops/agents/infra-devops-platform.md

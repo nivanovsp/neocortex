@@ -643,4 +643,4 @@ Visual representation of the Neocortex methodology's knowledge graph architectur
 
 ---
 
-*Neocortex Architecture Diagrams v2.3*
+*Neocortex Architecture Diagrams v2.4*

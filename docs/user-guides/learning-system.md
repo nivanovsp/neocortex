@@ -1,6 +1,6 @@
 # Learning System User Guide
 
-**Neocortex Methodology v2.3** | Two-Tier Learning System
+**Neocortex Methodology v2.4** | Two-Tier Learning System
 
 ---
 
@@ -285,4 +285,4 @@ If mode is reading `handoff.md` or `registry.yaml` during activation, update to 
 
 ---
 
-*Learning System User Guide v1.1 | Neocortex Methodology v2.3*
+*Learning System User Guide v1.2 | Neocortex Methodology v2.4*

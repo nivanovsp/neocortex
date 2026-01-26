@@ -4,13 +4,14 @@
 
 ---
 
-**Status:** Draft
+**Status:** Active
 **Date:** 2026-01-26
+**Updated:** 2026-01-26 (v2.4.0 - Agent Consolidation)
 **Authors:** Human + Claude collaboration
 **Supersedes:** DEC-009 (activation-context.yaml - deprecated)
 **Related:** DEC-007 (two-tier learning)
-**Beads:** Ways of Development-157
-**Version:** v2.3.0
+**Beads:** Ways of Development-157, Ways of Development-173
+**Version:** v2.4.0
 
 ---
 
@@ -349,6 +350,65 @@ DEC-009 is deprecated as of v2.3.0. Reasons:
 
 ---
 
+## 8. Agent Consolidation (v2.4.0)
+
+### Problem: Duplicate Agent Definitions
+
+During v2.3.0 deployment, agents loaded full context at activation despite DEC-JAN-26 instructions. Investigation revealed:
+
+```
+.claude/commands/
+├── modes/           # Updated with DEC-JAN-26 protocol ✓
+│   ├── analyst.md
+│   ├── architect.md
+│   ├── dev.md
+│   └── ...
+│
+└── bmad-agents/     # NOT updated - still had old protocol ✗
+    ├── analyst.md   # Loaded handoff.md, registry.yaml, config.yaml at startup
+    ├── architect.md
+    ├── dev.md
+    └── ...
+```
+
+**Root Cause:** Two folders defining the same agents created a sync problem. Updates to `modes/` weren't mirrored to `bmad-agents/`.
+
+### Solution: Single Source of Truth
+
+**Decision:** Delete `bmad-agents/` folder entirely. Use `modes/` as the single source of truth.
+
+| Before | After |
+|--------|-------|
+| `/bmad-agents:dev` + `/modes:dev` | `/modes:dev` only |
+| 2 places to maintain | 1 place to maintain |
+| Sync issues possible | No sync issues |
+
+### Invocation Change
+
+| Old Path | New Path |
+|----------|----------|
+| `/bmad-agents:analyst` | `/modes:analyst` |
+| `/bmad-agents:architect` | `/modes:architect` |
+| `/bmad-agents:dev` | `/modes:dev` |
+| `/bmad-agents:ux-expert` | `/modes:ux-expert` |
+| `/bmad-agents:bmad-master` | `/modes:bmad-master` |
+
+### Migration
+
+For existing projects:
+1. Delete `.claude/commands/bmad-agents/` folder
+2. Update any documentation referencing `/bmad-agents:*` paths
+3. Use `/modes:*` for all mode invocations
+
+### Why Not Redirects?
+
+Considered keeping `bmad-agents/` with redirect stubs, but:
+- Adds maintenance burden (even thin files need updating)
+- Confuses users about which path to use
+- Clean deletion is simpler and clearer
+
+---
+
 ## References
 
 | Document | Relationship |
@@ -359,4 +419,4 @@ DEC-009 is deprecated as of v2.3.0. Reasons:
 
 ---
 
-*DOC-PROC-010 | Simplified Activation Protocol | v1.0*
+*DOC-PROC-010 | Simplified Activation Protocol | v2.0 (Agent Consolidation)*
