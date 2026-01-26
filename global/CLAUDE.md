@@ -287,12 +287,12 @@ As projects grow, topic learning files can become large (60+ KB per topic). The 
 - Auto-triggered by DOC-ID references, beads labels, or user mention
 - Full depth available for current work
 
-**Mode Activation Flow:**
+**Mode Activation Flow (DEC-JAN-26):**
 ```
-1. Mode awakens → Load learning-index.yaml (Tier 1)
-2. User selects task or mentions topic
-3. Agent identifies topic from DOC-IDs/labels/conversation
-4. Agent loads .mlda/topics/{topic}/learning.yaml (Tier 2)
+1. Mode awakens → Load learning-index.yaml (~30 lines)
+2. Check beads → bd ready --json (show pending tasks)
+3. Greet as persona → Report status, await instructions
+4. User selects task → Load topic learning ON-DEMAND
 5. Work proceeds with full topic context
 ```
 
@@ -305,41 +305,42 @@ When you save learnings (via `*learning save`), the learning index is automatica
 # Or via skill: *learning-index
 ```
 
-### Activation Context Optimization (DEC-009)
+### Simplified Activation Protocol (DEC-JAN-26)
 
-Despite two-tier learning, modes still read multiple files on activation (~36% context). DEC-009 consolidates all awakening-time information into a single pre-computed file.
+DEC-009's `activation-context.yaml` approach was deprecated due to unreliable script execution and fallback complexity. DEC-JAN-26 introduces a simpler 4-step activation:
 
-**Unified Activation Protocol:**
+**Simplified Activation Flow:**
 ```
-1. Mode awakens → Load activation-context.yaml (single file, ~50-80 lines)
-2. Agent has: MLDA status, handoff summary, learning highlights, config
-3. Deep context (full handoff, registry, learning) loaded ON-DEMAND only
+1. Mode awakens → Load learning-index.yaml (~30 lines)
+2. Check beads → bd ready --json (if available)
+3. Greet and show ready tasks
+4. Deep context → ON-DEMAND only when task selected
 ```
 
-**Activation Context File:** `.mlda/activation-context.yaml`
+**Step-by-Step:**
 
-Pre-computed from registry, handoff, learning-index, and config. Contains:
-- MLDA status (doc count, domains, health)
-- Handoff summary (current phase, ready items, open questions, entry points)
-- Learning highlights (topic counts, top insights)
-- Config essentials (context limits)
+| Step | Action | When |
+|------|--------|------|
+| 1 | Read `.mlda/learning-index.yaml` | Always (lightweight) |
+| 2 | Run `bd ready --json` | Always (skip if beads not init) |
+| 3 | Greet as persona, show tasks | Always |
+| 4 | Load topic learning, handoff section | ON-DEMAND only |
 
-**Auto-Regeneration Triggers:**
-- Learning saves (`*learning save`) - chained from DEC-008
-- Handoff updates (`*handoff`)
-- Registry updates (document creation)
+**What Changed:**
+- Removed: `activation-context.yaml` dependency
+- Removed: Fallback logic that read full `handoff.md`
+- Added: Native beads integration
+- Simplified: 4 steps instead of complex fallback chains
 
 **Context Savings:**
-| Scenario | Without DEC-009 | With DEC-009 | Reduction |
-|----------|-----------------|--------------|-----------|
-| Mode awakening | ~2100 lines | ~50-80 lines | ~97% |
+| Scenario | Before DEC-JAN-26 | After DEC-JAN-26 | Reduction |
+|----------|-------------------|------------------|-----------|
+| Mode awakening | ~1900 lines | ~40 lines | ~98% |
 
-**Manual Regeneration:**
-```powershell
-.\.mlda\scripts\mlda-generate-activation-context.ps1
-```
-
-**Fallback:** If `activation-context.yaml` doesn't exist, modes fall back to individual file reads (DEC-007 behavior).
+**Deep Context (ON-DEMAND):** When user selects a task:
+- Load topic learning: `.mlda/topics/{topic}/learning.yaml`
+- Load relevant handoff section (not full file)
+- Look up DOC-IDs in registry as needed
 
 ### Context Limits
 
@@ -430,4 +431,4 @@ All modes support these commands:
 
 ---
 
-*Neocortex Methodology v2.4 | Rules Layer*
+*Neocortex Methodology v2.5 | Rules Layer*
