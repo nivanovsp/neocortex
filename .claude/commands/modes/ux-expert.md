@@ -221,6 +221,11 @@ templates:
 
 When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
 
+**CRITICAL - DO NOT read these files during activation:**
+- DO NOT read `docs/handoff.md` (load ON-DEMAND only)
+- DO NOT read `.mlda/registry.yaml` (load ON-DEMAND only)
+- DO NOT read `.mlda/config.yaml` (not needed)
+
 ### Step 1: Load Learning Index
 - [ ] Read `.mlda/learning-index.yaml` (~30 lines)
 - [ ] If missing: note "MLDA not initialized" (UX work can proceed without it)
