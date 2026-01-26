@@ -1,6 +1,6 @@
 # Learning System User Guide
 
-**Neocortex Methodology v1.8** | Two-Tier Learning System
+**Neocortex Methodology v2.3** | Two-Tier Learning System
 
 ---
 
@@ -48,22 +48,27 @@ As projects grow, learning files can become large (60+ KB per topic). The two-ti
 
 ## How It Works
 
-### 1. Mode Awakening
+### 1. Mode Awakening (DEC-JAN-26)
 
 When you activate a mode (`/modes:analyst`, `/modes:dev`, etc.):
 
 ```
 === Analyst Mode Activated ===
 
-Activation Protocol:
-✓ Handoff document loaded (docs/handoff.md)
-✓ Learning index loaded (12 topics, 47 sessions)
-✓ Awaiting task selection for deep learning
+Learning: 12 topics, 47 sessions
+Tasks: 3 ready
+  - [P1] Update authentication flow
+  - [P2] Add user profile page
+  - [P2] Fix login validation
 
-Ready. Use *help for commands.
+Use *help for commands.
 ```
 
-The agent loads only the lightweight index at this point.
+The agent loads only:
+1. **Learning index** (~30 lines) - knows what topics exist
+2. **Beads tasks** (~10 lines) - shows pending work
+
+Full context (handoff, registry, topic learning) is loaded ON-DEMAND when you select a task.
 
 ### 2. Topic Detection
 
@@ -250,11 +255,13 @@ Check the `generated_at` timestamp in the index. If old, regenerate:
 
 ### "Context still high after awakening"
 
-Verify mode is using two-tier protocol (v1.8+). Check mode file for:
+Verify mode is using simplified activation (v2.3+). Check mode file for:
 ```markdown
-### Step 2: Learning Index Load
-- [ ] Read `.mlda/learning-index.yaml`
+### Step 1: Load Learning Index
+- [ ] Read `.mlda/learning-index.yaml` (~30 lines)
 ```
+
+If mode is reading `handoff.md` or `registry.yaml` during activation, update to latest mode files.
 
 ---
 
@@ -278,4 +285,4 @@ Verify mode is using two-tier protocol (v1.8+). Check mode file for:
 
 ---
 
-*Learning System User Guide v1.0 | Neocortex Methodology v1.8*
+*Learning System User Guide v1.1 | Neocortex Methodology v2.3*

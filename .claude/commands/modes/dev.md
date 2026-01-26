@@ -178,11 +178,11 @@ mlda_protocol:
   mandatory: true
 
   on_activation:
-    - Read docs/handoff.md for project context
-    - Load .mlda/config.yaml for Neocortex settings
-    - Identify topic from story DOC-IDs
-    - Load topic learnings: .mlda/topics/{topic}/learning.yaml
-    - Apply learned co-activation patterns
+    # DEC-JAN-26: Simplified Activation Protocol
+    - Read .mlda/learning-index.yaml (lightweight, ~30 lines)
+    - Check beads: bd ready --json (if available)
+    - Greet and show ready tasks
+    - Load full docs ON-DEMAND only when task selected
 
   before_implementation:
     - MUST read handoff document
@@ -219,84 +219,53 @@ checklists:
 
 When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
 
-### Step 1: Load Activation Context (DEC-009)
-- [ ] Read `.mlda/activation-context.yaml` (single lightweight file, ~50-80 lines)
-- [ ] If missing, fall back to individual file reads (DEC-007 behavior)
-- [ ] Report activation summary using format below
-- [ ] Identify ready items from handoff summary
+### Step 1: Load Learning Index
+- [ ] Read `.mlda/learning-index.yaml` (~30 lines)
+- [ ] If missing: note "MLDA not initialized" and proceed
+- [ ] Extract: topic count, total sessions, recent topics
 
-**Report format:**
-```
-MLDA: ✓ {doc_count} docs | Domains: {domains}
-Phase: {current_phase} | Ready: {ready_item_count} items
-Learning: {topics_total} topics, {sessions_total} sessions
-Ready for implementation: [{ready_items}]
-```
+### Step 2: Check Beads Tasks
+- [ ] Run: `bd ready --json` (suppress errors if beads not initialized)
+- [ ] Extract: ready task count, top 3 tasks by priority
+- [ ] If beads not available: skip silently
 
-**Example:**
-```
-MLDA: ✓ 47 docs | Domains: API, UI, SEC, AUTH
-Phase: development | Ready: 3 items
-Learning: 11 topics, 41 sessions
-Ready for implementation: [STORY-AUTH-001, STORY-UI-003]
-```
+### Step 3: Greeting & Ready State
+- [ ] Greet as Devon, the Implementation Owner (Dev + QA)
+- [ ] Report status:
+  ```
+  Learning: {n} topics, {m} sessions
+  Tasks: {ready_count} ready
+  [List top 3 ready tasks if any]
+  ```
+- [ ] Show available commands (`*help`)
+- [ ] **IMPORTANT:** Do NOT begin development until story is reviewed (`*review-story`) and test cases created (`*create-test-cases`)
+- [ ] Await user instructions
 
-**Fallback (if activation-context.yaml missing):**
-1. Read `docs/handoff.md` for ready items and open questions
-2. Read `.mlda/registry.yaml` for MLDA status
-3. Read `.mlda/learning-index.yaml` for learning summary
-4. Report: "Activation context not found - using individual file reads"
+### Step 4: Deep Context (ON-DEMAND)
 
-### Step 2: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
-- [ ] If story provided, extract topic from story DOC-ID references (DOC-AUTH-xxx → authentication)
-- [ ] If no story yet, identify topic from activation context entry points
-- [ ] If topic identified:
-  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse and extract: version, sessions, groupings, activations, verification_notes
-  - [ ] Report using MANDATORY format below
-  - [ ] Apply learned co-activation patterns for efficient context gathering
+Load full context ONLY when user selects a task or requests specific information:
 
-**MANDATORY Deep Learning Report:**
+**On task/story selection:**
+- [ ] Identify topic from story DOC-ID references (DOC-AUTH-xxx → authentication)
+- [ ] Load topic learning: `.mlda/topics/{topic}/learning.yaml`
+- [ ] Load relevant handoff section (current phase only, not full file)
+- [ ] Apply learned co-activation patterns
+
+**On DOC-ID reference:**
+- [ ] Look up in `.mlda/registry.yaml` for file path
+- [ ] Load document and related docs per relationship strength
+
+**On *gather-context:**
+- [ ] Execute full MLDA traversal as defined in skill
+
+**Deep Learning Report (when topic loaded):**
 ```
 Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
 Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
-Note: "{relevant verification note for implementation}" | or omit if none
+Note: "{relevant verification note}" | or omit if none
 ```
-
-**Example:**
-```
-Deep Learning: authentication
-Learning: v2, 8 sessions contributed
-Groupings: token-management (2 docs)
-Activations: [DOC-AUTH-001, DOC-AUTH-002, DOC-SEC-001] (freq: 5)
-Note: "Token refresh requires checking DOC-SEC-001 for compliance"
-```
-
-**Multi-topic:** If story references multiple domains (e.g., DOC-AUTH-001 and DOC-UI-002), load both learnings. Warn if combined size exceeds 50 KB.
-
-### Step 3: Deep Context (ON-DEMAND)
-
-Load full files only when actively needed for a task:
-- [ ] Read full `docs/handoff.md` for complete phase history and architect decisions
-- [ ] Read full `.mlda/registry.yaml` for DOC-ID lookups
-- [ ] Execute `*gather-context` for comprehensive MLDA traversal
-
-**Important:** Deep context is loaded ONLY when actively needed, not preemptively during activation.
-
-### Step 4: Context Gathering (if story provided)
-- [ ] If story has DOC-ID references
-- [ ] Execute `*gather-context` proactively
-- [ ] Apply loaded learning activations to prioritize document loading
-- [ ] Focus on implementation-relevant documents (API contracts, data models, constraints)
-
-### Step 5: Greeting & Ready State
-- [ ] Greet as Devon, the Implementation Owner (Dev + QA)
-- [ ] Display available commands via `*help`
-- [ ] Report what architect phase produced and what's ready for implementation
-- [ ] **IMPORTANT:** Do NOT begin development until story is reviewed (`*review-story`) and test cases created (`*create-test-cases`)
-- [ ] Await user instructions
 
 ---
 

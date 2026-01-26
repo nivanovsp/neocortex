@@ -4,6 +4,70 @@ This document tracks all changes, decisions, and updates to the RMS-BMAD methodo
 
 ---
 
+## [2.3.0] - 2026-01-26
+
+### Changed: Simplified Activation Protocol (DEC-JAN-26)
+
+**Deprecated DEC-009** (`activation-context.yaml`) due to unreliable script execution and complex fallback logic. Replaced with a simpler 4-step activation protocol.
+
+#### Why DEC-009 Was Deprecated
+
+1. **Script execution unreliable** - Agents don't consistently execute PowerShell scripts
+2. **Fallback defeated the purpose** - When `activation-context.yaml` was missing, modes fell back to reading `handoff.md` (1400+ lines)
+3. **Added complexity** - Another file to generate and maintain without consistent benefit
+
+#### New Simplified Protocol
+
+```
+STEP 1: Read learning-index.yaml (~30 lines)
+STEP 2: Check beads: bd ready --json (~10 lines)
+STEP 3: Greet and show ready tasks
+STEP 4: Load full docs ON-DEMAND only when task selected
+```
+
+#### Performance
+
+| Scenario | Before | After | Reduction |
+|----------|--------|-------|-----------|
+| Mode awakening | ~1900 lines | ~40 lines | ~98% |
+| File reads | 3-4 files | 1-2 files | 50-75% |
+
+#### Key Benefits
+
+- **Native beads integration** - Shows pending tasks on mode activation
+- **No script execution required** - `learning-index.yaml` auto-regenerates via `*learning save`
+- **No fallback complexity** - If MLDA not initialized, proceed anyway
+- **Full context ON-DEMAND** - Only loaded when actually working on a task
+
+#### Files Changed
+
+| File | Change |
+|------|--------|
+| `analyst.md` | Simplified activation protocol |
+| `architect.md` | Simplified activation protocol |
+| `dev.md` | Simplified activation protocol |
+| `ux-expert.md` | Simplified activation protocol |
+| `bmad-master.md` | Simplified activation protocol |
+| `CLAUDE.md` (project) | Updated to v2.3.0 |
+| `CLAUDE.md` (global) | Updated to v2.5 |
+| `neocortex-architecture.md` | Updated section 8 |
+| `USER-GUIDE.md` | Updated to v2.3.0 |
+| `learning-system.md` | Updated to v1.1 |
+
+#### Deprecations
+
+| File | Status |
+|------|--------|
+| `.mlda/activation-context.yaml` | Deprecated - no longer generated or read |
+| `mlda-generate-activation-context.ps1` | Deprecated - kept for reference |
+
+#### Reference
+
+- Decision: `docs/decisions/DEC-JAN-26-simplified-activation-protocol.md`
+- Summary: `docs/summaries/summary-2026-01-26.md`
+
+---
+
 ## [1.9.0] - 2026-01-24
 
 ### Added: Activation Context Optimization

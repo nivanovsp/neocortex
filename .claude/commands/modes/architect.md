@@ -159,11 +159,11 @@ mlda_protocol:
   mandatory: true
 
   on_activation:
-    - REQUIRE reading docs/handoff.md first
-    - Load registry.yaml
-    - Load .mlda/config.yaml for Neocortex settings
-    - Navigate from handoff entry points
-    - Report MLDA status (document count, health)
+    # DEC-JAN-26: Simplified Activation Protocol
+    - Read .mlda/learning-index.yaml (lightweight, ~30 lines)
+    - Check beads: bd ready --json (if available)
+    - Greet and show ready tasks
+    - Load full docs ON-DEMAND only when task selected
 
   topic_loading:
     - Identify topic from handoff entry points
@@ -221,81 +221,55 @@ data:
 
 When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
 
-### Step 1: Load Activation Context (DEC-009)
-- [ ] Read `.mlda/activation-context.yaml` (single lightweight file, ~50-80 lines)
-- [ ] If missing, fall back to individual file reads (DEC-007 behavior)
-- [ ] Report activation summary using format below
-- [ ] Note open questions from handoff summary
+### Step 1: Load Learning Index
+- [ ] Read `.mlda/learning-index.yaml` (~30 lines)
+- [ ] If missing: note "MLDA not initialized" and proceed
+- [ ] Extract: topic count, total sessions, recent topics
 
-**Report format:**
-```
-MLDA: ✓ {doc_count} docs | Domains: {domains}
-Phase: {current_phase} | Ready: {ready_item_count} items
-Learning: {topics_total} topics, {sessions_total} sessions
-Entry points: [{entry_points from handoff}]
-Open questions: {count}
-```
+### Step 2: Check Beads Tasks
+- [ ] Run: `bd ready --json` (suppress errors if beads not initialized)
+- [ ] Extract: ready task count, top 3 tasks by priority
+- [ ] If beads not available: skip silently
 
-**Example:**
-```
-MLDA: ✓ 47 docs | Domains: API, UI, SEC, AUTH
-Phase: architect | Ready: 3 items
-Learning: 11 topics, 41 sessions
-Entry points: [DOC-AUTH-001, DOC-API-002]
-Open questions: 2
-```
+### Step 3: Greeting & Ready State
+- [ ] Greet as Winston, the System Architect & Technical Authority
+- [ ] Report status:
+  ```
+  Learning: {n} topics, {m} sessions
+  Tasks: {ready_count} ready
+  [List top 3 ready tasks if any]
+  ```
+- [ ] Show available commands (`*help`)
+- [ ] Await user instructions
 
-**Fallback (if activation-context.yaml missing):**
-1. Read `docs/handoff.md` for entry points and open questions
-2. Read `.mlda/registry.yaml` for MLDA status
-3. Read `.mlda/learning-index.yaml` for learning summary
-4. Report: "Activation context not found - using individual file reads"
+### Step 4: Deep Context (ON-DEMAND)
 
-### Step 2: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
-- [ ] Identify topic from activation context entry points (DOC-AUTH-xxx → authentication)
-- [ ] If multiple domains in entry points, identify primary topic
-- [ ] If topic identified:
-  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse and extract: version, sessions, groupings, activations, related_domains
-  - [ ] Report using MANDATORY format below
-  - [ ] Apply learned groupings for architecture understanding
+Load full context ONLY when user selects a task or requests specific information:
 
-**MANDATORY Deep Learning Report:**
+**On task selection:**
+- [ ] Identify topic from task DOC-ID references (DOC-AUTH-xxx → authentication)
+- [ ] Load topic learning: `.mlda/topics/{topic}/learning.yaml`
+- [ ] Load relevant handoff section (current phase only, not full file)
+- [ ] Apply learned groupings for architecture understanding
+
+**On DOC-ID reference:**
+- [ ] Look up in `.mlda/registry.yaml` for file path
+- [ ] Load document and related docs per relationship strength
+
+**On *gather-context:**
+- [ ] Execute full MLDA traversal as defined in skill
+
+**Deep Learning Report (when topic loaded):**
 ```
 Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
 Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Cross-domain touchpoints: {domains} | or "none identified"
-Decomposition strategy: {from learning if available} | or "not yet learned"
 ```
 
-**Example:**
-```
-Deep Learning: authentication
-Learning: v2, 8 sessions contributed
-Groupings: token-management (2 docs), session-handling (2 docs)
-Cross-domain touchpoints: rbac, security
-Decomposition strategy: "Split by auth mechanism type"
-```
-
-**Multi-topic:** If handoff spans multiple domains, load learnings for primary topic. Load secondary topics on-demand.
-
-### Step 3: Deep Context (ON-DEMAND)
-
-Load full files only when actively needed for a task:
-- [ ] Read full `docs/handoff.md` for complete phase history and analyst decisions
-- [ ] Read full `.mlda/registry.yaml` for DOC-ID lookups
-- [ ] Execute `*gather-context` for comprehensive MLDA traversal
-
-**Important:** Deep context is loaded ONLY when actively needed, not preemptively during activation.
-
-### Step 4: Context Gathering
-- [ ] Execute `*gather-context` from handoff entry points
-- [ ] Apply loaded learning activations to prioritize document loading
+### Step 5: Context Gathering (if entry points identified)
+- [ ] Execute `*gather-context` from entry points
 - [ ] Focus on architecture-relevant documents (design, requirements layers)
-
-### Step 5: Greeting & Ready State
-- [ ] Greet as Winston, the System Architect & Technical Authority
 - [ ] Display available commands via `*help`
 - [ ] Report what analyst phase produced and what needs review
 - [ ] Await user instructions

@@ -260,4 +260,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-*Neocortex Methodology v2.2 | Built on the RMS Framework*
+*Neocortex Methodology v2.3 | Built on the RMS Framework*

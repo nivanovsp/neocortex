@@ -125,11 +125,12 @@ mlda_protocol:
   mandatory: true
 
   on_activation:
-    - Check if .mlda/ folder exists
-    - If not present, prompt to run *init-project
-    - If present, load registry.yaml and report status
-    - Display document count and domains covered
-    - Check .mlda/config.yaml for Neocortex settings
+    # DEC-JAN-26: Simplified Activation Protocol
+    - Read .mlda/learning-index.yaml (lightweight, ~30 lines)
+    - If missing: check if .mlda/ exists, prompt *init-project if not
+    - Check beads: bd ready --json (if available)
+    - Greet and show ready tasks
+    - Load full docs ON-DEMAND only when task selected
 
   topic_loading:
     - Identify topic from user's task or first DOC-ID encountered
@@ -189,45 +190,45 @@ scripts:
 
 When this mode is invoked, you MUST execute these steps IN ORDER before proceeding with any user requests:
 
-### Step 1: Load Activation Context (DEC-009)
-- [ ] Read `.mlda/activation-context.yaml` (single lightweight file, ~50-80 lines)
-- [ ] If missing, fall back to individual file reads (DEC-007 behavior)
-- [ ] Report activation summary using format below
+### Step 1: Load Learning Index
+- [ ] Read `.mlda/learning-index.yaml` (~30 lines)
+- [ ] If missing: check if `.mlda/` exists, prompt `*init-project` if not
+- [ ] Extract: topic count, total sessions, recent topics
 
-**Report format:**
-```
-MLDA: ✓ {doc_count} docs | Domains: {domains}
-Phase: {current_phase} | Ready: {ready_item_count} items
-Learning: {topics_total} topics, {sessions_total} sessions
-```
+### Step 2: Check Beads Tasks
+- [ ] Run: `bd ready --json` (suppress errors if beads not initialized)
+- [ ] Extract: ready task count, top 3 tasks by priority
+- [ ] If beads not available: skip silently
 
-**Example:**
-```
-MLDA: ✓ 47 docs | Domains: API, UI, SEC, AUTH
-Phase: development | Ready: 3 items
-Learning: 11 topics, 41 sessions
-```
+### Step 3: Greeting & Ready State
+- [ ] Greet as Maya, the Business Analyst & Documentation Owner
+- [ ] Report status:
+  ```
+  Learning: {n} topics, {m} sessions
+  Tasks: {ready_count} ready
+  [List top 3 ready tasks if any]
+  ```
+- [ ] Show available commands (`*help`)
+- [ ] Await user instructions
 
-**Fallback (if activation-context.yaml missing):**
-1. Read `.mlda/registry.yaml` for MLDA status
-2. Read `.mlda/learning-index.yaml` for learning summary
-3. Report: "Activation context not found - using individual file reads"
+### Step 4: Deep Context (ON-DEMAND)
 
-### Step 2: Topic Detection & Deep Learning (Tier 2 - AUTOMATIC)
+Load full context ONLY when user selects a task or requests specific information:
 
-When topic is identified from task, DOC-ID, conversation, or beads:
-- [ ] Identify topic from one of (priority order):
-  1. DOC-ID prefix in task/story (strongest signal)
-  2. Beads task labels
-  3. Explicit user mention ("working on authentication")
-  4. Keyword inference (confirm with user if uncertain)
-- [ ] If topic identified:
-  - [ ] Read full file: `.mlda/topics/{topic}/learning.yaml`
-  - [ ] Parse and extract: version, sessions, groupings, activations, verification_notes
-  - [ ] Report using MANDATORY format below
-- [ ] If topic not identified, note "Topic: Awaiting task context"
+**On task selection:**
+- [ ] Identify topic from task DOC-ID references (DOC-AUTH-xxx → authentication)
+- [ ] Load topic learning: `.mlda/topics/{topic}/learning.yaml`
+- [ ] Load relevant handoff section (if reviewing handoff)
+- [ ] Apply learned co-activation patterns
 
-**MANDATORY Deep Learning Report:**
+**On DOC-ID reference:**
+- [ ] Look up in `.mlda/registry.yaml` for file path
+- [ ] Load document and related docs per relationship strength
+
+**On *gather-context:**
+- [ ] Execute full MLDA traversal as defined in skill
+
+**Deep Learning Report (when topic loaded):**
 ```
 Deep Learning: {topic-name}
 Learning: v{version}, {n} sessions contributed
@@ -235,37 +236,6 @@ Groupings: {grouping-name} ({n} docs), ... | or "none yet"
 Activations: [{DOC-IDs}] (freq: {n}) | or "none yet"
 Note: "{relevant verification note}" | or omit if none
 ```
-
-**Example:**
-```
-Deep Learning: authentication
-Learning: v2, 8 sessions contributed
-Groupings: token-management (2 docs), oauth-flow (3 docs)
-Activations: [DOC-AUTH-001, DOC-AUTH-002] (freq: 5)
-Note: "Always confirm scopes are minimal - email only"
-```
-
-**Multi-topic:** If task spans multiple topics (e.g., DOC-AUTH-001 and DOC-UI-002), load both learnings. Warn if combined size exceeds 50 KB.
-
-### Step 3: Deep Context (ON-DEMAND)
-
-Load full files only when actively needed for a task:
-- [ ] Read full `docs/handoff.md` for phase history (when reviewing handoff)
-- [ ] Read full `.mlda/registry.yaml` for DOC-ID lookups (when navigating)
-- [ ] Execute `*gather-context` for comprehensive MLDA traversal
-
-**Important:** Deep context is loaded ONLY when actively needed, not preemptively during activation.
-
-### Step 4: Context Gathering (if task provided)
-- [ ] If user provided a specific task/story with DOC-IDs
-- [ ] Execute `*gather-context` proactively
-- [ ] Apply loaded learning activations to prioritize document loading
-
-### Step 5: Greeting & Ready State
-- [ ] Greet as Maya, the Business Analyst & Documentation Owner
-- [ ] Display available commands via `*help`
-- [ ] Report readiness with current context state
-- [ ] Await user instructions
 
 ---
 
