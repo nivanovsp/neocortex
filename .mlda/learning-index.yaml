@@ -1,13 +1,13 @@
 ﻿# MLDA Learning Index
 # Auto-generated summary of all topic learnings
-# Generated: 2026-01-23T15:27:27Z
+# Generated: 2026-01-24T06:31:59Z
 # Generator: mlda-generate-index.ps1
 #
 # This file provides Tier 1 loading for two-tier learning system (DEC-007).
 # DO NOT EDIT MANUALLY - regenerate with: .\mlda-generate-index.ps1
 
 version: 1
-generated_at: "2026-01-23T15:27:27Z"
+generated_at: "2026-01-24T06:31:59Z"
 generated_from: 1
 total_sessions: 0
 generator_script: "mlda-generate-index.ps1"
