@@ -92,7 +92,6 @@ has_critical_markers: false     # Set to true if document contains <!-- CRITICAL
 # ============================================
 # TRACKING (optional)
 # ============================================
-# beads: "Project-XXX"          # Associated Beads task ID
 # version: "1.0"                # Document version
 ```
 

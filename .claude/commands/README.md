@@ -94,7 +94,6 @@ Universal standards that always apply:
 - Code style standards
 - Communication protocols
 - Safety guidelines
-- Beads issue tracking
 - MLDA documentation protocol
 - Git conventions
 

@@ -53,9 +53,8 @@ Task: "Implement authentication token refresh"
 
 How identified:
 1. DOC-ID references: DOC-AUTH-xxx → authentication
-2. Beads labels: auth, authentication
-3. Description keywords: "authentication", "auth"
-4. User confirmation (if uncertain)
+2. Description keywords: "authentication", "auth"
+3. User confirmation (if uncertain)
 ```
 
 ### Step 2: Check Topic Exists
@@ -510,7 +509,7 @@ activations:
 # "These docs frequently co-activate - load them together"
 ```
 
-### With Beads Task Selection
+### With Task Selection
 
 When user selects a task:
 
@@ -518,8 +517,7 @@ When user selects a task:
 User: "Let's work on Ways of Development-123"
 
 Agent:
-1. Reads task from beads
-2. Identifies topic from DOC-ID references
+1. Identifies topic from DOC-ID references
 3. Calls: *learning load {topic}
 4. Proceeds with task using learnings
 ```

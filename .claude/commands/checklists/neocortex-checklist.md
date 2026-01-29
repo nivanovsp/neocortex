@@ -338,17 +338,12 @@ For each `learning.yaml` file:
 
 [[LLM: Neocortex integrates with other methodology components. Verify these integration points.]]
 
-### 8.1 Beads Integration
-
-- [ ] `beads` field in sidecars references valid task IDs if present
-- [ ] Stories reference DOC-IDs in documentation sections
-
-### 8.2 Handoff Integration
+### 8.1 Handoff Integration
 
 - [ ] Handoff document references DOC-IDs for context
 - [ ] Phase transitions update handoff.md
 
-### 8.3 RMS Framework Integration
+### 8.2 RMS Framework Integration
 
 - [ ] Modes have access to navigation commands (*explore, *related, *context)
 - [ ] Skills for context gathering are available

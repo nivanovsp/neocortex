@@ -240,38 +240,6 @@ When critical thinking surfaces concerns, respond proportionally:
 
 ---
 
-## Issue Tracking with Beads
-
-Use **Beads** (`bd`) for multi-session projects with complex dependencies. For simple tasks, use regular TODOs.
-
-### Critical Setup
-
-**ALWAYS run `bd init` first in new projects** - creates .beads/ folder for project-local isolation.
-
-### Essential Commands
-
-```bash
-bd init                                    # Initialize (REQUIRED first step)
-bd ready --json                            # Show unblocked tasks
-bd create "Description" -t task -p 1       # Create issue (priority 0-4, lower=higher)
-bd update <id> --status in_progress        # Claim task
-bd close <id> --reason "Done"              # Complete task
-bd dep add <id> --blocks <other-id>        # Add dependency
-bd dep tree <id>                           # Visualize dependency graph
-bd stats                                   # Project overview
-```
-
-### Workflow
-
-1. Check `bd ready` for unblocked work
-2. Claim with `bd update <id> --status in_progress`
-3. File new issues as discovered: `bd create "Found bug" --deps discovered-from:<current-id>`
-4. Complete with `bd close <id> --reason "Implemented"`
-
-All commands support `--json` flag. Issues auto-sync via git-friendly JSONL files.
-
----
-
 ## MLDA Protocol - The Neocortex Model
 
 **Modular Linked Documentation Architecture** - a knowledge graph that agents navigate.
@@ -359,16 +327,15 @@ As projects grow, topic learning files can become large. The two-tier system opt
 
 **Tier 2: Full Learning** (loaded when topic identified)
 - Complete learning.yaml for the active topic only
-- Auto-triggered by DOC-ID references, beads labels, or user mention
+- Auto-triggered by DOC-ID references or user mention
 - Full depth available for current work
 
 **Mode Activation Flow (DEC-JAN-26):**
 ```
 1. Mode awakens → Load learning-index.yaml (~30 lines)
-2. Check beads → bd ready --json (show pending tasks)
-3. Greet as persona → Report status, await instructions
-4. User selects task → Load topic learning ON-DEMAND
-5. Work proceeds with full topic context
+2. Greet as persona → Report status, await instructions
+3. User selects task → Load topic learning ON-DEMAND
+4. Work proceeds with full topic context
 ```
 
 **Index Auto-Regeneration (DEC-008):**
@@ -389,9 +356,8 @@ DEC-009's `activation-context.yaml` approach was deprecated due to unreliable sc
 **Simplified Activation Flow:**
 ```
 1. Mode awakens → Load learning-index.yaml (~30 lines)
-2. Check beads → bd ready --json (if available)
-3. Greet and show ready tasks
-4. Deep context → ON-DEMAND only when task selected
+2. Greet as persona, await instructions
+3. Deep context → ON-DEMAND only when task selected
 ```
 
 **Step-by-Step:**
@@ -399,15 +365,14 @@ DEC-009's `activation-context.yaml` approach was deprecated due to unreliable sc
 | Step | Action | When |
 |------|--------|------|
 | 1 | Read `.mlda/learning-index.yaml` | Always (lightweight) |
-| 2 | Run `bd ready --json` | Always (skip if beads not init) |
-| 3 | Greet as persona, show tasks | Always |
-| 4 | Load topic learning, handoff section | ON-DEMAND only |
+| 2 | Greet as persona, await instructions | Always |
+| 3 | Load topic learning, handoff section | ON-DEMAND only |
 
 **What Changed:**
 - Removed: `activation-context.yaml` dependency
 - Removed: Fallback logic that read full `handoff.md`
-- Added: Native beads integration
-- Simplified: 4 steps instead of complex fallback chains
+- Removed: Beads integration (not suitable for large projects)
+- Simplified: 3 steps instead of complex fallback chains
 
 **Context Savings:**
 | Scenario | Before DEC-JAN-26 | After DEC-JAN-26 | Reduction |

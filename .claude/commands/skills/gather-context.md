@@ -109,9 +109,8 @@ Loading these BEFORE context gathering makes the process more efficient and accu
 
 ### Topic Identification Methods
 
-1. **Explicit domain tag** in task metadata (beads labels)
-2. **DOC-ID extraction** from task references (DOC-AUTH-xxx → authentication)
-3. **Inference from description** (confirm with user if uncertain)
+1. **DOC-ID extraction** from task references (DOC-AUTH-xxx → authentication)
+2. **Inference from description** (confirm with user if uncertain)
 
 ### Topic Loading
 
@@ -627,20 +626,6 @@ New learnings identified:
 - Verification note: "DOC-AUTH-007 section 3.2 is ambiguous"
 
 Save to .mlda/topics/authentication/learning.yaml? [y/n]
-```
-
-### With Beads
-
-Task selection triggers automatic context gathering:
-```
-User: "Let's work on Ways of Development-90"
-Agent:
-1. Reads task from beads
-2. Extracts DOC-ID references
-3. Identifies topic: authentication
-4. Runs gather-context workflow
-5. Presents context summary
-6. Awaits user confirmation
 ```
 
 ---

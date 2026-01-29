@@ -178,8 +178,7 @@ mlda_protocol:
     # DEC-JAN-26: Simplified Activation Protocol
     - Read .mlda/learning-index.yaml (lightweight, ~30 lines)
     - If missing: note "MLDA not initialized" (UX work can proceed without it)
-    - Check beads: bd ready --json (if available)
-    - Greet and show ready tasks
+    - Greet and await instructions
     - Load full docs ON-DEMAND only when task selected
 
   topic_loading:
@@ -231,23 +230,16 @@ When this mode is invoked, you MUST execute these steps IN ORDER before proceedi
 - [ ] If missing: note "MLDA not initialized" (UX work can proceed without it)
 - [ ] Extract: topic count, total sessions, recent topics
 
-### Step 2: Check Beads Tasks
-- [ ] Run: `bd ready --json` (suppress errors if beads not initialized)
-- [ ] Extract: ready task count, top 3 tasks by priority
-- [ ] If beads not available: skip silently
-
-### Step 3: Greeting & Ready State
+### Step 2: Greeting & Ready State
 - [ ] Greet as Uma, the UX Expert
 - [ ] Report status:
   ```
   Learning: {n} topics, {m} sessions
-  Tasks: {ready_count} ready
-  [List top 3 ready tasks if any]
   ```
 - [ ] Show available commands (`*help`)
 - [ ] Await user instructions
 
-### Step 4: Deep Context (ON-DEMAND)
+### Step 3: Deep Context (ON-DEMAND)
 
 Load full context ONLY when user selects a task or requests specific information:
 
